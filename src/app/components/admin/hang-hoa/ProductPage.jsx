@@ -462,6 +462,7 @@ const ProductPage = () => {
             <Title level={4} style={{ margin: 0 }}>
               {isMobile && (
                 <Button
+                  size="large"
                   type="text"
                   icon={<MenuOutlined />}
                   onClick={() => setMenuDrawerOpen(true)}
@@ -563,9 +564,12 @@ const ProductPage = () => {
           {/* Mobile Filter Button */}
           {isMobile && (
             <Flex gap="middle">
-              <Button icon={<ScanOutlined />} onClick={handleScanCode}></Button>
-              <Button icon={<SortAscendingOutlined />} onClick={() => {}}></Button>
-              <Button icon={<FilterOutlined />} onClick={() => setFilterDrawerOpen(true)}></Button>
+              <Button size="large" icon={<SortAscendingOutlined />} onClick={() => {}}></Button>
+              <Button
+                size="large"
+                icon={<FilterOutlined />}
+                onClick={() => setFilterDrawerOpen(true)}
+              ></Button>
             </Flex>
           )}
         </Flex>
@@ -587,15 +591,17 @@ const ProductPage = () => {
 
         {isMobile && (
           <>
-            <Input
-              placeholder="Tìm kiếm theo tên, mã sản phẩm..."
-              size="large"
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: "100%" }}
-              allowClear
-            />
+            <Flex gap="middle">
+              <Input
+                placeholder="Tìm kiếm theo tên, mã sản phẩm..."
+                size="large"
+                prefix={<SearchOutlined />}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                allowClear
+              />
+              <Button size="large" icon={<ScanOutlined />} onClick={handleScanCode}></Button>
+            </Flex>
             <Divider style={{ marginBottom: 0 }} />
           </>
         )}
@@ -657,7 +663,7 @@ const ProductPage = () => {
                 <List.Item.Meta
                   title={
                     <Flex vertical>
-                      <span className="font-medium">{item.name}</span>
+                      <span className="font-medium text-lg">{item.name}</span>
                     </Flex>
                   }
                   description={
@@ -723,6 +729,7 @@ const ProductPage = () => {
         onCancel={() => setAddModalVisible(false)}
         onAdd={handleAddProduct}
         categories={categories}
+        isMobile={isMobile}
       />
 
       {selectedProduct && (
@@ -733,6 +740,7 @@ const ProductPage = () => {
             onEdit={handleEditProduct}
             product={selectedProduct}
             categories={categories}
+            isMobile={isMobile}
           />
 
           <ViewProductModal
@@ -747,6 +755,7 @@ const ProductPage = () => {
             onCancel={() => setDeleteModalVisible(false)}
             onDelete={() => handleDeleteProduct(selectedProduct.id)}
             product={selectedProduct}
+            isMobile={isMobile}
           />
         </>
       )}
@@ -755,7 +764,23 @@ const ProductPage = () => {
         visible={importModalVisible}
         onCancel={() => setImportModalVisible(false)}
         onImport={handleImportProducts}
+        isMobile={isMobile}
       />
+
+      <Button
+        type="primary"
+        shape="circle"
+        onClick={() => setAddModalVisible(true)}
+        icon={<PlusOutlined />}
+        className="right-4 shadow-sm"
+        style={{
+          zIndex: 2,
+          position: "fixed",
+          bottom: "80px",
+          width: "48px",
+          height: "48px",
+        }}
+      ></Button>
     </div>
   );
 };

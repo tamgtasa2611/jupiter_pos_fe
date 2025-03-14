@@ -5,7 +5,7 @@ import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 const { Option } = Select;
 const { TextArea } = Input;
 
-const AddProductModal = ({ visible, onCancel, onAdd, categories }) => {
+const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -67,6 +67,7 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories }) => {
     <Modal
       title="Thêm sản phẩm mới"
       open={visible}
+      {...(isMobile && { centered: true })}
       onCancel={handleCancel}
       onOk={handleSubmit}
       okText="Thêm sản phẩm"

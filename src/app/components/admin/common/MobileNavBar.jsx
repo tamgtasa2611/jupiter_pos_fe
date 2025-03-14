@@ -114,9 +114,12 @@ export default function MobileNavBar() {
               <Link href={item.href} key={item.key}>
                 <Button
                   type="primary"
-                  shape="round"
+                  shape="circle"
                   icon={item.icon}
-                  size="large"
+                  style={{
+                    width: "48px",
+                    height: "48px"
+                  }}
                 />
               </Link>
             );
