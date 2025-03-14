@@ -16,9 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Jupiter Store",
-  description: "Cửa hàng thời trang Jupiter Store",
-  keywords: "thời trang, quần áo, quần, áo, Jupiter Store",
+  title: "Tổng Kho",
 };
 
 export default function RootLayout({ children }) {
