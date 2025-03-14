@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Popover, Badge } from "antd";
+import { Popover, Badge, Button } from "antd";
 import {
   HomeOutlined,
   ShoppingOutlined,
@@ -92,6 +92,7 @@ export default function MobileNavBar() {
       icon: <ShoppingCartOutlined />,
       label: "Bán hàng",
       href: "/admin/sale",
+      special: true,
     },
     {
       key: "/admin/orders",
@@ -107,22 +108,37 @@ export default function MobileNavBar() {
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
       <div className="flex justify-around items-center h-16">
-        {navItems.map((item) => (
-          <Link
-            href={item.href}
-            key={item.key}
-            className={`flex flex-col items-center justify-center w-1/5`}
-            style={{
-              color: isActive(item.key) ? "#1890ff" : "#666",
-              backgroundColor: isActive(item.key) ? "#f0f5ff" : "transparent",
-              borderRadius: "8px",
-              padding: "2px",
-            }}
-          >
-            <div className={`text-xl`}>{item.icon}</div>
-            <div className="text-xs mt-1">{item.label}</div>
-          </Link>
-        ))}
+        {navItems.map((item) => {
+          if (item.special) {
+            return (
+              <Link href={item.href} key={item.key}>
+                <Button
+                  type="primary"
+                  shape="round"
+                  icon={item.icon}
+                  size="large"
+                />
+              </Link>
+            );
+          } else {
+            return (
+              <Link
+                href={item.href}
+                key={item.key}
+                className={`flex flex-col items-center justify-center w-1/5`}
+                style={{
+                  color: isActive(item.key) ? "#1890ff" : "#666",
+                  backgroundColor: isActive(item.key) ? "#f0f5ff" : "transparent",
+                  borderRadius: "8px",
+                  padding: "2px",
+                }}
+              >
+                <div className={`text-xl`}>{item.icon}</div>
+                <div className="text-xs mt-1">{item.label}</div>
+              </Link>
+            );
+          }
+        })}
 
         <Popover
           content={moreMenuContent}
