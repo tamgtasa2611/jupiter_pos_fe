@@ -42,9 +42,9 @@ export default function NavBar() {
 
   const menuItems = [
     {
-      key: "/admin/dashboard",
+      key: "/admin/trang-chu",
       icon: <DashboardOutlined />,
-      label: <Link href="/admin/dashboard">Trang chủ</Link>,
+      label: <Link href="/admin/trang-chu">Trang chủ</Link>,
     },
     {
       key: "/admin/products",
@@ -70,26 +70,17 @@ export default function NavBar() {
       key: "/admin/statistics",
       icon: <BarChartOutlined />,
       label: <Link href="/admin/statistics">Thống kê</Link>,
-    }
+    },
   ];
 
   return (
-    <div className="bg-white flex items-center justify-between px-3 md:px-6 sticky top-0 z-10 shadow-md w-full h-16">
-      {/* Left side - Logo and sidebar toggle */}
-      <Space className="flex items-center">
-        {/* Show on mobile */}
-        <Button
-          type="text"
-          icon={<MenuOutlined />}
-          onClick={showMobileMenu}
-          className="flex md:hidden items-center justify-center"
-        />
-        <Link href="/admin/dashboard" className="flex items-center">
-          <Title level={4} className="m-0 text-base md:text-lg" style={{marginBottom: 0}}>
-            NPP An Sinh
-          </Title>
-        </Link>
-      </Space>
+    <div className="hidden md:flex bg-white items-center justify-between px-3 md:px-6 sticky top-0 z-10 shadow-md w-full h-16 ">
+      {/* Left side - Logo */}
+      <Link href="/admin/dashboard" className="flex items-center">
+        <Title level={4} className="m-0 text-base md:text-lg" style={{ marginBottom: 0 }}>
+          NPP An Sinh
+        </Title>
+      </Link>
 
       {/* Middle - Main Navigation - Hide on mobile */}
       <div className="hidden md:block flex-1 mx-6">
@@ -159,34 +150,6 @@ export default function NavBar() {
           <Avatar icon={<UserOutlined />} className="cursor-pointer" />
         </Dropdown>
       </Space>
-
-      {/* Mobile Menu Drawer */}
-      <Drawer
-        title="Menu"
-        placement="left"
-        onClose={closeMobileMenu}
-        open={mobileDrawerOpen}
-        width={250}
-      >
-        <Menu
-          mode="vertical"
-          selectedKeys={[pathname]}
-          items={menuItems}
-          onClick={closeMobileMenu}
-          className="border-0"
-        />
-
-        <div className="mt-4 pt-4 border-t">
-          <Menu
-            mode="vertical"
-            items={[
-              { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
-              { key: "profile", icon: <UserOutlined />, label: "Hồ sơ cá nhân" },
-              { key: "logout", icon: <LogoutOutlined />, label: "Đăng xuất" },
-            ]}
-          />
-        </div>
-      </Drawer>
     </div>
   );
 }

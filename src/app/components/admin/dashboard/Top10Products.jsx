@@ -102,7 +102,7 @@ const Top10Products = () => {
   const config = {
     data: productData,
     yField: sortBy === "revenue" ? "revenue" : "quantity",
-    xField: "revenueFormatted",
+    xField: sortBy === "revenue" ? "revenueFormatted" : "quantity",
     isStack: false,
     isGroup: false,
     legend: { position: "left" },
