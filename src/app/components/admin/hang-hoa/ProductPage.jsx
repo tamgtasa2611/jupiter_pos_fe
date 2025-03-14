@@ -1,0 +1,479 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  Card,
+  Button,
+  Input,
+  Space,
+  Dropdown,
+  Tag,
+  Tooltip,
+  Select,
+  Typography,
+  Flex,
+} from "antd";
+import {
+  PlusOutlined,
+  SearchOutlined,
+  FilterOutlined,
+  SortAscendingOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  MoreOutlined,
+  ExportOutlined,
+  ImportOutlined,
+  BarcodeOutlined,
+  FileExcelOutlined,
+  FilePdfOutlined,
+  PrinterOutlined,
+} from "@ant-design/icons";
+import AddProductModal from "./AddProductModal";
+import EditProductModal from "./EditProductModal";
+import ViewProductModal from "./ViewProductModal";
+import DeleteProductModal from "./DeleteProductModal";
+import ImportProductsModal from "./ImportProductsModal";
+
+const { Title } = Typography;
+const { Option } = Select;
+
+const ProductPage = () => {
+  // State management
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+
+  // Modal states
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [importModalVisible, setImportModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Pagination
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
+
+  // Categories for filtering
+  const categories = [
+    { value: "beverages", label: "Đồ uống" },
+    { value: "food", label: "Thực phẩm" },
+    { value: "snacks", label: "Bánh kẹo" },
+    { value: "household", label: "Đồ gia dụng" },
+    { value: "personal_care", label: "Chăm sóc cá nhân" },
+  ];
+
+  // Mock data fetch
+  useEffect(() => {
+    fetchProducts();
+  }, [pagination.current, pagination.pageSize, searchText, selectedCategory, selectedStatus]);
+
+  const fetchProducts = () => {
+    setLoading(true);
+
+    // Mock API call
+    setTimeout(() => {
+      // Generate mock data
+      const mockData = Array(35)
+        .fill()
+        .map((_, index) => {
+          const id = index + 1;
+          const categoryIndex = Math.floor(Math.random() * categories.length);
+          const category = categories[categoryIndex];
+          const price = Math.floor(Math.random() * 500000) + 10000;
+          const costPrice = Math.floor(price * 0.7);
+          const stock = Math.floor(Math.random() * 1000);
+          const isActive = Math.random() > 0.2;
+
+          return {
+            id,
+            barcode: `SP${String(id).padStart(6, "0")}`,
+            name: `Sản phẩm ${id}`,
+            category: category.value,
+            categoryName: category.label,
+            price,
+            costPrice,
+            stock,
+            unit: ["Thùng", "Hộp", "Chai", "Lốc", "Gói"][Math.floor(Math.random() * 5)],
+            isActive,
+            createdAt: new Date(
+              Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
+            ).toISOString(),
+            image: `/images/products/product-${(id % 10) + 1}.jpg`,
+          };
+        });
+
+      // Filter data based on search and filters
+      let filteredData = [...mockData];
+
+      if (searchText) {
+        filteredData = filteredData.filter(
+          (product) =>
+            product.name.toLowerCase().includes(searchText.toLowerCase()) ||
+            product.barcode.toLowerCase().includes(searchText.toLowerCase())
+        );
+      }
+
+      if (selectedCategory !== "all") {
+        filteredData = filteredData.filter((product) => product.category === selectedCategory);
+      }
+
+      if (selectedStatus !== "all") {
+        const isActive = selectedStatus === "active";
+        filteredData = filteredData.filter((product) => product.isActive === isActive);
+      }
+
+      // Total and pagination
+      const totalItems = filteredData.length;
+      const start = (pagination.current - 1) * pagination.pageSize;
+      const end = start + pagination.pageSize;
+      const paginatedData = filteredData.slice(start, end);
+
+      setProducts(paginatedData);
+      setPagination({
+        ...pagination,
+        total: totalItems,
+      });
+      setLoading(false);
+    }, 500);
+  };
+
+  // CRUD operations
+  const handleAddProduct = (newProduct) => {
+    // In a real app, you would make an API call here
+    console.log("Adding new product:", newProduct);
+    setAddModalVisible(false);
+    fetchProducts(); // Refresh data
+  };
+
+  const handleEditProduct = (updatedProduct) => {
+    // In a real app, you would make an API call here
+    console.log("Updating product:", updatedProduct);
+    setEditModalVisible(false);
+    fetchProducts(); // Refresh data
+  };
+
+  const handleDeleteProduct = (id) => {
+    // In a real app, you would make an API call here
+    console.log("Deleting product with ID:", id);
+    setDeleteModalVisible(false);
+    fetchProducts(); // Refresh data
+  };
+
+  const handleImportProducts = (data) => {
+    // In a real app, you would make an API call here
+    console.log("Importing products:", data);
+    setImportModalVisible(false);
+    fetchProducts(); // Refresh data
+  };
+
+  // Table columns
+  const columns = [
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "barcode",
+      key: "barcode",
+      render: (barcode) => (
+        <Tooltip title={barcode}>
+          <div className="flex items-center">
+            <BarcodeOutlined className="mr-1" />
+            <span className="font-mono">{barcode}</span>
+          </div>
+        </Tooltip>
+      ),
+      sorter: (a, b) => a.barcode.localeCompare(b.barcode),
+    },
+    // {
+    //   title: "Hình ảnh",
+    //   dataIndex: "image",
+    //   key: "image",
+    //   width: 80,
+    //   render: (image) => (
+    //     <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
+    //       <img
+    //         src={image || "/placeholder.png"}
+    //         alt="Product"
+    //         className="w-full h-full object-cover"
+    //         onError={(e) => {
+    //           e.target.onerror = null;
+    //           e.target.src = "/placeholder.png";
+    //         }}
+    //       />
+    //     </div>
+    //   ),
+    // },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      render: (text) => <span className="font-medium">{text}</span>,
+    },
+    {
+      title: "Danh mục",
+      dataIndex: "categoryName",
+      key: "categoryName",
+      filters: categories.map((cat) => ({ text: cat.label, value: cat.value })),
+      onFilter: (value, record) => record.category === value,
+    },
+    {
+      title: "Giá bán",
+      dataIndex: "price",
+      key: "price",
+      sorter: (a, b) => a.price - b.price,
+      render: (price) => (
+        <span className="font-semibold text-blue-600">
+          {new Intl.NumberFormat("vi-VN").format(price)}đ
+        </span>
+      ),
+    },
+    {
+      title: "Giá nhập",
+      dataIndex: "costPrice",
+      key: "costPrice",
+      sorter: (a, b) => a.costPrice - b.costPrice,
+      render: (costPrice) => (
+        <span className="text-gray-600">{new Intl.NumberFormat("vi-VN").format(costPrice)}đ</span>
+      ),
+    },
+    {
+      title: "Tồn kho",
+      dataIndex: "stock",
+      key: "stock",
+      sorter: (a, b) => a.stock - b.stock,
+      render: (stock, record) => (
+        <div>
+          <span
+            className={`font-semibold ${
+              stock < 10 ? "text-red-500" : stock < 30 ? "text-orange-500" : "text-green-600"
+            }`}
+          >
+            {stock}
+          </span>
+          <span className="text-gray-500 ml-1">{record.unit}</span>
+        </div>
+      ),
+    },
+    {
+      title: "Trạng thái",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (isActive) => (
+        <Tag color={isActive ? "green" : "red"}>{isActive ? "Đang bán" : "Ngừng bán"}</Tag>
+      ),
+    },
+    {
+      title: "Thao tác",
+      key: "action",
+      width: 120,
+      render: (_, record) => (
+        <Dropdown
+          menu={{
+            items: [
+              {
+                key: "1",
+                icon: <EyeOutlined />,
+                label: "Xem chi tiết",
+                onClick: () => {
+                  setSelectedProduct(record);
+                  setViewModalVisible(true);
+                },
+              },
+              {
+                key: "2",
+                icon: <EditOutlined />,
+                label: "Chỉnh sửa",
+                onClick: () => {
+                  setSelectedProduct(record);
+                  setEditModalVisible(true);
+                },
+              },
+              {
+                key: "3",
+                icon: <DeleteOutlined />,
+                label: "Xóa",
+                danger: true,
+                onClick: () => {
+                  setSelectedProduct(record);
+                  setDeleteModalVisible(true);
+                },
+              },
+            ],
+          }}
+          trigger={["click"]}
+          placement="bottomRight"
+        >
+          <Button type="text" icon={<MoreOutlined />} />
+        </Dropdown>
+      ),
+    },
+  ];
+
+  // Handle table change
+  const handleTableChange = (pagination, filters, sorter) => {
+    setPagination({
+      ...pagination,
+      current: pagination.current,
+    });
+  };
+
+  return (
+    <div className="">
+      <Card className="shadow-sm hover:shadow-md transition-shadow">
+        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 24 }}>
+          <div className="">
+            <Title level={4} style={{margin: 0}}>Hàng hóa</Title>
+          </div>
+
+          {/* Action bar */}
+          <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="mb-6">
+            {/* Search and filters */}
+            <Flex gap={12} wrap="wrap">
+              <Input
+                placeholder="Tìm kiếm theo tên, mã sản phẩm..."
+                prefix={<SearchOutlined />}
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+                style={{ width: 300 }}
+                allowClear
+              />
+
+              <Select
+                placeholder="Danh mục"
+                style={{ width: 150 }}
+                value={selectedCategory}
+                onChange={setSelectedCategory}
+                allowClear
+              >
+                <Option value="all">Tất cả danh mục</Option>
+                {categories.map((category) => (
+                  <Option key={category.value} value={category.value}>
+                    {category.label}
+                  </Option>
+                ))}
+              </Select>
+
+              <Select
+                placeholder="Trạng thái"
+                style={{ width: 150 }}
+                value={selectedStatus}
+                onChange={setSelectedStatus}
+                allowClear
+              >
+                <Option value="all">Tất cả trạng thái</Option>
+                <Option value="active">Đang bán</Option>
+                <Option value="inactive">Ngừng bán</Option>
+              </Select>
+            </Flex>
+
+            {/* Action buttons */}
+            <Flex gap={8} wrap="wrap">
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setAddModalVisible(true)}
+              >
+                Thêm sản phẩm
+              </Button>
+
+              <Button icon={<ImportOutlined />} onClick={() => setImportModalVisible(true)}>
+                Nhập từ Excel
+              </Button>
+
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "1",
+                      icon: <FileExcelOutlined />,
+                      label: "Xuất Excel",
+                    },
+                    {
+                      key: "2",
+                      icon: <FilePdfOutlined />,
+                      label: "Xuất PDF",
+                    },
+                    {
+                      key: "3",
+                      icon: <PrinterOutlined />,
+                      label: "In danh sách",
+                    },
+                  ],
+                }}
+              >
+                <Button icon={<ExportOutlined />}>
+                  Xuất{" "}
+                  <svg className="inline-block w-2 h-2 ml-1 -mt-1" viewBox="0 0 6 3">
+                    <polygon points="0,0 6,0 3,3" fill="currentColor" />
+                  </svg>
+                </Button>
+              </Dropdown>
+            </Flex>
+          </Flex>
+        </Flex>
+
+        {/* Product Table */}
+        <Table
+          columns={columns}
+          dataSource={products}
+          rowKey="id"
+          loading={loading}
+          pagination={pagination}
+          onChange={handleTableChange}
+          scroll={{ x: 1000 }}
+          className="shadow-sm"
+          size="middle"
+        />
+      </Card>
+
+      {/* Modals */}
+      <AddProductModal
+        visible={addModalVisible}
+        onCancel={() => setAddModalVisible(false)}
+        onAdd={handleAddProduct}
+        categories={categories}
+      />
+
+      {selectedProduct && (
+        <>
+          <EditProductModal
+            visible={editModalVisible}
+            onCancel={() => setEditModalVisible(false)}
+            onEdit={handleEditProduct}
+            product={selectedProduct}
+            categories={categories}
+          />
+
+          <ViewProductModal
+            visible={viewModalVisible}
+            onCancel={() => setViewModalVisible(false)}
+            product={selectedProduct}
+          />
+
+          <DeleteProductModal
+            visible={deleteModalVisible}
+            onCancel={() => setDeleteModalVisible(false)}
+            onDelete={() => handleDeleteProduct(selectedProduct.id)}
+            product={selectedProduct}
+          />
+        </>
+      )}
+
+      <ImportProductsModal
+        visible={importModalVisible}
+        onCancel={() => setImportModalVisible(false)}
+        onImport={handleImportProducts}
+      />
+    </div>
+  );
+};
+
+export default ProductPage;

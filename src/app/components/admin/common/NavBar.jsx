@@ -47,9 +47,9 @@ export default function NavBar() {
       label: <Link href="/admin/trang-chu">Trang chủ</Link>,
     },
     {
-      key: "/admin/products",
+      key: "/admin/hang-hoa",
       icon: <ShoppingOutlined />,
-      label: <Link href="/admin/products">Hàng hóa</Link>,
+      label: <Link href="/admin/hang-hoa">Hàng hóa</Link>,
     },
     {
       key: "/admin/orders",
@@ -89,6 +89,9 @@ export default function NavBar() {
           selectedKeys={[pathname]}
           items={menuItems}
           className="border-0 w-full"
+          style={{
+            border: "0",
+          }}
         />
       </div>
 

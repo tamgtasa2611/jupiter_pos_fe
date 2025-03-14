@@ -82,10 +82,10 @@ export default function MobileNavBar() {
       href: "/admin/trang-chu",
     },
     {
-      key: "/admin/products",
+      key: "/admin/hang-hoa",
       icon: <ShoppingOutlined />,
       label: "Hàng hóa",
-      href: "/admin/products",
+      href: "/admin/hang-hoa",
     },
     {
       key: "/admin/sale",
