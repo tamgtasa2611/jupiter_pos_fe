@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   Table,
   Card,
@@ -13,6 +13,12 @@ import {
   Select,
   Typography,
   Flex,
+  Menu,
+  Drawer,
+  List,
+  Empty,
+  Badge,
+  Divider,
 } from "antd";
 import {
   PlusOutlined,
@@ -29,6 +35,8 @@ import {
   FileExcelOutlined,
   FilePdfOutlined,
   PrinterOutlined,
+  MenuOutlined,
+  ScanOutlined,
 } from "@ant-design/icons";
 import AddProductModal from "./AddProductModal";
 import EditProductModal from "./EditProductModal";
@@ -41,6 +49,9 @@ const { Option } = Select;
 
 const ProductPage = () => {
   // State management
+  const [isMobile, setIsMobile] = useState(false);
+  const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -61,6 +72,20 @@ const ProductPage = () => {
     pageSize: 10,
     total: 0,
   });
+
+  // Check for mobile screen
+  useLayoutEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
 
   // Categories for filtering
   const categories = [
@@ -107,7 +132,7 @@ const ProductPage = () => {
             createdAt: new Date(
               Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
             ).toISOString(),
-            image: `/images/products/product-${(id % 10) + 1}.jpg`,
+            image: "../haohao.png",
           };
         });
 
@@ -191,25 +216,6 @@ const ProductPage = () => {
       ),
       sorter: (a, b) => a.barcode.localeCompare(b.barcode),
     },
-    // {
-    //   title: "Hình ảnh",
-    //   dataIndex: "image",
-    //   key: "image",
-    //   width: 80,
-    //   render: (image) => (
-    //     <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden">
-    //       <img
-    //         src={image || "/placeholder.png"}
-    //         alt="Product"
-    //         className="w-full h-full object-cover"
-    //         onError={(e) => {
-    //           e.target.onerror = null;
-    //           e.target.src = "/placeholder.png";
-    //         }}
-    //       />
-    //     </div>
-    //   ),
-    // },
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
@@ -325,114 +331,391 @@ const ProductPage = () => {
     });
   };
 
+  const handleScanCode = () => {
+    // Check if browser supports camera access
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      // Request camera access
+      navigator.mediaDevices
+        .getUserMedia({ video: { facingMode: "environment" } })
+        .then((stream) => {
+          // Create and show a modal with video element for scanning
+          const videoModal = document.createElement("div");
+          videoModal.style = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    display: flex;
+                    flex-direction: column;
+                    z-index: 9999;
+                  `;
+
+          const video = document.createElement("video");
+          video.style = `
+                    width: 100%;
+                    height: calc(100% - 60px);
+                    object-fit: cover;
+                  `;
+          video.srcObject = stream;
+          video.autoplay = true;
+
+          const closeBtn = document.createElement("button");
+          closeBtn.innerText = "Hủy";
+          closeBtn.style = `
+                    padding: 12px;
+                    background: #f44336;
+                    color: white;
+                    border: none;
+                    height: 60px;
+                    font-size: 16px;
+                  `;
+          closeBtn.onclick = () => {
+            stream.getTracks().forEach((track) => track.stop());
+            document.body.removeChild(videoModal);
+          };
+
+          videoModal.appendChild(video);
+          videoModal.appendChild(closeBtn);
+          document.body.appendChild(videoModal);
+
+          // Here you would typically add barcode detection
+          // This is a placeholder for integrating a barcode scanner library
+          // like zxing or QuaggaJS in a real implementation
+        })
+        .catch((err) => {
+          console.error("Error accessing camera:", err);
+          alert("Truy cập camera thất bại. Vui lòng cấp quyền truy cập camera.");
+        });
+    } else {
+      alert("Trình duyệt không hỗ trợ truy cập camera.");
+    }
+  };
+
+  // Action menu for mobile
+  const mobileActionMenu = (
+    <Menu>
+      <Menu.Item key="add" icon={<PlusOutlined />} onClick={() => setAddModalVisible(true)}>
+        Thêm sản phẩm
+      </Menu.Item>
+      <Menu.Item key="import" icon={<ImportOutlined />} onClick={() => setImportModalVisible(true)}>
+        Nhập từ Excel
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.SubMenu key="export" icon={<ExportOutlined />} title="Xuất">
+        <Menu.Item key="excel" icon={<FileExcelOutlined />}>
+          Xuất Excel
+        </Menu.Item>
+        <Menu.Item key="pdf" icon={<FilePdfOutlined />}>
+          Xuất PDF
+        </Menu.Item>
+        <Menu.Item key="print" icon={<PrinterOutlined />}>
+          In danh sách
+        </Menu.Item>
+      </Menu.SubMenu>
+    </Menu>
+  );
+
+  // Filter drawer content for mobile
+  const filterDrawerContent = (
+    <Flex vertical gap={12}>
+      <Select
+        placeholder="Danh mục"
+        style={{ width: "100%" }}
+        value={selectedCategory}
+        onChange={setSelectedCategory}
+        allowClear
+      >
+        <Option value="all">Tất cả danh mục</Option>
+        {categories.map((category) => (
+          <Option key={category.value} value={category.value}>
+            {category.label}
+          </Option>
+        ))}
+      </Select>
+
+      <Select
+        placeholder="Trạng thái"
+        style={{ width: "100%" }}
+        value={selectedStatus}
+        onChange={setSelectedStatus}
+        allowClear
+      >
+        <Option value="all">Tất cả trạng thái</Option>
+        <Option value="active">Đang bán</Option>
+        <Option value="inactive">Ngừng bán</Option>
+      </Select>
+
+      <Button type="primary" block onClick={() => setFilterDrawerOpen(false)}>
+        Áp dụng
+      </Button>
+    </Flex>
+  );
+
+  // Render desktop or mobile UI
   return (
     <div className="">
       <Card className="shadow-sm hover:shadow-md transition-shadow">
         <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 24 }}>
           <div className="">
-            <Title level={4} style={{margin: 0}}>Hàng hóa</Title>
+            <Title level={4} style={{ margin: 0 }}>
+              {isMobile && (
+                <Button
+                  type="text"
+                  icon={<MenuOutlined />}
+                  onClick={() => setMenuDrawerOpen(true)}
+                  style={{ marginRight: 8 }}
+                />
+              )}
+              Hàng hóa
+            </Title>
           </div>
 
-          {/* Action bar */}
-          <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="mb-6">
-            {/* Search and filters */}
-            <Flex gap={12} wrap="wrap">
-              <Input
-                placeholder="Tìm kiếm theo tên, mã sản phẩm..."
-                prefix={<SearchOutlined />}
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                style={{ width: 300 }}
-                allowClear
-              />
+          {/* Action bar - Desktop */}
+          {!isMobile && (
+            <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="mb-6">
+              {/* Search and filters */}
+              <Flex gap={12} wrap="wrap">
+                <Input
+                  placeholder="Tìm kiếm theo tên, mã sản phẩm..."
+                  prefix={<SearchOutlined />}
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  style={{ width: 300 }}
+                  allowClear
+                />
 
-              <Select
-                placeholder="Danh mục"
-                style={{ width: 150 }}
-                value={selectedCategory}
-                onChange={setSelectedCategory}
-                allowClear
-              >
-                <Option value="all">Tất cả danh mục</Option>
-                {categories.map((category) => (
-                  <Option key={category.value} value={category.value}>
-                    {category.label}
-                  </Option>
-                ))}
-              </Select>
+                <Select
+                  placeholder="Danh mục"
+                  style={{ width: 150 }}
+                  value={selectedCategory}
+                  onChange={setSelectedCategory}
+                  allowClear
+                >
+                  <Option value="all">Tất cả danh mục</Option>
+                  {categories.map((category) => (
+                    <Option key={category.value} value={category.value}>
+                      {category.label}
+                    </Option>
+                  ))}
+                </Select>
 
-              <Select
-                placeholder="Trạng thái"
-                style={{ width: 150 }}
-                value={selectedStatus}
-                onChange={setSelectedStatus}
-                allowClear
-              >
-                <Option value="all">Tất cả trạng thái</Option>
-                <Option value="active">Đang bán</Option>
-                <Option value="inactive">Ngừng bán</Option>
-              </Select>
-            </Flex>
+                <Select
+                  placeholder="Trạng thái"
+                  style={{ width: 150 }}
+                  value={selectedStatus}
+                  onChange={setSelectedStatus}
+                  allowClear
+                >
+                  <Option value="all">Tất cả trạng thái</Option>
+                  <Option value="active">Đang bán</Option>
+                  <Option value="inactive">Ngừng bán</Option>
+                </Select>
+              </Flex>
 
-            {/* Action buttons */}
-            <Flex gap={8} wrap="wrap">
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => setAddModalVisible(true)}
-              >
-                Thêm sản phẩm
-              </Button>
-
-              <Button icon={<ImportOutlined />} onClick={() => setImportModalVisible(true)}>
-                Nhập từ Excel
-              </Button>
-
-              <Dropdown
-                menu={{
-                  items: [
-                    {
-                      key: "1",
-                      icon: <FileExcelOutlined />,
-                      label: "Xuất Excel",
-                    },
-                    {
-                      key: "2",
-                      icon: <FilePdfOutlined />,
-                      label: "Xuất PDF",
-                    },
-                    {
-                      key: "3",
-                      icon: <PrinterOutlined />,
-                      label: "In danh sách",
-                    },
-                  ],
-                }}
-              >
-                <Button icon={<ExportOutlined />}>
-                  Xuất{" "}
-                  <svg className="inline-block w-2 h-2 ml-1 -mt-1" viewBox="0 0 6 3">
-                    <polygon points="0,0 6,0 3,3" fill="currentColor" />
-                  </svg>
+              {/* Action buttons */}
+              <Flex gap={8} wrap="wrap">
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => setAddModalVisible(true)}
+                >
+                  Thêm sản phẩm
                 </Button>
-              </Dropdown>
+
+                <Button icon={<ImportOutlined />} onClick={() => setImportModalVisible(true)}>
+                  Nhập từ Excel
+                </Button>
+
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        key: "1",
+                        icon: <FileExcelOutlined />,
+                        label: "Xuất Excel",
+                      },
+                      {
+                        key: "2",
+                        icon: <FilePdfOutlined />,
+                        label: "Xuất PDF",
+                      },
+                      {
+                        key: "3",
+                        icon: <PrinterOutlined />,
+                        label: "In danh sách",
+                      },
+                    ],
+                  }}
+                >
+                  <Button icon={<ExportOutlined />}>
+                    Xuất{" "}
+                    <svg className="inline-block w-2 h-2 ml-1 -mt-1" viewBox="0 0 6 3">
+                      <polygon points="0,0 6,0 3,3" fill="currentColor" />
+                    </svg>
+                  </Button>
+                </Dropdown>
+              </Flex>
             </Flex>
-          </Flex>
+          )}
+
+          {/* Mobile Filter Button */}
+          {isMobile && (
+            <Flex gap="middle">
+              <Button icon={<ScanOutlined />} onClick={handleScanCode}></Button>
+              <Button icon={<SortAscendingOutlined />} onClick={() => {}}></Button>
+              <Button icon={<FilterOutlined />} onClick={() => setFilterDrawerOpen(true)}></Button>
+            </Flex>
+          )}
         </Flex>
 
-        {/* Product Table */}
-        <Table
-          columns={columns}
-          dataSource={products}
-          rowKey="id"
-          loading={loading}
-          pagination={pagination}
-          onChange={handleTableChange}
-          scroll={{ x: 1000 }}
-          className="shadow-sm"
-          size="middle"
-        />
+        {/* Product Table for Desktop */}
+        {!isMobile && (
+          <Table
+            columns={columns}
+            dataSource={products}
+            rowKey="id"
+            loading={loading}
+            pagination={pagination}
+            onChange={handleTableChange}
+            scroll={{ x: 1000 }}
+            className="shadow-sm"
+            size="middle"
+          />
+        )}
+
+        {isMobile && (
+          <>
+            <Input
+              placeholder="Tìm kiếm theo tên, mã sản phẩm..."
+              size="large"
+              prefix={<SearchOutlined />}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              style={{ width: "100%" }}
+              allowClear
+            />
+            <Divider style={{ marginBottom: 0 }} />
+          </>
+        )}
+
+        {/* Product List for Mobile */}
+        {isMobile && (
+          <List
+            loading={loading}
+            itemLayout="horizontal"
+            dataSource={products}
+            pagination={{
+              ...pagination,
+              size: "small",
+            }}
+            renderItem={(item) => (
+              <List.Item
+                actions={[
+                  <Dropdown
+                    key="actions"
+                    menu={{
+                      items: [
+                        {
+                          key: "view",
+                          icon: <EyeOutlined />,
+                          label: "Xem chi tiết",
+                          onClick: () => {
+                            setSelectedProduct(item);
+                            setViewModalVisible(true);
+                          },
+                        },
+                        {
+                          key: "edit",
+                          icon: <EditOutlined />,
+                          label: "Chỉnh sửa",
+                          onClick: () => {
+                            setSelectedProduct(item);
+                            setEditModalVisible(true);
+                          },
+                        },
+                        {
+                          key: "delete",
+                          icon: <DeleteOutlined />,
+                          label: "Xóa",
+                          danger: true,
+                          onClick: () => {
+                            setSelectedProduct(item);
+                            setDeleteModalVisible(true);
+                          },
+                        },
+                      ],
+                    }}
+                    trigger={["click"]}
+                    placement="bottomRight"
+                  >
+                    <Button shape="circle" size="large" icon={<MoreOutlined />} />
+                  </Dropdown>,
+                ]}
+              >
+                <List.Item.Meta
+                  title={
+                    <Flex vertical>
+                      <span className="font-medium">{item.name}</span>
+                    </Flex>
+                  }
+                  description={
+                    <Flex vertical>
+                      <span className="font-semibold text-blue-600">
+                        {new Intl.NumberFormat("vi-VN").format(item.price)}đ
+                      </span>
+                      <Flex align="center" justify="space-between">
+                        <span
+                          className={`font-medium ${
+                            item.stock < 10
+                              ? "text-red-500"
+                              : item.stock < 30
+                              ? "text-orange-500"
+                              : "text-green-600"
+                          }`}
+                        >
+                          {item.stock} {item.unit}
+                        </span>
+                      </Flex>
+                    </Flex>
+                  }
+                />
+              </List.Item>
+            )}
+            locale={{
+              emptyText: (
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description="Không tìm thấy sản phẩm nào"
+                />
+              ),
+            }}
+          />
+        )}
       </Card>
+
+      {/* Mobile Menu Drawer */}
+      <Drawer
+        title="Menu"
+        placement="left"
+        open={menuDrawerOpen}
+        onClose={() => setMenuDrawerOpen(false)}
+        width={280}
+      >
+        {mobileActionMenu}
+      </Drawer>
+
+      {/* Mobile Filter Drawer */}
+      <Drawer
+        title="Bộ lọc"
+        placement="right"
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        width={300}
+      >
+        {filterDrawerContent}
+      </Drawer>
 
       {/* Modals */}
       <AddProductModal
@@ -456,6 +739,7 @@ const ProductPage = () => {
             visible={viewModalVisible}
             onCancel={() => setViewModalVisible(false)}
             product={selectedProduct}
+            isMobile={isMobile}
           />
 
           <DeleteProductModal

@@ -6,9 +6,11 @@ import { EditOutlined, BarcodeOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
-const ViewProductModal = ({ visible, onCancel, product }) => {
+const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
   if (!product) return null;
 
+  console.log(product);
+  
   return (
     <Modal
       title={
@@ -16,6 +18,7 @@ const ViewProductModal = ({ visible, onCancel, product }) => {
           Chi tiết sản phẩm
         </Title>
       }
+      {...(isMobile && { centered: true })}
       open={visible}
       onCancel={onCancel}
       width={700}
@@ -30,8 +33,7 @@ const ViewProductModal = ({ visible, onCancel, product }) => {
           <div className="bg-gray-50 rounded-lg p-2 flex items-center justify-center">
             <Image
               alt={product.name}
-              src={product.image || "/placeholder.png"}
-              fallback="/placeholder.png"
+              src={product.image}
               className="max-w-full rounded"
               style={{ maxHeight: "200px", objectFit: "contain" }}
             />
