@@ -77,13 +77,6 @@ export default function NavBar() {
     <div className="bg-white flex items-center justify-between px-3 md:px-6 sticky top-0 z-10 shadow-md w-full h-16">
       {/* Left side - Logo and sidebar toggle */}
       <Space className="flex items-center">
-        {/* Only show on desktop */}
-        <Button
-          type="text"
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={toggleCollapsed}
-          className="hidden md:flex items-center justify-center"
-        />
         {/* Show on mobile */}
         <Button
           type="text"
@@ -117,7 +110,7 @@ export default function NavBar() {
           href="/admin/sale"
           className="flex items-center text-xs md:text-sm"
         >
-          <span className="hidden md:inline">New Sale</span>
+          <span className="hidden md:inline">Bán hàng</span>
         </Button>
 
         {/* Notifications */}
@@ -140,9 +133,9 @@ export default function NavBar() {
         <Dropdown
           menu={{
             items: [
-              { key: "1", label: "System Settings", icon: <SettingOutlined /> },
-              { key: "2", label: "User Preferences", icon: <UserOutlined /> },
-              { key: "3", label: "Store Configuration", icon: <BarcodeOutlined /> },
+              { key: "1", label: "Cài đặt hệ thống", icon: <SettingOutlined /> },
+              { key: "2", label: "Cài đặt người dùng", icon: <UserOutlined /> },
+              { key: "3", label: "Cài đặt cửa hàng", icon: <BarcodeOutlined /> },
             ],
           }}
           placement="bottomRight"
@@ -155,10 +148,10 @@ export default function NavBar() {
         <Dropdown
           menu={{
             items: [
-              { key: "1", icon: <UserOutlined />, label: "Profile" },
-              { key: "2", icon: <SettingOutlined />, label: "Account Settings" },
+              { key: "1", icon: <UserOutlined />, label: "Hồ sơ cá nhân" },
+              { key: "2", icon: <SettingOutlined />, label: "Cài đặt tài khoản" },
               { type: "divider" },
-              { key: "3", icon: <LogoutOutlined />, label: "Logout" },
+              { key: "3", icon: <LogoutOutlined />, label: "Đăng xuất" },
             ],
           }}
           placement="bottomRight"
@@ -187,9 +180,9 @@ export default function NavBar() {
           <Menu
             mode="vertical"
             items={[
-              { key: "settings", icon: <SettingOutlined />, label: "Settings" },
-              { key: "profile", icon: <UserOutlined />, label: "My Profile" },
-              { key: "logout", icon: <LogoutOutlined />, label: "Logout" },
+              { key: "settings", icon: <SettingOutlined />, label: "Cài đặt" },
+              { key: "profile", icon: <UserOutlined />, label: "Hồ sơ cá nhân" },
+              { key: "logout", icon: <LogoutOutlined />, label: "Đăng xuất" },
             ]}
           />
         </div>
