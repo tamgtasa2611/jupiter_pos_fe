@@ -81,13 +81,15 @@ const Top10Customers = () => {
     xField: "index",
     isStack: false,
     isGroup: false,
-    legend: { position: "top" },
+    legend: { position: "left" },
     barStyle: {
       radius: [0, 4, 4, 0], // Rounded corners on right side
     },
     label: {
       text: "name",
-      textAlign: "left"
+      position: "left",
+      textAlign: "left",
+      dx: 5
     },
     interactions: [{ type: "element-active" }],
     animation: {
@@ -96,30 +98,45 @@ const Top10Customers = () => {
         duration: 800,
       },
     },
-    padding: [20, 100, 30, 120], // top, right, bottom, left
+    padding: [20, 20, 20, 20], // top, right, bottom, left
   };
 
   return (
     <Card
       title={
-        <Space>
-          <ShoppingOutlined />
-          <span>Top 10 khách mua nhiều nhất</span>
-        </Space>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 my-4 md:my-0">
+          <div className="flex items-center gap-2">
+            <ShoppingOutlined />
+            <span>Top 10 khách mua nhiều nhất</span>
+          </div>
+          <Select
+            value={timeRange}
+            onChange={setTimeRange}
+            className="w-full sm:w-32"
+            popupMatchSelectWidth={false}
+          >
+            <Option value="today">Hôm nay</Option>
+            <Option value="yesterday">Hôm qua</Option>
+            <Option value="week">7 ngày qua</Option>
+            <Option value="thisMonth">Tháng này</Option>
+            <Option value="lastMonth">Tháng trước</Option>
+          </Select>
+        </div>
       }
       className="shadow-sm hover:shadow-md transition-shadow w-full"
-      extra={
-        <Select value={timeRange} onChange={setTimeRange} className="w-32">
-          <Option value="today">Hôm nay</Option>
-          <Option value="yesterday">Hôm qua</Option>
-          <Option value="week">7 ngày qua</Option>
-          <Option value="thisMonth">Tháng này</Option>
-          <Option value="lastMonth">Tháng trước</Option>
-        </Select>
-      }
+      style={{
+        head: {
+          padding: "16px",
+        },
+        body: {
+          padding: "16px",
+        },
+      }}
     >
-      <div className="h-96">
-        <Bar {...config} />
+      <div className="h-64 sm:h-96">
+        <Bar
+          {...config}
+        />
       </div>
     </Card>
   );

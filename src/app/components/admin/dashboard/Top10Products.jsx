@@ -13,7 +13,7 @@ const Top10Products = () => {
 
   // Format currency to Vietnamese format
   const formatVND = (value) => {
-    return value / 1000000 + " tr";
+    return (value / 1000000).toFixed(2) + " tr";
   };
 
   // Generate dummy data for top selling products
@@ -105,17 +105,18 @@ const Top10Products = () => {
     xField: "revenueFormatted",
     isStack: false,
     isGroup: false,
-    legend: { position: "right" },
+    legend: { position: "left" },
     barStyle: {
       radius: [0, 4, 4, 0], // Rounded corners on right side
     },
     label: {
       text: "name",
-      position: "right",
+      position: "left",
       style: {
         fill: "#000",
         textAlign: "left",
-      }
+        dx: 5
+      },
     },
     interactions: [{ type: "element-active" }],
     animation: {
@@ -130,49 +131,49 @@ const Top10Products = () => {
   return (
     <Card
       title={
-        <Space>
-          <ShoppingOutlined />
-          <span>Top 10 hàng bán chạy</span>
-        </Space>
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 my-4 md:my-0">
+          <Space>
+            <ShoppingOutlined />
+            <span>Top 10 hàng bán chạy</span>
+          </Space>
+          <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center w-full gap-2">
+            <Select
+              value={sortBy}
+              onChange={setSortBy}
+              className="w-52"
+              options={[
+                {
+                  value: "revenue",
+                  label: (
+                    <Space>
+                      <DollarOutlined />
+                      <span>Theo doanh thu thuần</span>
+                    </Space>
+                  ),
+                },
+                {
+                  value: "quantity",
+                  label: (
+                    <Space>
+                      <NumberOutlined />
+                      <span>Theo số lượng</span>
+                    </Space>
+                  ),
+                },
+              ]}
+            />
+
+            <Select value={timeRange} onChange={setTimeRange} className="w-32">
+              <Option value="today">Hôm nay</Option>
+              <Option value="yesterday">Hôm qua</Option>
+              <Option value="week">7 ngày qua</Option>
+              <Option value="thisMonth">Tháng này</Option>
+              <Option value="lastMonth">Tháng trước</Option>
+            </Select>
+          </div>
+        </div>
       }
       className="shadow-sm hover:shadow-md transition-shadow w-full"
-      extra={
-        <Space>
-          <Select
-            value={sortBy}
-            onChange={setSortBy}
-            className="w-52"
-            options={[
-              {
-                value: "revenue",
-                label: (
-                  <Space>
-                    <DollarOutlined />
-                    <span>Theo doanh thu thuần</span>
-                  </Space>
-                ),
-              },
-              {
-                value: "quantity",
-                label: (
-                  <Space>
-                    <NumberOutlined />
-                    <span>Theo số lượng</span>
-                  </Space>
-                ),
-              },
-            ]}
-          />
-
-          <Select value={timeRange} onChange={setTimeRange} className="w-32">
-            <Option value="today">Hôm nay</Option>
-            <Option value="yesterday">Hôm qua</Option>
-            <Option value="week">7 ngày qua</Option>
-            <Option value="thisMonth">Tháng này</Option>
-            <Option value="lastMonth">Tháng trước</Option>
-          </Select>
-        </Space>
-      }
     >
       <div className="h-96">
         <Bar {...config} />

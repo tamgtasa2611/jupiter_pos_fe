@@ -176,7 +176,7 @@ const SalesSummary = () => {
 
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
-      <Row gutter={[16, 16]}>
+      <Row gutter={[16, 16]} className="w-full">
         <Col xs={24} md={12}>
           <Title level={4}>Doanh thu thuần</Title>
           <Statistic
@@ -186,30 +186,28 @@ const SalesSummary = () => {
           />
         </Col>
 
-        <Col
-          xs={24}
-          md={12}
-          className="flex flex-col md:flex-row md:items-center md:justify-end gap-2"
-        >
-          <Select
-            value={timeRange}
-            className="w-full md:w-40"
-            onChange={(value) => {
-              setTimeRange(value);
-              // Reset view type if necessary
-              if ((value === "today" || value === "yesterday") && viewType !== "hour") {
-                setViewType("hour");
-              }
-            }}
-          >
-            <Option value="today">Hôm nay</Option>
-            <Option value="yesterday">Hôm qua</Option>
-            <Option value="week">7 ngày qua</Option>
-            <Option value="thisMonth">Tháng này</Option>
-            <Option value="lastMonth">Tháng trước</Option>
-          </Select>
+        <Col xs={24} md={12}>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-end gap-2">
+            <Select
+              value={timeRange}
+              className="w-full md:w-40"
+              onChange={(value) => {
+                setTimeRange(value);
+                // Reset view type if necessary
+                if ((value === "today" || value === "yesterday") && viewType !== "hour") {
+                  setViewType("hour");
+                }
+              }}
+            >
+              <Option value="today">Hôm nay</Option>
+              <Option value="yesterday">Hôm qua</Option>
+              <Option value="week">7 ngày qua</Option>
+              <Option value="thisMonth">Tháng này</Option>
+              <Option value="lastMonth">Tháng trước</Option>
+            </Select>
 
-          <Segmented options={getViewOptions()} value={viewType} onChange={setViewType} />
+            <Segmented options={getViewOptions()} value={viewType} onChange={setViewType} />
+          </div>
         </Col>
 
         <Col xs={24} className="h-80">

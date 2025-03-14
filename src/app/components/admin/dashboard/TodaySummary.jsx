@@ -36,7 +36,7 @@ const TodaySummary = () => {
       className="shadow-sm hover:shadow-md transition-shadow"
     >
       <Row gutter={[24, 16]} align="middle" className="flex-nowrap overflow-x-auto pb-2">
-        <Col xs={8} sm={6} lg={4}>
+        <Col xs={12} sm={6} lg={4}>
           <Statistic
             title={<Title level={5}>Doanh thu</Title>}
             value={formatCurrency(todayData.revenue)}
@@ -46,7 +46,7 @@ const TodaySummary = () => {
           <Text type="secondary" className="block">{todayData.invoiceCount} hóa đơn</Text>
         </Col>
 
-        <Col xs={8} sm={6} lg={4}>
+        <Col xs={12} sm={6} lg={4}>
           <Statistic
             title={<Title level={5}>Trả hàng</Title>}
             value={formatCurrency(todayData.returns)}
@@ -55,7 +55,7 @@ const TodaySummary = () => {
           />
         </Col>
 
-        <Col xs={8} sm={6} lg={4}>
+        <Col xs={12} sm={6} lg={4}>
           <Statistic
             title={<Title level={5}>Doanh thu thuần</Title>}
             value={formatCurrency(todayData.netRevenue)}
