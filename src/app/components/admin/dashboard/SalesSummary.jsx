@@ -109,6 +109,8 @@ const SalesSummary = () => {
       }
     }
 
+    data = data.map((item) => ({ ...item, revenueFormatted: (item.revenue / 1000000).toFixed(2) + " tr" }));
+
     setChartData(data);
   }, [timeRange, viewType]);
 
@@ -116,19 +118,20 @@ const SalesSummary = () => {
   const config = {
     data: chartData,
     xField: "time",
-    yField: "revenue",
+    yField: "revenueFormatted",
     columnWidthRatio: 0.6,
     label: {
+      text: "revenueFormatted",
       position: "top",
       style: {
-        fill: "#aaa",
+        fill: "#000",
         fontSize: 12,
+        dy: 5,
       },
-      formatter: (datum) => `₫${formatCurrency(datum.revenue)}`.slice(0, -3) + "K",
     },
     tooltip: {
       formatter: (datum) => {
-        return { name: "Doanh thu", value: `₫${formatCurrency(datum.revenue)}` };
+        return { name: "Doanh thu", value: `${datum.revenueFormatted}` };
       },
     },
     xAxis: {
@@ -139,7 +142,7 @@ const SalesSummary = () => {
     },
     yAxis: {
       label: {
-        formatter: (v) => `₫${formatCurrency(v / 1000000)}Tr`,
+        text: "revenueFormatted"
       },
     },
     meta: {

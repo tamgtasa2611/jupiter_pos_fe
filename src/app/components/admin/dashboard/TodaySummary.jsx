@@ -48,6 +48,16 @@ const TodaySummary = () => {
 
         <Col xs={12} sm={6} lg={4}>
           <Statistic
+            title={<Title level={5}>Lợi nhuận</Title>}
+            value={formatCurrency(todayData.revenue)}
+            prefix="₫"
+            valueStyle={{ color: '#3f8600', fontSize: '18px' }}
+          />
+          <Text type="secondary" className="block">{todayData.invoiceCount} hóa đơn</Text>
+        </Col>
+
+        <Col xs={12} sm={6} lg={4}>
+          <Statistic
             title={<Title level={5}>Trả hàng</Title>}
             value={formatCurrency(todayData.returns)}
             prefix="₫"
@@ -60,7 +70,7 @@ const TodaySummary = () => {
             title={<Title level={5}>Doanh thu thuần</Title>}
             value={formatCurrency(todayData.netRevenue)}
             prefix="₫"
-            valueStyle={{ color: '#1677ff', fontSize: '18px', fontWeight: 'bold' }}
+            valueStyle={{ color: '#1677ff', fontSize: '18px' }}
           />
         </Col>
 
@@ -80,7 +90,7 @@ const TodaySummary = () => {
 
         <Col xs={12} sm={8} lg={6}>
           <Statistic
-            title={<Text type="secondary">So với cùng kỳ tháng trước</Text>}
+            title={<Text type="secondary">So với tháng trước</Text>}
             value={todayData.comparedToLastMonth}
             precision={2}
             valueStyle={{ 
