@@ -105,17 +105,18 @@ const Top10Products = () => {
     xField: "revenueFormatted",
     isStack: false,
     isGroup: false,
-    seriesField: "category",
-    legend: { position: "top" },
+    legend: { position: "right" },
     barStyle: {
       radius: [0, 4, 4, 0], // Rounded corners on right side
     },
     label: {
       text: "name",
-      position: "bottom",
+      position: "right",
+      style: {
+        fill: "#000",
+        textAlign: "left",
+      }
     },
-    colorField: "category",
-    color: ["#1677ff", "#52c41a", "#fa8c16", "#eb2f96", "#722ed1"],
     interactions: [{ type: "element-active" }],
     animation: {
       appear: {
