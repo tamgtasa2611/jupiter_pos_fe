@@ -6,7 +6,7 @@ import { UserOutlined, LockOutlined, GoogleOutlined, FacebookOutlined } from "@a
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const { Title, Text } = Typography;
+const { Title, Text, Paragraph } = Typography;
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
@@ -19,8 +19,10 @@ const LoginForm = () => {
       // Giả lập API call đăng nhập - thay thế bằng API thực tế sau này
       console.log("Login values:", values);
 
-      // Giả lập đăng nhập thành công
+      // Simulate login success and saving token
       setTimeout(() => {
+        // Store token in localStorage for authentication
+        localStorage.setItem("token", "example-token-value");
         message.success("Đăng nhập thành công!");
         router.push("/"); // Chuyển về trang chủ sau khi đăng nhập
         setLoading(false);
@@ -32,81 +34,185 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="max-w-md w-full mx-auto shadow-md">
-      <div className="text-center mb-6">
-        <Title level={2} className="mb-1">
-          Đăng nhập
-        </Title>
-        <Text className="text-gray-500">Chào mừng bạn đã quay trở lại với Jupiter Store</Text>
+    <div className="min-h-screen w-full flex flex-col md:flex-row bg-gradient-to-br from-sky-200 to-white">
+      {/* Left section - logo and intro (full width on desktop) */}
+      <div className="hidden md:flex md:w-3/5 bg-sky-400 text-white p-8 flex-col justify-center items-center">
+        <div className="max-w-2xl mx-auto text-center">
+          <div className="mb-8">
+            {/* Your logo here */}
+            <svg viewBox="0 0 24 24" fill="currentColor" height="80" width="80">
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
+            </svg>
+          </div>
+          <Title level={1} style={{ color: "white", marginBottom: "1.5rem", fontSize: "2.5rem" }}>
+            Jupiter Store POS
+          </Title>
+          <Paragraph
+            style={{
+              color: "rgba(255, 255, 255, 0.9)",
+              fontSize: "1.25rem",
+              maxWidth: "700px",
+              margin: "0 auto 2rem",
+            }}
+          >
+            Nền tảng quản lý bán hàng hiện đại giúp doanh nghiệp của bạn phát triển nhanh chóng và
+            hiệu quả.
+          </Paragraph>
+
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-blue-500 bg-opacity-30 p-6 rounded-lg">
+              <Text style={{ color: "white", fontStyle: "italic", fontSize: "1.1rem" }}>
+                "Hệ thống POS của Jupiter đã giúp doanh thu của chúng tôi tăng 30% chỉ trong 3
+                tháng."
+              </Text>
+              <div className="mt-4">
+                <Text strong style={{ color: "white", fontSize: "1rem" }}>
+                  Nguyễn Văn A
+                </Text>
+                <div style={{ color: "rgba(255, 255, 255, 0.7)" }}>CEO, Shop ABC</div>
+              </div>
+            </div>
+
+            <div className="bg-blue-500 bg-opacity-30 p-6 rounded-lg">
+              <Text style={{ color: "white", fontStyle: "italic", fontSize: "1.1rem" }}>
+                "Quản lý kho hàng trở nên dễ dàng hơn bao giờ hết với Jupiter POS."
+              </Text>
+              <div className="mt-4">
+                <Text strong style={{ color: "white", fontSize: "1rem" }}>
+                  Trần Thị B
+                </Text>
+                <div style={{ color: "rgba(255, 255, 255, 0.7)" }}>Quản lý, Cửa hàng XYZ</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <Form
-        name="login"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        layout="vertical"
-        size="large"
-      >
-        <Form.Item
-          name="email"
-          rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không hợp lệ!" },
-          ]}
+      {/* Right section - login form (fullscreen on mobile) */}
+      <div className="w-full md:w-2/5 flex items-center justify-center p-4 md:p-8 min-h-screen md:min-h-0">
+        <Card
+          style={{
+            width: "100%",
+            maxWidth: "450px",
+            borderRadius: "16px",
+            border: "none",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.05)",
+          }}
         >
-          <Input prefix={<UserOutlined />} placeholder="Email" />
-        </Form.Item>
-
-        <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}>
-          <Input.Password prefix={<LockOutlined />} placeholder="Mật khẩu" />
-        </Form.Item>
-
-        <Form.Item>
-          <div className="flex justify-between items-center">
-            <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox>Ghi nhớ đăng nhập</Checkbox>
-            </Form.Item>
-            <Link href="/forgot-password" className="text-blue-500 hover:text-blue-700">
-              Quên mật khẩu?
-            </Link>
+          <div className="text-center mb-8">
+            <Title level={3} style={{ fontSize: "1.75rem", marginBottom: "4px" }}>
+              Xin chào!
+            </Title>
+            <Text type="secondary" style={{ fontSize: "1.1rem" }}>
+              Vui lòng đăng nhập để tiếp tục
+            </Text>
           </div>
-        </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="w-full" loading={loading}>
-            Đăng nhập
-          </Button>
-        </Form.Item>
-
-        <div className="text-center mb-4">
-          <Text className="text-gray-500">
-            Chưa có tài khoản?
-            <Link href="/dang-ky" className="text-blue-500 hover:text-blue-700 ml-1">
-              Đăng ký ngay
-            </Link>
-          </Text>
-        </div>
-
-        <Divider plain>Hoặc đăng nhập với</Divider>
-
-        <div className="flex justify-center space-x-4">
-          <Button
-            icon={<GoogleOutlined />}
+          <Form
+            name="login"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            layout="vertical"
             size="large"
-            className="flex items-center justify-center"
           >
-            Google
-          </Button>
-          <Button
-            icon={<FacebookOutlined />}
-            size="large"
-            className="flex items-center justify-center"
-          >
-            Facebook
-          </Button>
-        </div>
-      </Form>
-    </Card>
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: "Vui lòng nhập email!" },
+                { type: "email", message: "Email không hợp lệ!" },
+              ]}
+            >
+              <Input
+                prefix={<UserOutlined className="text-gray-400" />}
+                placeholder="Email"
+                style={{
+                  borderRadius: "12px",
+                  height: "54px",
+                  padding: "8px 16px",
+                  fontSize: "1rem",
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+            >
+              <Input.Password
+                prefix={<LockOutlined className="text-gray-400" />}
+                placeholder="Mật khẩu"
+                style={{
+                  borderRadius: "12px",
+                  height: "54px",
+                  padding: "8px 16px",
+                  fontSize: "1rem",
+                }}
+              />
+            </Form.Item>
+
+            <Form.Item>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                  <Checkbox>Ghi nhớ đăng nhập</Checkbox>
+                </Form.Item>
+              </div>
+            </Form.Item>
+
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="w-full"
+                loading={loading}
+                style={{
+                  height: "54px",
+                  borderRadius: "12px",
+                  fontWeight: "600",
+                  fontSize: "1.1rem",
+                }}
+              >
+                Đăng nhập
+              </Button>
+            </Form.Item>
+
+            <Divider plain style={{ margin: "16px 0 24px" }}>
+              <Text type="secondary" style={{ fontSize: "0.95rem" }}>
+                Hoặc tiếp tục với
+              </Text>
+            </Divider>
+
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                icon={<GoogleOutlined style={{ fontSize: "1.2rem" }} />}
+                size="large"
+                className="flex items-center justify-center"
+                style={{
+                  borderRadius: "12px",
+                  height: "48px",
+                  borderColor: "#eaeaea",
+                  color: "#555",
+                }}
+              >
+                Google
+              </Button>
+              <Button
+                icon={<FacebookOutlined style={{ fontSize: "1.2rem" }} />}
+                size="large"
+                className="flex items-center justify-center"
+                style={{
+                  borderRadius: "12px",
+                  height: "48px",
+                  borderColor: "#eaeaea",
+                  color: "#3b5998",
+                }}
+              >
+                Facebook
+              </Button>
+            </div>
+          </Form>
+        </Card>
+      </div>
+    </div>
   );
 };
 
