@@ -11,7 +11,7 @@ export default function AdminLayout({ children }) {
   return (
     <Layout className="min-h-screen">
       <NavBar />
-      <Content className="px-0 pb-16 md:p-6 bg-sky-50">{children}</Content>
+      <Content className="px-0 pb-16 md:p-6 bg-gradient-to-br from-sky-100 to-white h-full">{children}</Content>
       <MobileNavBar />
     </Layout>
   );

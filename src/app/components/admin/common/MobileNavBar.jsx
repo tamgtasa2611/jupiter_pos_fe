@@ -115,12 +115,16 @@ export default function MobileNavBar() {
                 <Button
                   type="primary"
                   shape="circle"
-                  icon={item.icon}
                   style={{
                     width: "48px",
-                    height: "48px"
+                    height: "48px",
                   }}
-                />
+                >
+                  <ShoppingCartOutlined style={{
+                    fontSize: "16px",
+                    color: "white",
+                  }}/>
+                </Button>
               </Link>
             );
           } else {

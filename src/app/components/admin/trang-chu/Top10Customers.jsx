@@ -123,7 +123,7 @@ const Top10Customers = () => {
           </Select>
         </div>
       }
-      className="shadow-sm hover:shadow-md transition-shadow w-full"
+      className="shadow-drop rounded-nice  transition-shadow w-full"
       style={{
         head: {
           padding: "16px",

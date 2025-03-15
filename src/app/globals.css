@@ -36,3 +36,11 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+
+.shadow-drop {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+}
+
+.rounded-nice {
+  border-radius: 16px !important;
+}

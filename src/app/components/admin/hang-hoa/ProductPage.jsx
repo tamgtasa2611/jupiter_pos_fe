@@ -70,7 +70,9 @@ const ProductPage = () => {
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
-    total: 0,
+    total: 200,
+    position: ["bottomCenter"],
+    showSizeChanger: true,
   });
 
   // Check for mobile screen
@@ -455,8 +457,8 @@ const ProductPage = () => {
 
   // Render desktop or mobile UI
   return (
-    <div className="">
-      <Card className="shadow-sm hover:shadow-md transition-shadow">
+    <div className="min-h-screen">
+      <Card className="shadow-drop rounded-nice transition-shadow">
         <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 24 }}>
           <div className="">
             <Title level={4} style={{ margin: 0 }}>
@@ -583,8 +585,8 @@ const ProductPage = () => {
             loading={loading}
             pagination={pagination}
             onChange={handleTableChange}
-            scroll={{ x: 1000 }}
-            className="shadow-sm"
+            scroll={{ x: 1000, y: 600 }}
+            className=""
             size="middle"
           />
         )}
@@ -631,6 +633,7 @@ const ProductPage = () => {
                             setSelectedProduct(item);
                             setViewModalVisible(true);
                           },
+                          style: { padding: "8px 12px" },
                         },
                         {
                           key: "edit",
@@ -640,6 +643,7 @@ const ProductPage = () => {
                             setSelectedProduct(item);
                             setEditModalVisible(true);
                           },
+                          style: { padding: "8px 12px" },
                         },
                         {
                           key: "delete",
@@ -650,6 +654,7 @@ const ProductPage = () => {
                             setSelectedProduct(item);
                             setDeleteModalVisible(true);
                           },
+                          style: { padding: "8px 12px" },
                         },
                       ],
                     }}
@@ -779,6 +784,7 @@ const ProductPage = () => {
           bottom: "80px",
           width: "48px",
           height: "48px",
+          display: isMobile ? "block" : "none",
         }}
       ></Button>
     </div>

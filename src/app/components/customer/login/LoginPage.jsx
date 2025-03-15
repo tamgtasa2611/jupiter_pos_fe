@@ -38,12 +38,7 @@ const LoginForm = () => {
       {/* Left section - logo and intro (full width on desktop) */}
       <div className="hidden md:flex md:w-3/5 bg-sky-400 text-white p-8 flex-col justify-center items-center">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="mb-8">
-            {/* Your logo here */}
-            <svg viewBox="0 0 24 24" fill="currentColor" height="80" width="80">
-              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2m0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8m.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z" />
-            </svg>
-          </div>
+
           <Title level={1} style={{ color: "white", marginBottom: "1.5rem", fontSize: "2.5rem" }}>
             Jupiter Store POS
           </Title>
@@ -95,9 +90,8 @@ const LoginForm = () => {
             width: "100%",
             maxWidth: "450px",
             borderRadius: "16px",
-            border: "none",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.05)",
           }}
+          className="shadow-drop"
         >
           <div className="text-center mb-8">
             <Title level={3} style={{ fontSize: "1.75rem", marginBottom: "4px" }}>

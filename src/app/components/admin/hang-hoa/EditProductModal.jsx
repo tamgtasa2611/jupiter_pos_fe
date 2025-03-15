@@ -18,7 +18,7 @@ import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 const { Option } = Select;
 const { TextArea } = Input;
 
-const EditProductModal = ({ visible, onCancel, onEdit, product, categories }) => {
+const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMobile }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -101,7 +101,7 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories }) =>
     <Modal
       title="Chỉnh sửa sản phẩm"
       open={visible}
-      centered
+      {...(!isMobile && { centered: true })}
       onCancel={onCancel}
       width={720}
       footer={[
@@ -112,6 +112,9 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories }) =>
           Lưu thay đổi
         </Button>,
       ]}
+      style={{
+        ...(isMobile ? { top: "0" } : {}),
+      }}
     >
       <Form
         form={form}

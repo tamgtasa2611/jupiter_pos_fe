@@ -33,7 +33,7 @@ const TodaySummary = () => {
           <span>Kết quả bán hàng hôm nay</span>
         </Space>
       }
-      className="shadow-sm hover:shadow-md transition-shadow"
+      className="shadow-drop rounded-nice transition-shadow"
     >
       <Row gutter={[24, 16]} align="middle" className="flex-nowrap overflow-x-auto pb-2">
         <Col xs={12} sm={6} lg={4}>

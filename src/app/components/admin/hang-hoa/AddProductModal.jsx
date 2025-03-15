@@ -10,6 +10,13 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // Mobile style configurations
+  const mobileInputStyle = isMobile ? { height: "44px", fontSize: "16px" } : {};
+  const mobileSelectStyle = isMobile ? { height: "44px" } : {};
+  const mobileSwitchStyle = isMobile ? { } : {};
+  const mobileFormItemStyle = isMobile ? { marginBottom: "20px" } : {};
+  const mobileButtonStyle = isMobile ? { height: "44px", padding: "0 20px", fontSize: "16px" } : {};
+
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -67,13 +74,30 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
     <Modal
       title="Thêm sản phẩm mới"
       open={visible}
-      {...(isMobile && { centered: true })}
+      {...(!isMobile && { centered: true })}
       onCancel={handleCancel}
       onOk={handleSubmit}
       okText="Thêm sản phẩm"
       cancelText="Hủy"
       confirmLoading={loading}
-      width={700}
+      style={{
+        ...(isMobile ? { top: "0" } : {}),
+      }}
+      footer={
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
+          <Button onClick={handleCancel} style={isMobile ? mobileButtonStyle : {}}>
+            Hủy
+          </Button>
+          <Button
+            type="primary"
+            onClick={handleSubmit}
+            loading={loading}
+            style={isMobile ? mobileButtonStyle : {}}
+          >
+            Thêm sản phẩm
+          </Button>
+        </div>
+      }
     >
       <Form
         form={form}
@@ -81,6 +105,7 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
         initialValues={{
           isActive: true,
         }}
+        style={isMobile ? { fontSize: "16px" } : {}}
       >
         <Divider orientation="left">Thông tin cơ bản</Divider>
 
@@ -88,16 +113,18 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
           name="barcode"
           label="Mã sản phẩm / Barcode"
           rules={[{ required: true, message: "Vui lòng nhập mã sản phẩm!" }]}
+          style={mobileFormItemStyle}
         >
-          <Input placeholder="Nhập mã sản phẩm hoặc barcode" />
+          <Input placeholder="Nhập mã sản phẩm hoặc barcode" style={mobileInputStyle} />
         </Form.Item>
 
         <Form.Item
           name="name"
           label="Tên sản phẩm"
           rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm!" }]}
+          style={mobileFormItemStyle}
         >
-          <Input placeholder="Nhập tên sản phẩm" />
+          <Input placeholder="Nhập tên sản phẩm" style={mobileInputStyle} />
         </Form.Item>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -105,8 +132,13 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
             name="category"
             label="Danh mục"
             rules={[{ required: true, message: "Vui lòng chọn danh mục!" }]}
+            style={mobileFormItemStyle}
           >
-            <Select placeholder="Chọn danh mục">
+            <Select
+              placeholder="Chọn danh mục"
+              style={mobileSelectStyle}
+              dropdownStyle={isMobile ? { fontSize: "16px" } : {}}
+            >
               {categories.map((category) => (
                 <Option key={category.value} value={category.value}>
                   {category.label}
@@ -119,8 +151,13 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
             name="unit"
             label="Đơn vị tính"
             rules={[{ required: true, message: "Vui lòng nhập đơn vị tính!" }]}
+            style={mobileFormItemStyle}
           >
-            <Select placeholder="Chọn đơn vị tính">
+            <Select
+              placeholder="Chọn đơn vị tính"
+              style={mobileSelectStyle}
+              dropdownStyle={isMobile ? { fontSize: "16px" } : {}}
+            >
               <Option value="Thùng">Thùng</Option>
               <Option value="Hộp">Hộp</Option>
               <Option value="Chai">Chai</Option>
@@ -138,32 +175,32 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Form.Item
             name="costPrice"
-            label="Giá nhập"
+            label="Giá nhập (VND)"
             rules={[{ required: true, message: "Vui lòng nhập giá nhập!" }]}
+            style={mobileFormItemStyle}
           >
             <InputNumber
               min={0}
               step={1000}
-              style={{ width: "100%" }}
+              style={{ width: "100%", ...mobileInputStyle }}
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-              addonAfter="₫"
               placeholder="0"
             />
           </Form.Item>
 
           <Form.Item
             name="price"
-            label="Giá bán"
+            label="Giá bán (VND)"
             rules={[{ required: true, message: "Vui lòng nhập giá bán!" }]}
+            style={mobileFormItemStyle}
           >
             <InputNumber
               min={0}
               step={1000}
-              style={{ width: "100%" }}
+              style={{ width: "100%", ...mobileInputStyle }}
               formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-              addonAfter="₫"
               placeholder="0"
             />
           </Form.Item>
@@ -172,14 +209,15 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
             name="stock"
             label="Số lượng tồn kho"
             rules={[{ required: true, message: "Vui lòng nhập số lượng tồn kho!" }]}
+            style={mobileFormItemStyle}
           >
-            <InputNumber min={0} style={{ width: "100%" }} placeholder="0" />
+            <InputNumber min={0} style={{ width: "100%", ...mobileInputStyle }} placeholder="0" />
           </Form.Item>
         </div>
 
         <Divider orientation="left">Hình ảnh & Thông tin khác</Divider>
 
-        <Form.Item name="image" label="Hình ảnh sản phẩm">
+        <Form.Item name="image" label="Hình ảnh sản phẩm" style={mobileFormItemStyle}>
           <Upload {...uploadProps} listType="picture-card" maxCount={1}>
             {fileList.length === 0 && (
               <div>
@@ -194,8 +232,13 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
           <TextArea rows={4} placeholder="Nhập mô tả sản phẩm" />
         </Form.Item>
 
-        <Form.Item name="isActive" valuePropName="checked" label="Trạng thái">
-          <Switch checkedChildren="Đang bán" unCheckedChildren="Ngừng bán" />
+        <Form.Item
+          name="isActive"
+          valuePropName="checked"
+          label="Trạng thái"
+          style={mobileFormItemStyle}
+        >
+          <Switch checkedChildren="Đang bán" unCheckedChildren="Ngừng bán" style={mobileSwitchStyle} />
         </Form.Item>
       </Form>
     </Modal>
