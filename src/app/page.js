@@ -1,7 +1,7 @@
 "use client";
 import "@ant-design/v5-patch-for-react-19";
 import { useEffect, useState } from "react";
-import { Layout, Spin } from "antd";
+import { Layout, Spin, Button } from "antd";
 import { useRouter } from "next/navigation";
 
 const { Content } = Layout;
@@ -9,49 +9,87 @@ const { Content } = Layout;
 export default function CustomerLandingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
+    // Simple check to verify component is mounting correctly
+    console.log("Landing page mounted");
+    setAppReady(true);
+
     // Check if running in a Capacitor/Cordova context
-    const isNative = window.Capacitor || window.cordova;
+    const isNative = typeof window !== "undefined" && (window.Capacitor || window.cordova);
+    console.log("Running in native context:", isNative);
 
-    // Check if the user is logged in
-    const token = typeof localStorage !== "undefined" ? localStorage.getItem("token") : null;
+    // Log if localStorage is accessible
+    try {
+      const testKey = "test_storage_access";
+      localStorage.setItem(testKey, "works");
+      const result = localStorage.getItem(testKey);
+      localStorage.removeItem(testKey);
+      console.log("LocalStorage access:", result === "works" ? "OK" : "FAILED");
 
-    if (!token) {
-      router.push("/dang-nhap");
-    } else {
+      // Check if token exists
+      const token = localStorage.getItem("token");
+      if (token) {
+        console.log("Token found, redirecting to dashboard");
+        router.push("/admin/trang-chu");
+      } else {
+        console.log("No token found, redirecting to login");
+        router.push("/dang-nhap");
+      }
+    } catch (e) {
+      console.error("LocalStorage error:", e);
+    } finally {
+      // Set loading to false regardless of outcome
       setLoading(false);
     }
-
-    // Handle hardware back button for Android
-    if (isNative && window.Capacitor?.Plugins?.App) {
-      const { App } = window.Capacitor.Plugins;
-      const handleBackButton = () => {
-        // Custom back button logic
-        return false; // Prevents default behavior
-      };
-
-      App.addListener("backButton", handleBackButton);
-      return () => App.removeAllListeners();
-    }
   }, [router]);
+
+  const handleLogin = async (values) => {
+    try {
+      setLoading(true);
+      console.log("Login attempt:", values.username);
+
+      // Mock successful login
+      setTimeout(() => {
+        // Store token in localStorage
+        localStorage.setItem("token", "mock-jwt-token");
+        console.log("Login successful, token stored");
+
+        // Redirect to admin dashboard
+        router.push("/admin/trang-chu");
+        setLoading(false);
+      }, 1000);
+    } catch (error) {
+      console.error("Login error:", error);
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
       <div
-        style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          flexDirection: "column",
+        }}
       >
         <Spin size="large" />
+        <p style={{ marginTop: 16 }}>Vui lòng chờ ứng dụng khởi động...</p>
       </div>
     );
   }
 
+  // This should never be reached since we're redirecting in useEffect
   return (
     <Layout
       className="landing-page App"
       style={{ minHeight: "100vh", touchAction: "manipulation" }}
     >
-      <Content style={{ padding: "10px" }}>{/* Your landing page content will go here */}</Content>
+      <Content style={{ padding: "20px", textAlign: "center" }}></Content>
     </Layout>
   );
 }

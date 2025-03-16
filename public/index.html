@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>NPP AS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #09d;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="spinner"></div>
+  <p>Loading application...</p>
+  
+  <script src="index.js"></script>
+  <script>
+    // Fallback error handler
+    window.addEventListener('error', function(event) {
+      document.body.innerHTML = `
+        <div style="padding: 20px; max-width: 80%; text-align: center;">
+          <h3 style="color: red;">Application Error</h3>
+          <p>${event.message}</p>
+          <small>${event.filename}:${event.lineno}</small>
+          <div style="margin-top: 20px;">
+            <button onclick="window.location.reload()">Reload App</button>
+          </div>
+        </div>
+      `;
+    });
+
+    // Redirect after a timeout if nothing happens
+    setTimeout(function() {
+      if (document.querySelector('.spinner')) {
+        window.location.href = '/dang-nhap';
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
