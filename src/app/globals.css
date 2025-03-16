@@ -38,9 +38,31 @@ body {
 }
 
 .shadow-drop {
-  box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
 }
 
 .rounded-nice {
   border-radius: 16px !important;
+}
+
+/* Style for making the app background transparent during scanning */
+body.scanner-active {
+  background: transparent !important;
+}
+
+body.scanner-active .ant-layout,
+body.scanner-active .ant-card,
+body.scanner-active .ant-layout-header,
+body.scanner-active .ant-layout-footer,
+body.scanner-active .ant-layout-sider,
+body.scanner-active .ant-layout-content {
+  background: transparent !important;
+}
+
+body.scanner-active * {
+  visibility: hidden;
+}
+
+body.scanner-active .barcode-scanner-active {
+  visibility: visible;
 }
