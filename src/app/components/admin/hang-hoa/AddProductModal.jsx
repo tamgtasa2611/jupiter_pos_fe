@@ -13,7 +13,7 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
   // Mobile style configurations
   const mobileInputStyle = isMobile ? { height: "44px", fontSize: "16px" } : {};
   const mobileSelectStyle = isMobile ? { height: "44px" } : {};
-  const mobileSwitchStyle = isMobile ? { } : {};
+  const mobileSwitchStyle = isMobile ? {} : {};
   const mobileFormItemStyle = isMobile ? { marginBottom: "20px" } : {};
   const mobileButtonStyle = isMobile ? { height: "44px", padding: "0 20px", fontSize: "16px" } : {};
 

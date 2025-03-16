@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NPP AS</string>
+    <string name="title_activity_main">NPP AS</string>
+    <string name="package_name">com.tamnd.app</string>
+    <string name="custom_url_scheme">com.tamnd.app</string>
+</resources>
