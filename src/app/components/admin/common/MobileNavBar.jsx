@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Popover, Badge, Button } from "antd";
+import { usePathname, useRouter } from "next/navigation"; // Add useRouter import
+import { Popover, Button } from "antd";
 import {
   HomeOutlined,
   ShoppingOutlined,
@@ -13,16 +13,38 @@ import {
   UserSwitchOutlined,
   BarChartOutlined,
   SettingOutlined,
+  LogoutOutlined, // Add logout icon
 } from "@ant-design/icons";
 
-export default function MobileNavBar() {
+export default function MobileNavBar({ onLogout }) {
   const pathname = usePathname();
+  const router = useRouter(); // Add router
   const [visible, setVisible] = useState(false);
 
   // Helper function to check if a menu item is active
   const isActive = (itemKey) => {
     // Check for exact match or if pathname starts with the key
     return pathname === itemKey || pathname.startsWith(itemKey);
+  };
+
+  // Handle logout with proper navigation
+  const handleLogout = () => {
+    setVisible(false); // Close the popover
+
+    // Call the onLogout function passed from the parent
+    if (onLogout) {
+      onLogout();
+
+      // As a backup, directly navigate after a short delay
+      setTimeout(() => {
+        console.log("Backup navigation to login page");
+        window.location.href = "/dang-nhap";
+      }, 300);
+    } else {
+      // If onLogout is not provided, navigate directly
+      console.log("Direct navigation to login page");
+      router.push("/dang-nhap");
+    }
   };
 
   const moreMenuItems = [
@@ -48,7 +70,8 @@ export default function MobileNavBar() {
       key: "/admin/settings",
       icon: <SettingOutlined />,
       label: "Cài đặt",
-      href: "/admin/settings",
+      // href: "/dang-nhap",
+      customBehaviour: handleLogout, // Add custom behaviour
     },
   ];
 
@@ -56,7 +79,7 @@ export default function MobileNavBar() {
     <div className="grid grid-cols-2 gap-4 p-2 w-60">
       {moreMenuItems.map((item) => (
         <Link
-          href={item.href}
+          href={item.href ? item.href : "#"}
           key={item.key}
           className={`flex flex-col items-center justify-center p-2 rounded-lg`}
           style={{
@@ -65,7 +88,12 @@ export default function MobileNavBar() {
             borderRadius: "8px",
             padding: "2px",
           }}
-          onClick={() => setVisible(false)}
+          onClick={() => {
+            setVisible(false);
+            if (item.customBehaviour) {
+              item.customBehaviour();
+            }
+          }}
         >
           <div className="text-xl mb-1">{item.icon}</div>
           <div className="text-xs">{item.label}</div>
@@ -120,10 +148,12 @@ export default function MobileNavBar() {
                     height: "48px",
                   }}
                 >
-                  <ShoppingCartOutlined style={{
-                    fontSize: "16px",
-                    color: "white",
-                  }}/>
+                  <ShoppingCartOutlined
+                    style={{
+                      fontSize: "16px",
+                      color: "white",
+                    }}
+                  />
                 </Button>
               </Link>
             );

@@ -45,27 +45,6 @@ export default function CustomerLandingPage() {
     }
   }, [router]);
 
-  const handleLogin = async (values) => {
-    try {
-      setLoading(true);
-      console.log("Login attempt:", values.username);
-
-      // Mock successful login
-      setTimeout(() => {
-        // Store token in localStorage
-        localStorage.setItem("token", "mock-jwt-token");
-        console.log("Login successful, token stored");
-
-        // Redirect to admin dashboard
-        router.push("/admin/trang-chu");
-        setLoading(false);
-      }, 1000);
-    } catch (error) {
-      console.error("Login error:", error);
-      setLoading(false);
-    }
-  };
-
   if (loading) {
     return (
       <div

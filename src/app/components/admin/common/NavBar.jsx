@@ -23,7 +23,7 @@ import { usePathname } from "next/navigation";
 
 const { Title } = Typography;
 
-export default function NavBar() {
+export default function NavBar({ onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const pathname = usePathname();
@@ -145,7 +145,12 @@ export default function NavBar() {
               { key: "1", icon: <UserOutlined />, label: "Hồ sơ cá nhân" },
               { key: "2", icon: <SettingOutlined />, label: "Cài đặt tài khoản" },
               { type: "divider" },
-              { key: "3", icon: <LogoutOutlined />, label: "Đăng xuất" },
+              {
+                key: "3",
+                icon: <LogoutOutlined />,
+                label: "Đăng xuất",
+                onClick: () => onLogout(),
+              },
             ],
           }}
           placement="bottomRight"

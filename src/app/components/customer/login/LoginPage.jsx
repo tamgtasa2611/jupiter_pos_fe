@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Input, Button, Checkbox, Card, Typography, Divider, message } from "antd";
 import { UserOutlined, LockOutlined, GoogleOutlined, FacebookOutlined } from "@ant-design/icons";
 import Link from "next/link";
@@ -11,6 +11,18 @@ const { Title, Text, Paragraph } = Typography;
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Check if token exists
+    const token = localStorage.getItem("token");
+    if (token) {
+      console.log("Token found, redirecting to dashboard");
+      router.push("/admin/trang-chu");
+    } else {
+      console.log("No token found, redirecting to login");
+      router.push("/dang-nhap");
+    }
+  }, []);
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -24,7 +36,7 @@ const LoginForm = () => {
         // Store token in localStorage for authentication
         localStorage.setItem("token", "example-token-value");
         message.success("Đăng nhập thành công!");
-        router.push("/"); // Chuyển về trang chủ sau khi đăng nhập
+        router.push("/admin/trang-chu"); // Chuyển về trang chủ sau khi đăng nhập
         setLoading(false);
       }, 1000);
     } catch (error) {
@@ -38,7 +50,6 @@ const LoginForm = () => {
       {/* Left section - logo and intro (full width on desktop) */}
       <div className="hidden md:flex md:w-3/5 bg-sky-400 text-white p-8 flex-col justify-center items-center">
         <div className="max-w-2xl mx-auto text-center">
-
           <Title level={1} style={{ color: "white", marginBottom: "1.5rem", fontSize: "2.5rem" }}>
             Jupiter Store POS
           </Title>
