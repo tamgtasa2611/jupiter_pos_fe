@@ -239,7 +239,7 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
     >
       <Row gutter={[24, 16]}>
         <Col span={8}>
-          <Card title="Chi tiết đơn hàng" size="small">
+          <Card title="Chi tiết đơn hàng" size="small" className="overflow-y-auto h-dvh">
             <List
               size="small"
               dataSource={cart}
@@ -266,7 +266,7 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
                   </div>
                 </Space>
               }
-              style={{ maxHeight: "300px", overflow: "auto" }}
+              style={{ height: "100%", overflow: "auto" }}
             />
           </Card>
         </Col>

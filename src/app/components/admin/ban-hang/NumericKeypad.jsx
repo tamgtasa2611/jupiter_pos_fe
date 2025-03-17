@@ -36,7 +36,6 @@ const NumericKeypad = ({ visible, onCancel, onConfirm, title, initialValue = "" 
       centered
       maskClosable={false}
     //   closeIcon={<CloseOutlined />}
-      bodyStyle={{ padding: "16px" }}
     >
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <Input

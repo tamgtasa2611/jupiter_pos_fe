@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Button, Badge, Typography, Space, theme } from "antd";
+import { Layout, Row, Col, Card, Button, Badge, Typography, Space, theme, Flex } from "antd";
 import { ShoppingCartOutlined, DollarOutlined } from "@ant-design/icons";
 import SearchBar from "./SearchBar";
 import CategorySelector from "./CategorySelector";
@@ -27,65 +27,38 @@ const MainSellingPage = () => {
 
   // Mock data - replace with API calls
   useEffect(() => {
-    // Simulate fetching products
-    setProducts([
-      {
-        id: 1,
-        name: "Cà phê đen",
-        price: 25000,
-        category: "coffee",
-        image: "https://via.placeholder.com/80",
-      },
-      {
-        id: 2,
-        name: "Cà phê sữa",
-        price: 30000,
-        category: "coffee",
-        image: "https://via.placeholder.com/80",
-      },
-      {
-        id: 3,
-        name: "Trà đào",
-        price: 35000,
-        category: "tea",
-        image: "https://via.placeholder.com/80",
-      },
-      {
-        id: 4,
-        name: "Trà sữa",
-        price: 40000,
-        category: "tea",
-        image: "https://via.placeholder.com/80",
-      },
-      {
-        id: 5,
-        name: "Bánh mì",
-        price: 20000,
-        category: "food",
-        image: "https://via.placeholder.com/80",
-      },
-      {
-        id: 6,
-        name: "Bánh ngọt",
-        price: 15000,
-        category: "food",
-        image: "https://via.placeholder.com/80",
-      },
-      {
-        id: 7,
-        name: "Nước suối",
-        price: 10000,
-        category: "drinks",
-        image: "https://via.placeholder.com/80",
-      },
-      {
-        id: 8,
-        name: "Nước ngọt",
-        price: 15000,
-        category: "drinks",
-        image: "https://via.placeholder.com/80",
-      },
-    ]);
+    // Generate 20 random products
+    const productCategories = ["grocery", "snacks", "beverages", "household"];
+    const productNames = {
+      grocery: ["Gạo", "Đường", "Muối", "Bột ngọt", "Dầu ăn", "Nước mắm", "Tương ớt", "Bột giặt"],
+      snacks: ["Bánh quy", "Kẹo", "Snack mực", "Bim bim", "Hạt dưa", "Mít sấy", "Chuối sấy"],
+      beverages: [
+        "Nước lọc",
+        "Nước ngọt",
+        "Trà đóng chai",
+        "Cà phê hòa tan",
+        "Sữa tươi",
+        "Nước tăng lực",
+      ],
+      household: ["Khăn giấy", "Bàn chải", "Kem đánh răng", "Dầu gội", "Xà phòng", "Nước rửa chén"],
+    };
+
+    const randomProducts = Array.from({ length: 20 }, (_, index) => {
+      const category = productCategories[Math.floor(Math.random() * productCategories.length)];
+      const namesForCategory = productNames[category];
+      const name = namesForCategory[Math.floor(Math.random() * namesForCategory.length)];
+      const price = Math.floor(Math.random() * 5 + 1) * 10000 + 5000; // Random price between 15000 and 55000
+
+      return {
+        id: index + 1,
+        name: `${name}`,
+        price: price,
+        category: category,
+        image: "../../../haohao.png",
+      };
+    });
+
+    setProducts(randomProducts);
 
     // Simulate fetching categories
     setCategories([
@@ -154,10 +127,19 @@ const MainSellingPage = () => {
 
   return (
     <>
-      <Row gutter={[16, 16]}>
-        <Col span={16}>
-          <Card bodyStyle={{ padding: "12px" }} className="shadow-drop rounded-nice">
-            <Space direction="vertical" style={{ width: "100%" }}>
+      <Flex
+        gap="large"
+        align="center"
+        justify="space-between"
+        className="w-full"
+        style={{
+          height: "100%",
+        }}
+      >
+        {/* Products */}
+        <div className="h-full w-1/2">
+          <Card className="shadow-drop rounded-nice h-full">
+            <Flex vertical gap="large" className="w-full h-full">
               <SearchBar onSearch={setSearchQuery} />
               <CategorySelector
                 categories={categories}
@@ -165,41 +147,32 @@ const MainSellingPage = () => {
                 onSelectCategory={setSelectedCategory}
               />
               <ProductGrid products={filteredProducts} onProductClick={addToCart} />
-            </Space>
+            </Flex>
           </Card>
-        </Col>
+        </div>
 
-        <Col span={8}>
-          <Space direction="vertical" style={{ width: "100%" }} size="middle">
-            <CustomerInfo customer={customerInfo} onSelectCustomer={setCustomerInfo} />
-
-            <Card
-              title={
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Text strong>Giỏ hàng</Text>
-                  <Badge count={totalItems} showZero />
-                </div>
-              }
-              bodyStyle={{
-                padding: "12px",
-                maxHeight: "350px",
-                overflow: "auto",
-              }}
-              className="shadow-drop rounded-nice"
-            >
+        {/* Cart */}
+        <div className="h-full w-1/4">
+          <Card
+            title={
+              <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+                <Text strong>Giỏ hàng</Text>
+                <Badge count={totalItems} showZero />
+              </Flex>
+            }
+            styles={{
+              body: { padding: 0, height: "100%" },
+            }}
+            className="shadow-drop rounded-nice h-full"
+          >
+            <div className="overflow-auto p-6" style={{ maxHeight: "calc(100% - 60px)" }}>
               {cart.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "20px 0" }}>
-                  <ShoppingCartOutlined style={{ fontSize: 32, color: token.colorTextSecondary }} />
+                <Flex vertical justify="center" align="center" className="h-full">
+                  <ShoppingCartOutlined style={{ fontSize: 32, divor: token.divorTextSecondary }} />
                   <Text type="secondary" style={{ display: "block", marginTop: 8 }}>
                     Giỏ hàng trống
                   </Text>
-                </div>
+                </Flex>
               ) : (
                 cart.map((item) => (
                   <CartItem
@@ -211,7 +184,14 @@ const MainSellingPage = () => {
                   />
                 ))
               )}
-            </Card>
+            </div>
+          </Card>
+        </div>
+
+        {/* Customer info and order summary */}
+        <div className="w-1/4 h-full">
+          <Flex vertical style={{ height: "100%", width: "100%" }} gap="large">
+            <CustomerInfo customer={customerInfo} onSelectCustomer={setCustomerInfo} />
 
             <OrderSummary cart={cart} totalAmount={totalAmount} />
 
@@ -226,9 +206,9 @@ const MainSellingPage = () => {
             >
               Thanh toán
             </Button>
-          </Space>
-        </Col>
-      </Row>
+          </Flex>
+        </div>
+      </Flex>
 
       <PaymentModal
         visible={isPaymentModalVisible}

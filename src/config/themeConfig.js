@@ -1,6 +1,6 @@
 const themeConfig = {
   token: {
-    colorPrimary: '#1890ff',
+    colorPrimary: '#5783db',
     // Bạn có thể thêm các token khác tùy theo nhu cầu
     // borderRadius: 6,
     // colorBgContainer: '#ffffff',
