@@ -78,7 +78,7 @@ export default function NavBar({ onLogout }) {
       {/* Left side - Logo */}
       <Link href="/admin/dashboard" className="flex items-center">
         <Title level={4} className="m-0 text-base md:text-lg" style={{ marginBottom: 0 }}>
-          NPP An Sinh
+          STORE
         </Title>
       </Link>
 
