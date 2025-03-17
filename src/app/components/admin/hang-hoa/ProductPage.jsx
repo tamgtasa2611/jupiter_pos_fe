@@ -1,51 +1,52 @@
 "use client";
 
-import React, { useState, useEffect, useLayoutEffect } from "react";
-import {
-  Table,
-  Card,
-  Button,
-  Input,
-  Space,
-  Dropdown,
-  Tag,
-  Tooltip,
-  Select,
-  Typography,
-  Flex,
-  Menu,
-  Drawer,
-  List,
-  Empty,
-  Badge,
-  Divider,
-} from "antd";
+import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo } from "react";
+import { Card, Button, Select, Dropdown, Flex, Menu, Drawer, Input, Divider } from "antd";
 import {
   PlusOutlined,
   SearchOutlined,
   FilterOutlined,
   SortAscendingOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  EyeOutlined,
-  MoreOutlined,
   ExportOutlined,
   ImportOutlined,
-  BarcodeOutlined,
   FileExcelOutlined,
   FilePdfOutlined,
   PrinterOutlined,
   MenuOutlined,
   ScanOutlined,
 } from "@ant-design/icons";
-import AddProductModal from "./AddProductModal";
-import EditProductModal from "./EditProductModal";
-import ViewProductModal from "./ViewProductModal";
-import DeleteProductModal from "./DeleteProductModal";
-import ImportProductsModal from "./ImportProductsModal";
+import dynamic from "next/dynamic";
+import ProductTable from "./ProductTable";
+import ProductList from "./ProductList";
+import ProductFilters from "./ProductFilters";
+import MobileMenu from "./MobileMenu";
+import { Typography } from "antd";
+import { debounce } from "lodash";
 
 const { Title } = Typography;
 const { Option } = Select;
+
+// Lazy load modal components
+const AddProductModal = dynamic(() => import("./AddProductModal"), {
+  loading: () => <p>Loading...</p>,
+});
+const EditProductModal = dynamic(() => import("./EditProductModal"), {
+  loading: () => <p>Loading...</p>,
+});
+const ViewProductModal = dynamic(() => import("./ViewProductModal"), {
+  loading: () => <p>Loading...</p>,
+});
+const DeleteProductModal = dynamic(() => import("./DeleteProductModal"), {
+  loading: () => <p>Loading...</p>,
+});
+const ImportProductsModal = dynamic(() => import("./ImportProductsModal"), {
+  loading: () => <p>Loading...</p>,
+});
+
+// Memoize ProductTable, ProductList, and ProductFilters
+const MemoizedProductTable = React.memo(ProductTable);
+const MemoizedProductList = React.memo(ProductList);
+const MemoizedProductFilters = React.memo(ProductFilters);
 
 const ProductPage = () => {
   // State management
@@ -75,6 +76,17 @@ const ProductPage = () => {
     showSizeChanger: true,
   });
 
+  const categories = useMemo(
+    () => [
+      { value: "beverages", label: "Đồ uống" },
+      { value: "food", label: "Thực phẩm" },
+      { value: "snacks", label: "Bánh kẹo" },
+      { value: "household", label: "Đồ gia dụng" },
+      { value: "personal_care", label: "Chăm sóc cá nhân" },
+    ],
+    []
+  );
+
   // Check for mobile screen
   useLayoutEffect(() => {
     const checkScreenSize = () => {
@@ -89,14 +101,13 @@ const ProductPage = () => {
     };
   }, []);
 
-  // Categories for filtering
-  const categories = [
-    { value: "beverages", label: "Đồ uống" },
-    { value: "food", label: "Thực phẩm" },
-    { value: "snacks", label: "Bánh kẹo" },
-    { value: "household", label: "Đồ gia dụng" },
-    { value: "personal_care", label: "Chăm sóc cá nhân" },
-  ];
+  // Debounced search handler
+  const debouncedSetSearchText = useCallback(
+    debounce((value) => {
+      setSearchText(value);
+    }, 300),
+    []
+  );
 
   // Mock data fetch
   useEffect(() => {
@@ -142,11 +153,12 @@ const ProductPage = () => {
       let filteredData = [...mockData];
 
       if (searchText) {
-        filteredData = filteredData.filter(
-          (product) =>
-            product.name.toLowerCase().includes(searchText.toLowerCase()) ||
-            product.barcode.toLowerCase().includes(searchText.toLowerCase())
-        );
+        const searchTerm = searchText.toLowerCase();
+        filteredData = filteredData.filter((product) => {
+          const name = product.name.toLowerCase();
+          const barcode = product.barcode.toLowerCase();
+          return name.includes(searchTerm) || barcode.includes(searchTerm);
+        });
       }
 
       if (selectedCategory !== "all") {
@@ -174,164 +186,53 @@ const ProductPage = () => {
   };
 
   // CRUD operations
-  const handleAddProduct = (newProduct) => {
-    // In a real app, you would make an API call here
-    console.log("Adding new product:", newProduct);
-    setAddModalVisible(false);
-    fetchProducts(); // Refresh data
-  };
+  const handleAddProduct = useCallback(
+    (newProduct) => {
+      // In a real app, you would make an API call here
+      console.log("Adding new product:", newProduct);
+      setAddModalVisible(false);
+      fetchProducts(); // Refresh data
+    },
+    [fetchProducts]
+  );
 
-  const handleEditProduct = (updatedProduct) => {
-    // In a real app, you would make an API call here
-    console.log("Updating product:", updatedProduct);
-    setEditModalVisible(false);
-    fetchProducts(); // Refresh data
-  };
+  const handleEditProduct = useCallback(
+    (updatedProduct) => {
+      // In a real app, you would make an API call here
+      console.log("Updating product:", updatedProduct);
+      setEditModalVisible(false);
+      fetchProducts(); // Refresh data
+    },
+    [fetchProducts]
+  );
 
-  const handleDeleteProduct = (id) => {
-    // In a real app, you would make an API call here
-    console.log("Deleting product with ID:", id);
-    setDeleteModalVisible(false);
-    fetchProducts(); // Refresh data
-  };
+  const handleDeleteProduct = useCallback(
+    (id) => {
+      // In a real app, you would make an API call here
+      console.log("Deleting product with ID:", id);
+      setDeleteModalVisible(false);
+      fetchProducts(); // Refresh data
+    },
+    [fetchProducts]
+  );
 
-  const handleImportProducts = (data) => {
-    // In a real app, you would make an API call here
-    console.log("Importing products:", data);
-    setImportModalVisible(false);
-    fetchProducts(); // Refresh data
-  };
-
-  // Table columns
-  const columns = [
-    {
-      title: "Mã sản phẩm",
-      dataIndex: "barcode",
-      key: "barcode",
-      render: (barcode) => (
-        <Tooltip title={barcode}>
-          <div className="flex items-center">
-            <BarcodeOutlined className="mr-1" />
-            <span className="font-mono">{barcode}</span>
-          </div>
-        </Tooltip>
-      ),
-      sorter: (a, b) => a.barcode.localeCompare(b.barcode),
+  const handleImportProducts = useCallback(
+    (data) => {
+      // In a real app, you would make an API call here
+      console.log("Importing products:", data);
+      setImportModalVisible(false);
+      fetchProducts(); // Refresh data
     },
-    {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (text) => <span className="font-medium">{text}</span>,
-    },
-    {
-      title: "Danh mục",
-      dataIndex: "categoryName",
-      key: "categoryName",
-      filters: categories.map((cat) => ({ text: cat.label, value: cat.value })),
-      onFilter: (value, record) => record.category === value,
-    },
-    {
-      title: "Giá bán",
-      dataIndex: "price",
-      key: "price",
-      sorter: (a, b) => a.price - b.price,
-      render: (price) => (
-        <span className="font-semibold text-blue-600">
-          {new Intl.NumberFormat("vi-VN").format(price)}đ
-        </span>
-      ),
-    },
-    {
-      title: "Giá nhập",
-      dataIndex: "costPrice",
-      key: "costPrice",
-      sorter: (a, b) => a.costPrice - b.costPrice,
-      render: (costPrice) => (
-        <span className="text-gray-600">{new Intl.NumberFormat("vi-VN").format(costPrice)}đ</span>
-      ),
-    },
-    {
-      title: "Tồn kho",
-      dataIndex: "stock",
-      key: "stock",
-      sorter: (a, b) => a.stock - b.stock,
-      render: (stock, record) => (
-        <div>
-          <span
-            className={`font-semibold ${
-              stock < 10 ? "text-red-500" : stock < 30 ? "text-orange-500" : "text-green-600"
-            }`}
-          >
-            {stock}
-          </span>
-          <span className="text-gray-500 ml-1">{record.unit}</span>
-        </div>
-      ),
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "isActive",
-      key: "isActive",
-      render: (isActive) => (
-        <Tag color={isActive ? "green" : "red"}>{isActive ? "Đang bán" : "Ngừng bán"}</Tag>
-      ),
-    },
-    {
-      title: "Thao tác",
-      key: "action",
-      width: 120,
-      render: (_, record) => (
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: "1",
-                icon: <EyeOutlined />,
-                label: "Xem chi tiết",
-                onClick: () => {
-                  setSelectedProduct(record);
-                  setViewModalVisible(true);
-                },
-              },
-              {
-                key: "2",
-                icon: <EditOutlined />,
-                label: "Chỉnh sửa",
-                onClick: () => {
-                  setSelectedProduct(record);
-                  setEditModalVisible(true);
-                },
-              },
-              {
-                key: "3",
-                icon: <DeleteOutlined />,
-                label: "Xóa",
-                danger: true,
-                onClick: () => {
-                  setSelectedProduct(record);
-                  setDeleteModalVisible(true);
-                },
-              },
-            ],
-          }}
-          trigger={["click"]}
-          placement="bottomRight"
-        >
-          <Button type="text" icon={<MoreOutlined />} />
-        </Dropdown>
-      ),
-    },
-  ];
+    [fetchProducts]
+  );
 
   // Handle table change
-  const handleTableChange = (pagination, filters, sorter) => {
-    setPagination({
-      ...pagination,
+  const handleTableChange = useCallback((pagination) => {
+    setPagination((prevPagination) => ({
+      ...prevPagination,
       current: pagination.current,
-    });
-  };
+    }));
+  }, []);
 
   const handleScanCode = async () => {
     // Check if running in Capacitor environment (mobile app)
@@ -370,7 +271,7 @@ const ProductPage = () => {
         if (barcodes.length > 0) {
           console.log("Barcode data:", barcodes[0].rawValue);
           // Search for the product using the scanned barcode
-          setSearchText(barcodes[0].rawValue);
+          debouncedSetSearchText(barcodes[0].rawValue);
         }
       } catch (error) {
         console.error("Barcode scanning error:", error);
@@ -439,7 +340,7 @@ const ProductPage = () => {
             .then((result) => {
               // Found a barcode
               if (result && result.text) {
-                setSearchText(result.text);
+                debouncedSetSearchText(result.text);
                 stream.getTracks().forEach((track) => track.stop());
                 document.body.removeChild(videoModal);
               }
@@ -460,30 +361,6 @@ const ProductPage = () => {
       alert("Thiết bị của bạn không hỗ trợ quét mã vạch.");
     }
   };
-
-  // Action menu for mobile
-  const mobileActionMenu = (
-    <Menu>
-      <Menu.Item key="add" icon={<PlusOutlined />} onClick={() => setAddModalVisible(true)}>
-        Thêm sản phẩm
-      </Menu.Item>
-      <Menu.Item key="import" icon={<ImportOutlined />} onClick={() => setImportModalVisible(true)}>
-        Nhập từ Excel
-      </Menu.Item>
-      <Menu.Divider />
-      <Menu.SubMenu key="export" icon={<ExportOutlined />} title="Xuất">
-        <Menu.Item key="excel" icon={<FileExcelOutlined />}>
-          Xuất Excel
-        </Menu.Item>
-        <Menu.Item key="pdf" icon={<FilePdfOutlined />}>
-          Xuất PDF
-        </Menu.Item>
-        <Menu.Item key="print" icon={<PrinterOutlined />}>
-          In danh sách
-        </Menu.Item>
-      </Menu.SubMenu>
-    </Menu>
-  );
 
   // Filter drawer content for mobile
   const filterDrawerContent = (
@@ -521,7 +398,10 @@ const ProductPage = () => {
     </Flex>
   );
 
-  // Render desktop or mobile UI
+  const updateSearchText = (value) => {
+    debouncedSetSearchText(value);
+  };
+
   return (
     <div className="min-h-screen">
       <Card className="shadow-drop rounded-nice transition-shadow">
@@ -545,43 +425,16 @@ const ProductPage = () => {
           {!isMobile && (
             <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="mb-6">
               {/* Search and filters */}
-              <Flex gap={12} wrap="wrap">
-                <Input
-                  placeholder="Tìm kiếm theo tên, mã sản phẩm..."
-                  prefix={<SearchOutlined />}
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  style={{ width: 300 }}
-                  allowClear
-                />
-
-                <Select
-                  placeholder="Danh mục"
-                  style={{ width: 150 }}
-                  value={selectedCategory}
-                  onChange={setSelectedCategory}
-                  allowClear
-                >
-                  <Option value="all">Tất cả danh mục</Option>
-                  {categories.map((category) => (
-                    <Option key={category.value} value={category.value}>
-                      {category.label}
-                    </Option>
-                  ))}
-                </Select>
-
-                <Select
-                  placeholder="Trạng thái"
-                  style={{ width: 150 }}
-                  value={selectedStatus}
-                  onChange={setSelectedStatus}
-                  allowClear
-                >
-                  <Option value="all">Tất cả trạng thái</Option>
-                  <Option value="active">Đang bán</Option>
-                  <Option value="inactive">Ngừng bán</Option>
-                </Select>
-              </Flex>
+              <MemoizedProductFilters
+                searchText={searchText}
+                setSearchText={updateSearchText}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                selectedStatus={selectedStatus}
+                setSelectedStatus={setSelectedStatus}
+                categories={categories}
+                isMobile={isMobile}
+              />
 
               {/* Action buttons */}
               <Flex gap={8} wrap="wrap">
@@ -619,7 +472,7 @@ const ProductPage = () => {
                   }}
                 >
                   <Button icon={<ExportOutlined />}>
-                    Xuất{" "}
+                    Xuất
                     <svg className="inline-block w-2 h-2 ml-1 -mt-1" viewBox="0 0 6 3">
                       <polygon points="0,0 6,0 3,3" fill="currentColor" />
                     </svg>
@@ -644,16 +497,15 @@ const ProductPage = () => {
 
         {/* Product Table for Desktop */}
         {!isMobile && (
-          <Table
-            columns={columns}
-            dataSource={products}
-            rowKey="id"
+          <MemoizedProductTable
+            products={products}
             loading={loading}
             pagination={pagination}
-            onChange={handleTableChange}
-            scroll={{ x: 1000, y: 600 }}
-            className=""
-            size="middle"
+            handleTableChange={handleTableChange}
+            setSelectedProduct={setSelectedProduct}
+            setViewModalVisible={setViewModalVisible}
+            setEditModalVisible={setEditModalVisible}
+            setDeleteModalVisible={setDeleteModalVisible}
           />
         )}
 
@@ -665,7 +517,7 @@ const ProductPage = () => {
                 size="large"
                 prefix={<SearchOutlined />}
                 value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={(e) => updateSearchText(e.target.value)}
                 allowClear
               />
               <Button size="large" icon={<ScanOutlined />} onClick={handleScanCode}></Button>
@@ -676,98 +528,14 @@ const ProductPage = () => {
 
         {/* Product List for Mobile */}
         {isMobile && (
-          <List
+          <MemoizedProductList
+            products={products}
             loading={loading}
-            itemLayout="horizontal"
-            dataSource={products}
-            pagination={{
-              ...pagination,
-              size: "small",
-            }}
-            renderItem={(item) => (
-              <List.Item
-                actions={[
-                  <Dropdown
-                    key="actions"
-                    menu={{
-                      items: [
-                        {
-                          key: "view",
-                          icon: <EyeOutlined />,
-                          label: "Xem chi tiết",
-                          onClick: () => {
-                            setSelectedProduct(item);
-                            setViewModalVisible(true);
-                          },
-                          style: { padding: "8px 12px" },
-                        },
-                        {
-                          key: "edit",
-                          icon: <EditOutlined />,
-                          label: "Chỉnh sửa",
-                          onClick: () => {
-                            setSelectedProduct(item);
-                            setEditModalVisible(true);
-                          },
-                          style: { padding: "8px 12px" },
-                        },
-                        {
-                          key: "delete",
-                          icon: <DeleteOutlined />,
-                          label: "Xóa",
-                          danger: true,
-                          onClick: () => {
-                            setSelectedProduct(item);
-                            setDeleteModalVisible(true);
-                          },
-                          style: { padding: "8px 12px" },
-                        },
-                      ],
-                    }}
-                    trigger={["click"]}
-                    placement="bottomRight"
-                  >
-                    <Button shape="circle" size="large" icon={<MoreOutlined />} />
-                  </Dropdown>,
-                ]}
-              >
-                <List.Item.Meta
-                  title={
-                    <Flex vertical>
-                      <span className="font-medium text-lg">{item.name}</span>
-                    </Flex>
-                  }
-                  description={
-                    <Flex vertical>
-                      <span className="font-semibold text-blue-600">
-                        {new Intl.NumberFormat("vi-VN").format(item.price)}đ
-                      </span>
-                      <Flex align="center" justify="space-between">
-                        <span
-                          className={`font-medium ${
-                            item.stock < 10
-                              ? "text-red-500"
-                              : item.stock < 30
-                              ? "text-orange-500"
-                              : "text-green-600"
-                          }`}
-                        >
-                          Tồn: {item.stock} {item.unit}
-                        </span>
-                      </Flex>
-                    </Flex>
-                  }
-                />
-              </List.Item>
-            )}
-            locale={{
-              emptyText: (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description="Không tìm thấy sản phẩm nào"
-                />
-              ),
-            }}
+            pagination={pagination}
+            setSelectedProduct={setSelectedProduct}
+            setViewModalVisible={setViewModalVisible}
+            setEditModalVisible={setEditModalVisible}
+            setDeleteModalVisible={setDeleteModalVisible}
           />
         )}
       </Card>
@@ -780,7 +548,10 @@ const ProductPage = () => {
         onClose={() => setMenuDrawerOpen(false)}
         width={280}
       >
-        {mobileActionMenu}
+        <MobileMenu
+          setAddModalVisible={setAddModalVisible}
+          setImportModalVisible={setImportModalVisible}
+        />
       </Drawer>
 
       {/* Mobile Filter Drawer */}

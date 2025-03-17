@@ -62,9 +62,9 @@ export default function NavBar({ onLogout }) {
       label: <Link href="/admin/customers">Khách hàng</Link>,
     },
     {
-      key: "/admin/employees",
+      key: "/admin/nhan-vien",
       icon: <UserSwitchOutlined />,
-      label: <Link href="/admin/employees">Nhân viên</Link>,
+      label: <Link href="/admin/nhan-vien">Nhân viên</Link>,
     },
     {
       key: "/admin/statistics",

@@ -55,10 +55,10 @@ export default function MobileNavBar({ onLogout }) {
       href: "/admin/customers",
     },
     {
-      key: "/admin/employees",
+      key: "/admin/nhan-vien",
       icon: <UserSwitchOutlined />,
       label: "Nhân viên",
-      href: "/admin/employees",
+      href: "/admin/nhan-vien",
     },
     {
       key: "/admin/statistics",
