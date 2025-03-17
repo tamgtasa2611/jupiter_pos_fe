@@ -5,6 +5,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import EmployeeList from "./EmployeeList";
 import EmployeeSearch from "./EmployeeSearch";
+import EmployeeSales from "./EmployeeSales";
 import { AddEmployeeModal, EditEmployeeModal, DeleteEmployeeModal } from "./EmployeeModals";
 import AttendanceCalendar from "./AttendanceCalendar";
 
@@ -235,6 +236,11 @@ const EmployeePage = () => {
             attendanceData={attendanceData}
           />
         ),
+      },
+      {
+        key: "sales", // Add a new tab for Employee Sales
+        label: "Doanh số",
+        children: <EmployeeSales />,
       },
     ];
 
