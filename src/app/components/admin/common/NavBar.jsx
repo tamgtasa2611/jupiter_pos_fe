@@ -52,14 +52,14 @@ export default function NavBar({ onLogout }) {
       label: <Link href="/admin/hang-hoa">Hàng hóa</Link>,
     },
     {
-      key: "/admin/orders",
+      key: "/admin/don-hang",
       icon: <OrderedListOutlined />,
-      label: <Link href="/admin/orders">Đơn hàng</Link>,
+      label: <Link href="/admin/don-hang">Đơn hàng</Link>,
     },
     {
-      key: "/admin/customers",
+      key: "/admin/khach-hang",
       icon: <TeamOutlined />,
-      label: <Link href="/admin/customers">Khách hàng</Link>,
+      label: <Link href="/admin/khach-hang">Khách hàng</Link>,
     },
     {
       key: "/admin/nhan-vien",

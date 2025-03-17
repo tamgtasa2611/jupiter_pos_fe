@@ -49,10 +49,10 @@ export default function MobileNavBar({ onLogout }) {
 
   const moreMenuItems = [
     {
-      key: "/admin/customers",
+      key: "/admin/khach-hang",
       icon: <TeamOutlined />,
       label: "Khách hàng",
-      href: "/admin/customers",
+      href: "/admin/khach-hang",
     },
     {
       key: "/admin/nhan-vien",
@@ -123,10 +123,10 @@ export default function MobileNavBar({ onLogout }) {
       special: true,
     },
     {
-      key: "/admin/orders",
+      key: "/admin/don-hang",
       icon: <OrderedListOutlined />,
       label: "Đơn hàng",
-      href: "/admin/orders",
+      href: "/admin/don-hang",
     },
   ];
 
