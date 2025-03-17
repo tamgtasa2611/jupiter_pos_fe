@@ -116,10 +116,10 @@ export default function MobileNavBar({ onLogout }) {
       href: "/admin/hang-hoa",
     },
     {
-      key: "/admin/sale",
+      key: "/admin/ban-hang",
       icon: <ShoppingCartOutlined />,
       label: "Bán hàng",
-      href: "/admin/sale",
+      href: "/admin/ban-hang",
       special: true,
     },
     {

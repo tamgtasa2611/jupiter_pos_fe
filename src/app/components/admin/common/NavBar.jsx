@@ -74,7 +74,7 @@ export default function NavBar({ onLogout }) {
   ];
 
   return (
-    <div className="hidden md:flex bg-white items-center justify-between px-3 md:px-6 sticky top-0 z-10 shadow-drop w-full h-16 ">
+    <div className="hidden md:flex bg-white items-center justify-between px-3 md:px-6 sticky top-0 z-10 border border-gray-200 drop-shadow-sm w-full h-16 ">
       {/* Left side - Logo */}
       <Link href="/admin/dashboard" className="flex items-center">
         <Title level={4} className="m-0 text-base md:text-lg" style={{ marginBottom: 0 }}>
@@ -101,7 +101,7 @@ export default function NavBar({ onLogout }) {
         <Button
           type="primary"
           icon={<ShoppingCartOutlined />}
-          href="/admin/sale"
+          href="/admin/ban-hang"
           className="flex items-center text-xs md:text-sm"
         >
           <span className="hidden md:inline">Bán hàng</span>
