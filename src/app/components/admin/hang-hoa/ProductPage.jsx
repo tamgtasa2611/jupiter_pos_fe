@@ -752,7 +752,7 @@ const ProductPage = () => {
                               : "text-green-600"
                           }`}
                         >
-                          {item.stock} {item.unit}
+                          Tồn: {item.stock} {item.unit}
                         </span>
                       </Flex>
                     </Flex>
