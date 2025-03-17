@@ -61,10 +61,10 @@ export default function MobileNavBar({ onLogout }) {
       href: "/admin/nhan-vien",
     },
     {
-      key: "/admin/statistics",
+      key: "/admin/thong-ke",
       icon: <BarChartOutlined />,
       label: "Thống kê",
-      href: "/admin/statistics",
+      href: "/admin/thong-ke",
     },
     {
       key: "/admin/settings",
