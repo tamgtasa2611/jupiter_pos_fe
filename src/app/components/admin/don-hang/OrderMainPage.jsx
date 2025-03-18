@@ -1,43 +1,98 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Card, Col, Row, Statistic, Table, Space, Button, Input, Select, Tag } from "antd";
-import {
-  LikeOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import React, { useState, useEffect, useLayoutEffect, useCallback } from "react";
+import { Card, Button, Flex, Typography, DatePicker } from "antd";
+import { MenuOutlined, PlusOutlined } from "@ant-design/icons";
 import OrderDetailsModal from "./OrderDetailsModal";
-import OrderFilter from "./OrderFilter";
+import { debounce } from "lodash";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 
-const { Option } = Select;
+import OrderTable from "./OrderTable";
+import OrderList from "./OrderList";
+import OrderSearchFilters from "./OrderSearchFilters";
+import OrderActions from "./OrderActions";
+import MobileMenuDrawer from "./MobileMenuDrawer";
+import MobileFilterDrawer from "./MobileFilterDrawer";
+import MobileHeader from "./MobileHeader";
+import Link from "next/link";
+
+dayjs.extend(isBetween);
+
+const { Title } = Typography;
 
 const OrderMainPage = () => {
+  // State management
+  const [isMobile, setIsMobile] = useState(false);
+  const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
+  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [statusFilter, setStatusFilter] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [dateRange, setDateRange] = useState(null);
+
+  // Order detail modal
+  const [isDetailsModalVisible, setIsDetailsModalVisible] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // Sorting
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
 
+  // Pagination
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+    position: ["bottomCenter"],
+    showSizeChanger: true,
+  });
+
+  // Debounced search handler
+  const debouncedSetSearchText = useCallback(
+    debounce((value) => {
+      setSearchText(value);
+    }, 300),
+    []
+  );
+
+  // Check for mobile screen
+  useLayoutEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
+
+  // Fetch orders
   useEffect(() => {
     fetchOrders();
-  }, [searchText, statusFilter, sortBy, sortOrder]);
+  }, [
+    pagination.current,
+    pagination.pageSize,
+    searchText,
+    selectedStatus,
+    sortBy,
+    sortOrder,
+    dateRange,
+  ]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = () => {
     setLoading(true);
-    // Mock API call - replace with your actual API endpoint
     setTimeout(() => {
-      let mockData = Array(15)
+      let mockData = Array(35)
         .fill()
         .map((_, index) => ({
           id: index + 1,
-          orderId: `DH${index + 1}`,
+          orderId: `DH${String(index + 1).padStart(6, "0")}`,
           customerName: `Khách hàng ${index + 1}`,
           orderDate: new Date(
             Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
@@ -46,6 +101,9 @@ const OrderMainPage = () => {
           status: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"][
             Math.floor(Math.random() * 5)
           ],
+          phone: `09${Math.floor(Math.random() * 100000000)}`,
+          address: `Địa chỉ ${index + 1}, Phường X, Quận Y, TP.HCM`,
+          items: Math.floor(Math.random() * 10) + 1,
         }));
 
       // Apply search filter
@@ -54,14 +112,23 @@ const OrderMainPage = () => {
         mockData = mockData.filter((order) => {
           return (
             order.customerName.toLowerCase().includes(searchTerm) ||
-            order.orderId.toLowerCase().includes(searchTerm)
+            order.orderId.toLowerCase().includes(searchTerm) ||
+            order.phone.includes(searchTerm)
           );
         });
       }
 
       // Apply status filter
-      if (statusFilter) {
-        mockData = mockData.filter((order) => order.status === statusFilter);
+      if (selectedStatus !== "all") {
+        mockData = mockData.filter((order) => order.status === selectedStatus);
+      }
+
+      // Apply date range filter
+      if (dateRange && dateRange[0] && dateRange[1]) {
+        mockData = mockData.filter((order) => {
+          const orderDate = dayjs(order.orderDate, "DD/MM/YYYY");
+          return orderDate.isBetween(dateRange[0], dateRange[1], null, "[]");
+        });
       }
 
       // Apply sorting
@@ -81,87 +148,34 @@ const OrderMainPage = () => {
         });
       }
 
-      setOrders(mockData);
+      // Total and pagination
+      const totalItems = mockData.length;
+      const start = (pagination.current - 1) * pagination.pageSize;
+      const end = start + pagination.pageSize;
+      const paginatedData = mockData.slice(start, end);
+
+      setOrders(paginatedData);
+      setPagination({
+        ...pagination,
+        total: totalItems,
+      });
       setLoading(false);
     }, 500);
   };
 
-  const columns = [
-    {
-      title: "Mã đơn hàng",
-      dataIndex: "orderId",
-      key: "orderId",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Tên khách hàng",
-      dataIndex: "customerName",
-      key: "customerName",
-      sorter: true,
-    },
-    {
-      title: "Ngày đặt hàng",
-      dataIndex: "orderDate",
-      key: "orderDate",
-      sorter: true,
-    },
-    {
-      title: "Tổng tiền",
-      dataIndex: "totalAmount",
-      key: "totalAmount",
-      render: (amount) => new Intl.NumberFormat("vi-VN").format(amount) + "đ",
-      sorter: true,
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <Tag
-          color={
-            status === "Delivered"
-              ? "green"
-              : status === "Shipped"
-              ? "blue"
-              : status === "Processing"
-              ? "orange"
-              : status === "Pending"
-              ? "purple"
-              : "red"
-          }
-        >
-          {status}
-        </Tag>
-      ),
-      sorter: true,
-    },
-    {
-      title: "Thao tác",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button type="text" onClick={() => showOrderDetails(record)}>
-            Xem chi tiết
-          </Button>
-        </Space>
-      ),
-    },
-  ];
-
-  const showOrderDetails = (record) => {
+  // Event handlers
+  const handleShowOrderDetails = (record) => {
     setSelectedOrder(record);
     setIsDetailsModalVisible(true);
   };
 
-  const handleSearch = (value) => {
-    setSearchText(value);
-  };
-
-  const handleStatusFilter = (value) => {
-    setStatusFilter(value);
-  };
-
   const handleTableChange = (pagination, filters, sorter) => {
+    setPagination((prev) => ({
+      ...prev,
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    }));
+
     if (sorter.field) {
       setSortBy(sorter.field);
       setSortOrder(sorter.order);
@@ -171,70 +185,131 @@ const OrderMainPage = () => {
     }
   };
 
-  const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-  const deliveredOrders = orders.filter((order) => order.status === "Delivered").length;
+  const handleDateRangeChange = (dates) => {
+    setDateRange(dates);
+  };
+
+  const handleStatusFilter = (value) => {
+    setSelectedStatus(value);
+  };
+
+  const handleExport = (type) => {
+    console.log(`Exporting as ${type}`);
+    // Implement export logic
+  };
+
+  const handleSearch = (value) => {
+    debouncedSetSearchText(value);
+  };
 
   return (
-    <div>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Tổng số đơn hàng"
-              value={orders.length}
-              prefix={<ShoppingCartOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Doanh thu"
-              value={new Intl.NumberFormat("vi-VN").format(totalRevenue) + "đ"}
-              prefix={<LikeOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic title="Đơn hàng đã giao" value={deliveredOrders} prefix={<UserOutlined />} />
-          </Card>
-        </Col>
-      </Row>
+    <div className="min-h-screen">
+      <Card className="shadow-drop rounded-nice transition-shadow mt-5">
+        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 24 }}>
+          <div className="">
+            <Title level={4} style={{ margin: 0 }}>
+              {isMobile && (
+                <Button
+                  size="large"
+                  type="text"
+                  icon={<MenuOutlined />}
+                  onClick={() => setMenuDrawerOpen(true)}
+                  style={{ marginRight: 8 }}
+                />
+              )}
+              Đơn hàng
+            </Title>
+          </div>
 
-      <Card title="Danh sách đơn hàng" style={{ marginTop: 20 }}>
-        <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-          <Col>
-            <Button type="primary" icon={<ShoppingCartOutlined />}>
-              Thêm đơn hàng
-            </Button>
-          </Col>
-          <Col>
-            <Space>
-              <Input.Search
-                placeholder="Tìm kiếm đơn hàng"
+          {/* Action bar - Desktop */}
+          {!isMobile && (
+            <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="mb-6">
+              <OrderSearchFilters
+                searchText={searchText}
+                selectedStatus={selectedStatus}
+                dateRange={dateRange}
                 onSearch={handleSearch}
-                style={{ width: 200 }}
-                prefix={<SearchOutlined />}
+                onStatusChange={handleStatusFilter}
+                onDateChange={handleDateRangeChange}
               />
-              <OrderFilter onStatusFilter={handleStatusFilter} />
-            </Space>
-          </Col>
-        </Row>
-        <Table
-          columns={columns}
-          dataSource={orders}
-          rowKey="id"
-          loading={loading}
-          onChange={handleTableChange}
-        />
+
+              <OrderActions onExport={handleExport} />
+            </Flex>
+          )}
+
+          {/* Mobile Search Bar */}
+          {isMobile && (
+            <MobileHeader
+              searchText={searchText}
+              onSearch={handleSearch}
+              onFilterClick={() => setFilterDrawerOpen(true)}
+            />
+          )}
+        </Flex>
+
+        {/* Order Table for Desktop */}
+        {!isMobile && (
+          <OrderTable
+            orders={orders}
+            loading={loading}
+            pagination={pagination}
+            onTableChange={handleTableChange}
+            onShowDetails={handleShowOrderDetails}
+          />
+        )}
+
+        {/* Order List for Mobile */}
+        {isMobile && (
+          <OrderList
+            orders={orders}
+            loading={loading}
+            pagination={pagination}
+            onShowDetails={handleShowOrderDetails}
+          />
+        )}
       </Card>
 
+      {/* Mobile Menu Drawer */}
+      <MobileMenuDrawer
+        open={menuDrawerOpen}
+        onClose={() => setMenuDrawerOpen(false)}
+        onExport={handleExport}
+      />
+
+      {/* Mobile Filter Drawer */}
+      <MobileFilterDrawer
+        open={filterDrawerOpen}
+        onClose={() => setFilterDrawerOpen(false)}
+        selectedStatus={selectedStatus}
+        dateRange={dateRange}
+        onStatusChange={setSelectedStatus}
+        onDateChange={handleDateRangeChange}
+      />
+
+      {/* Order Details Modal */}
       <OrderDetailsModal
         visible={isDetailsModalVisible}
         onCancel={() => setIsDetailsModalVisible(false)}
         order={selectedOrder}
       />
+
+      {/* Mobile Add Button */}
+      <Link href="/admin/ban-hang">
+        <Button
+          type="primary"
+          shape="circle"
+          icon={<PlusOutlined />}
+          className="right-4 shadow-sm"
+          style={{
+            zIndex: 2,
+            position: "fixed",
+            bottom: "80px",
+            width: "48px",
+            height: "48px",
+            display: isMobile ? "block" : "none",
+          }}
+        />
+      </Link>
     </div>
   );
 };
