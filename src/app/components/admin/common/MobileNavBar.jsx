@@ -140,19 +140,20 @@ export default function MobileNavBar({ onLogout }) {
           if (item.special) {
             return (
               <Link
-                href={item.href}
-                key={item.key}
-                className="flex flex-col items-center relative -top-3"
+              href={item.href}
+              key={item.key}
+              className="flex flex-col items-center relative -top-3"
               >
-                <div
-                  className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md"
-                  style={{
-                    boxShadow: "0 4px 8px rgba(59, 130, 246, 0.3)",
-                  }}
-                >
-                  {item.icon}
-                </div>
-                <span className="text-xs font-medium text-gray-600 mt-1">{item.label}</span>
+              <div
+                className="flex items-center justify-center w-12 h-12 rounded-full shadow-md"
+                style={{
+                  background: "var(--primary-color)",
+                  boxShadow: "0 4px 8px rgba(59, 130, 246, 0.3)",
+                }}
+              >
+                {item.icon}
+              </div>
+              <span className="text-xs font-medium text-gray-600 mt-1">{item.label}</span>
               </Link>
             );
           } else {
@@ -213,7 +214,7 @@ export default function MobileNavBar({ onLogout }) {
                 visible || isAnyMoreItemActive ? "text-blue-600" : "text-gray-500"
               }`}
             >
-              Khác
+              Xem thêm
             </span>
           </div>
         </Popover>
