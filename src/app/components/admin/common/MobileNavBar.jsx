@@ -1,48 +1,40 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation"; // Add useRouter import
-import { Popover, Button } from "antd";
+import { usePathname, useRouter } from "next/navigation";
+import { Popover, Badge } from "antd";
 import {
   HomeOutlined,
   ShoppingOutlined,
   ShoppingCartOutlined,
   OrderedListOutlined,
-  EllipsisOutlined,
   TeamOutlined,
   UserSwitchOutlined,
   BarChartOutlined,
   SettingOutlined,
-  LogoutOutlined, // Add logout icon
+  LogoutOutlined,
+  EllipsisOutlined,
 } from "@ant-design/icons";
 
 export default function MobileNavBar({ onLogout }) {
   const pathname = usePathname();
-  const router = useRouter(); // Add router
+  const router = useRouter();
   const [visible, setVisible] = useState(false);
 
   // Helper function to check if a menu item is active
   const isActive = (itemKey) => {
-    // Check for exact match or if pathname starts with the key
     return pathname === itemKey || pathname.startsWith(itemKey);
   };
 
   // Handle logout with proper navigation
   const handleLogout = () => {
-    setVisible(false); // Close the popover
-
-    // Call the onLogout function passed from the parent
+    setVisible(false);
     if (onLogout) {
       onLogout();
-
-      // As a backup, directly navigate after a short delay
       setTimeout(() => {
-        console.log("Backup navigation to login page");
         window.location.href = "/dang-nhap";
       }, 300);
     } else {
-      // If onLogout is not provided, navigate directly
-      console.log("Direct navigation to login page");
       router.push("/dang-nhap");
     }
   };
@@ -50,53 +42,59 @@ export default function MobileNavBar({ onLogout }) {
   const moreMenuItems = [
     {
       key: "/admin/khach-hang",
-      icon: <TeamOutlined />,
+      icon: <TeamOutlined style={{ fontSize: "18px" }} />,
       label: "Khách hàng",
       href: "/admin/khach-hang",
     },
     {
       key: "/admin/nhan-vien",
-      icon: <UserSwitchOutlined />,
+      icon: <UserSwitchOutlined style={{ fontSize: "18px" }} />,
       label: "Nhân viên",
       href: "/admin/nhan-vien",
     },
     {
       key: "/admin/thong-ke",
-      icon: <BarChartOutlined />,
+      icon: <BarChartOutlined style={{ fontSize: "18px" }} />,
       label: "Thống kê",
       href: "/admin/thong-ke",
     },
     {
-      key: "/admin/settings",
-      icon: <SettingOutlined />,
-      label: "Cài đặt",
-      // href: "/dang-nhap",
-      customBehaviour: handleLogout, // Add custom behaviour
+      key: "logout",
+      icon: <LogoutOutlined style={{ fontSize: "18px" }} />,
+      label: "Đăng xuất",
+      customBehaviour: handleLogout,
     },
   ];
 
   const moreMenuContent = (
-    <div className="grid grid-cols-2 gap-4 p-2 w-60">
+    <div className="grid grid-cols-2 gap-3 p-2 w-64">
       {moreMenuItems.map((item) => (
         <Link
           href={item.href ? item.href : "#"}
           key={item.key}
-          className={`flex flex-col items-center justify-center p-2 rounded-lg`}
-          style={{
-            color: isActive(item.key) ? "#1890ff" : "#666",
-            backgroundColor: isActive(item.key) ? "#f0f5ff" : "transparent",
-            borderRadius: "8px",
-            padding: "2px",
-          }}
-          onClick={() => {
-            setVisible(false);
+          className={`flex flex-col items-center justify-center p-2 rounded-lg ${
+            isActive(item.key) ? "bg-blue-50" : "hover:bg-gray-50"
+          }`}
+          onClick={(e) => {
             if (item.customBehaviour) {
+              e.preventDefault();
               item.customBehaviour();
             }
+            setVisible(false);
           }}
         >
-          <div className="text-xl mb-1">{item.icon}</div>
-          <div className="text-xs">{item.label}</div>
+          <div 
+            className={`mb-1.5 p-2 rounded-full ${
+              isActive(item.key)
+                ? "bg-blue-500 text-white"
+                : "bg-gray-100 text-gray-500"
+            }`}
+          >
+            {item.icon}
+          </div>
+          <div className={`text-xs font-medium ${isActive(item.key) ? "text-blue-600" : "text-gray-600"}`}>
+            {item.label}
+          </div>
         </Link>
       ))}
     </div>
@@ -105,26 +103,26 @@ export default function MobileNavBar({ onLogout }) {
   const navItems = [
     {
       key: "/admin/trang-chu",
-      icon: <HomeOutlined />,
+      icon: <HomeOutlined style={{ fontSize: "20px" }} />,
       label: "Trang chủ",
       href: "/admin/trang-chu",
     },
     {
       key: "/admin/hang-hoa",
-      icon: <ShoppingOutlined />,
+      icon: <ShoppingOutlined style={{ fontSize: "20px" }} />,
       label: "Hàng hóa",
       href: "/admin/hang-hoa",
     },
     {
       key: "/admin/ban-hang",
-      icon: <ShoppingCartOutlined />,
+      icon: <ShoppingCartOutlined style={{ fontSize: "20px", color: "white" }} />,
       label: "Bán hàng",
       href: "/admin/ban-hang",
       special: true,
     },
     {
       key: "/admin/don-hang",
-      icon: <OrderedListOutlined />,
+      icon: <OrderedListOutlined style={{ fontSize: "20px" }} />,
       label: "Đơn hàng",
       href: "/admin/don-hang",
     },
@@ -134,27 +132,28 @@ export default function MobileNavBar({ onLogout }) {
   const isAnyMoreItemActive = moreMenuItems.some((item) => isActive(item.key));
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-      <div className="flex justify-around items-center h-16">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-2">
+      <div 
+        className="flex items-center justify-around bg-white border-t border-gray-200 h-16 px-2 mx-2 mb-1 rounded-2xl shadow-md"
+        style={{
+          boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.05)"
+        }}
+      >
         {navItems.map((item) => {
           if (item.special) {
             return (
-              <Link href={item.href} key={item.key}>
-                <Button
-                  type="primary"
-                  shape="circle"
+              <Link href={item.href} key={item.key} className="flex flex-col items-center relative -top-3">
+                <div
+                  className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md"
                   style={{
-                    width: "48px",
-                    height: "48px",
+                    boxShadow: "0 4px 8px rgba(59, 130, 246, 0.3)"
                   }}
                 >
-                  <ShoppingCartOutlined
-                    style={{
-                      fontSize: "16px",
-                      color: "white",
-                    }}
-                  />
-                </Button>
+                  {item.icon}
+                </div>
+                <span className="text-xs font-medium text-gray-600 mt-1">
+                  {item.label}
+                </span>
               </Link>
             );
           } else {
@@ -162,16 +161,25 @@ export default function MobileNavBar({ onLogout }) {
               <Link
                 href={item.href}
                 key={item.key}
-                className={`flex flex-col items-center justify-center w-1/5`}
-                style={{
-                  color: isActive(item.key) ? "#1890ff" : "#666",
-                  backgroundColor: isActive(item.key) ? "#f0f5ff" : "transparent",
-                  borderRadius: "8px",
-                  padding: "2px",
-                }}
+                className="flex flex-col items-center justify-center p-2"
               >
-                <div className={`text-xl`}>{item.icon}</div>
-                <div className="text-xs mt-1">{item.label}</div>
+                <div
+                  className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
+                    isActive(item.key)
+                      ? "bg-blue-50 text-blue-500"
+                      : "text-gray-500"
+                  }`}
+                >
+                  {item.icon}
+                  {isActive(item.key) && (
+                    <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-blue-500 rounded-full"></span>
+                  )}
+                </div>
+                <span className={`text-xs mt-1 font-medium ${
+                  isActive(item.key) ? "text-blue-600" : "text-gray-500"
+                }`}>
+                  {item.label}
+                </span>
               </Link>
             );
           }
@@ -183,18 +191,32 @@ export default function MobileNavBar({ onLogout }) {
           placement="topRight"
           open={visible}
           onOpenChange={(newOpen) => setVisible(newOpen)}
-          classNames={{ root: "mobile-nav-popover" }}
+          overlayClassName="mobile-nav-popover"
+          overlayStyle={{ 
+            borderRadius: "12px", 
+            overflow: "hidden", 
+            boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
+          }}
         >
           <div
-            className={`flex flex-col items-center justify-center w-1/5 ${
-              visible || isAnyMoreItemActive ? "text-blue-500" : "text-gray-600"
-            }`}
-            aria-label="More options"
+            className="flex flex-col items-center p-2"
+            onClick={() => setVisible(!visible)}
           >
-            <div className="text-xl">
-              <EllipsisOutlined />
+            <div
+              className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
+                visible || isAnyMoreItemActive ? "bg-blue-50 text-blue-500" : "text-gray-500"
+              }`}
+            >
+              <EllipsisOutlined style={{ fontSize: "20px" }} />
+              {(visible || isAnyMoreItemActive) && (
+                <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-blue-500 rounded-full"></span>
+              )}
             </div>
-            <div className="text-xs mt-1">Xem thêm</div>
+            <span className={`text-xs mt-1 font-medium ${
+              visible || isAnyMoreItemActive ? "text-blue-600" : "text-gray-500"
+            }`}>
+              Khác
+            </span>
           </div>
         </Popover>
       </div>
