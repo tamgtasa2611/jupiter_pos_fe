@@ -1,30 +1,20 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useLayoutEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Layout, message } from "antd";
 import NavBar from "../components/admin/common/NavBar";
 import MobileNavBar from "../components/admin/common/MobileNavBar";
 import { useRouter } from "next/navigation";
+import { useIsMobile } from "../atoms/common";
 
 const { Content } = Layout;
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  // Check for mobile screen
-  useLayoutEffect(() => {
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
 
-    checkScreenSize();
-    window.addEventListener("resize", checkScreenSize);
-
-    return () => {
-      window.removeEventListener("resize", checkScreenSize);
-    };
-  }, []);
+  // Use the custom hook to detect mobile directly
+  const isMobile = useIsMobile();
 
   // Check authentication on component mount
   useEffect(() => {
@@ -58,8 +48,8 @@ export default function AdminLayout({ children }) {
 
   return (
     <Layout className="h-dvh">
-      <NavBar onLogout={handleLogout} />
-      <Content className=" bg-gradient-to-br from-sky-100 to-white  overflow-y-auto px-0 pb-16 md:p-6 h-full">
+      {!isMobile && <NavBar onLogout={handleLogout} />}
+      <Content className="bg-gradient-to-br from-sky-100 to-white overflow-y-auto px-0 pb-16 md:p-6 h-full">
         {children}
       </Content>
       {isMobile && <MobileNavBar onLogout={handleLogout} />}
