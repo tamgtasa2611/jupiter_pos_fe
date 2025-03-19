@@ -2,7 +2,12 @@
 
 import React, { useState, useEffect, useLayoutEffect, useCallback } from "react";
 import { Card, Button, Flex, Typography, DatePicker } from "antd";
-import { MenuOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  FilterOutlined,
+  MenuOutlined,
+  PlusOutlined,
+  SortAscendingOutlined,
+} from "@ant-design/icons";
 import OrderDetailsModal from "./OrderDetailsModal";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
@@ -28,6 +33,7 @@ const OrderMainPage = () => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   const [orders, setOrders] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -74,26 +80,22 @@ const OrderMainPage = () => {
 
   // Fetch orders
   useEffect(() => {
-    fetchOrders();
-  }, [
-    pagination.current,
-    pagination.pageSize,
-    searchText,
-    selectedStatus,
-    sortBy,
-    sortOrder,
-    dateRange,
-  ]);
+    // Only fetch on filter/sort changes, not for infinite scroll
+    fetchOrders(false);
+  }, [searchText, selectedStatus, sortBy, sortOrder, dateRange]);
 
-  const fetchOrders = () => {
+  const fetchOrders = (isLoadingMore = false) => {
     setLoading(true);
+
     setTimeout(() => {
-      let mockData = Array(35)
+      // Your existing logic to generate mock data
+      let mockData = Array(100)
         .fill()
         .map((_, index) => ({
           id: index + 1,
           orderId: `DH${String(index + 1).padStart(6, "0")}`,
           customerName: `Khách hàng ${index + 1}`,
+          createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000),
           orderDate: new Date(
             Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
           ).toLocaleDateString(),
@@ -148,19 +150,45 @@ const OrderMainPage = () => {
         });
       }
 
-      // Total and pagination
-      const totalItems = mockData.length;
-      const start = (pagination.current - 1) * pagination.pageSize;
-      const end = start + pagination.pageSize;
-      const paginatedData = mockData.slice(start, end);
+      // Handle pagination or infinite scroll
+      const pageSize = 10;
+      const total = mockData.length;
 
-      setOrders(paginatedData);
-      setPagination({
-        ...pagination,
-        total: totalItems,
-      });
+      // Slice data properly for pagination or infinite scroll
+      let result;
+      if (isLoadingMore) {
+        const start = orders.length;
+        const end = start + pageSize;
+        result = mockData.slice(start, end);
+
+        // Append new data to existing orders
+        setOrders((prevOrders) => [...prevOrders, ...result]);
+        setHasMore(orders.length + result.length < total);
+      } else {
+        // Initial load or filter change
+        const start = 0;
+        const end = pageSize;
+        result = mockData.slice(start, end);
+
+        setOrders(result);
+        setHasMore(result.length < total);
+
+        // Update pagination for desktop view
+        setPagination((prev) => ({
+          ...prev,
+          current: 1,
+          total: total,
+        }));
+      }
+
       setLoading(false);
     }, 500);
+  };
+
+  const handleLoadMore = () => {
+    if (!loading && hasMore) {
+      fetchOrders(true);
+    }
   };
 
   // Event handlers
@@ -204,8 +232,8 @@ const OrderMainPage = () => {
 
   return (
     <div className="min-h-screen">
-      <Card className="     transition-shadow mt-5">
-        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 24 }}>
+      <Card className="transition-shadow mt-5">
+        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 16 }}>
           <div className="">
             <Title level={4} style={{ margin: 0 }}>
               {isMobile && (
@@ -220,6 +248,18 @@ const OrderMainPage = () => {
               Đơn hàng
             </Title>
           </div>
+
+          {/* Mobile Filter Button */}
+          {isMobile && (
+            <Flex gap="middle">
+              <Button size="large" icon={<SortAscendingOutlined />} onClick={() => {}}></Button>
+              <Button
+                size="large"
+                icon={<FilterOutlined />}
+                onClick={() => setFilterDrawerOpen(true)}
+              ></Button>
+            </Flex>
+          )}
 
           {/* Action bar - Desktop */}
           {!isMobile && (
@@ -236,16 +276,10 @@ const OrderMainPage = () => {
               <OrderActions onExport={handleExport} />
             </Flex>
           )}
-
-          {/* Mobile Search Bar */}
-          {isMobile && (
-            <MobileHeader
-              searchText={searchText}
-              onSearch={handleSearch}
-              onFilterClick={() => setFilterDrawerOpen(true)}
-            />
-          )}
         </Flex>
+
+        {/* Mobile Search Bar */}
+        {isMobile && <MobileHeader searchText={searchText} onSearch={handleSearch} />}
 
         {/* Order Table for Desktop */}
         {!isMobile && (
@@ -263,7 +297,8 @@ const OrderMainPage = () => {
           <OrderList
             orders={orders}
             loading={loading}
-            pagination={pagination}
+            hasMore={hasMore}
+            onLoadMore={handleLoadMore}
             onShowDetails={handleShowOrderDetails}
           />
         )}

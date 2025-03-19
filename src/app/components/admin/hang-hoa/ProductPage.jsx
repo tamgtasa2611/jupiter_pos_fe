@@ -405,7 +405,7 @@ const ProductPage = () => {
   return (
     <div className="min-h-screen">
       <Card className="     transition-shadow">
-        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 24 }}>
+        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 16 }}>
           <div className="">
             <Title level={4} style={{ margin: 0 }}>
               {isMobile && (
@@ -520,7 +520,7 @@ const ProductPage = () => {
                 onChange={(e) => updateSearchText(e.target.value)}
                 allowClear
               />
-              <Button size="large" icon={<ScanOutlined />} onClick={handleScanCode}></Button>
+              <Button style={{ width: "48px" }} icon={<ScanOutlined />} onClick={handleScanCode}></Button>
             </Flex>
             <Divider style={{ marginBottom: 0 }} />
           </>

@@ -1,11 +1,11 @@
 import React from "react";
 import { Flex, Input, Button, Divider } from "antd";
-import { SearchOutlined, FilterOutlined } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 
-const MobileHeader = ({ searchText, onSearch, onFilterClick }) => {
+const MobileHeader = ({ searchText, onSearch }) => {
   return (
     <>
-      <Flex gap="middle">
+      <Flex gap="middle" className="w-full">
         <Input
           placeholder="Tìm kiếm đơn hàng..."
           size="large"
@@ -14,7 +14,6 @@ const MobileHeader = ({ searchText, onSearch, onFilterClick }) => {
           onChange={(e) => onSearch(e.target.value)}
           allowClear
         />
-        <Button size="large" icon={<FilterOutlined />} onClick={onFilterClick}></Button>
       </Flex>
       <Divider style={{ marginBottom: 0 }} />
     </>

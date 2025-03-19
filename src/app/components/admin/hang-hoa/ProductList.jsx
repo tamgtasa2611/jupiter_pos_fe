@@ -63,7 +63,7 @@ const ProductList = ({
               trigger={["click"]}
               placement="bottomRight"
             >
-              <Button shape="circle" size="large" icon={<MoreOutlined />} />
+              <Button icon={<MoreOutlined />} />
             </Dropdown>,
           ]}
         >
