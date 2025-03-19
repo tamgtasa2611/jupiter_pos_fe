@@ -94,10 +94,9 @@ export default function NavBar({ onLogout }) {
 
   return (
     <div
-      className={`flex items-center justify-between px-6 sticky top-0 z-10 w-full h-16 transition-all duration-500 bg-gray-50 border-b border-slate-200 shadow-drop`}
+      className={`flex items-center justify-between px-6 sticky top-0 z-10 w-full h-16 transition-all duration-500 bg-white border-b border-slate-200`}
       style={{
-        backgroundImage:
-          "radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent 80%)",
+        boxShadow: "0 6px 16px rgba(0, 0, 0, 0.05)",
       }}
     >
       {/* Left side - Logo */}
@@ -192,7 +191,7 @@ export default function NavBar({ onLogout }) {
           trigger={["click"]}
           overlayClassName="w-80"
           dropdownRender={(menu) => (
-            <div className="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden animate-fadeIn">
+            <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
               <div className="px-4 py-3 bg-gray-50 border-gray-100 border-b">
                 <span className="font-bold">Thông báo</span>
               </div>
@@ -234,7 +233,7 @@ export default function NavBar({ onLogout }) {
           trigger={["click"]}
           overlayClassName="w-56"
           dropdownRender={(menu) => (
-            <div className="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden animate-fadeIn">
+            <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
               {menu}
             </div>
           )}
@@ -279,7 +278,7 @@ export default function NavBar({ onLogout }) {
           trigger={["click"]}
           overlayClassName="w-56"
           dropdownRender={(menu) => (
-            <div className="bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden animate-fadeIn">
+            <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
               <div className="px-4 py-3 flex items-center gap-3 border-b border-gray-100 bg-gray-50">
                 <Avatar
                   size="large"

@@ -138,7 +138,7 @@ const MainSellingPage = () => {
       >
         {/* Products */}
         <div className="h-full w-1/2">
-          <Card className="shadow-drop rounded-nice h-full">
+          <Card className="     h-full">
             <Flex vertical gap="large" className="w-full h-full">
               <SearchBar onSearch={setSearchQuery} />
               <CategorySelector
@@ -163,7 +163,7 @@ const MainSellingPage = () => {
             styles={{
               body: { padding: 0, height: "100%" },
             }}
-            className="shadow-drop rounded-nice h-full"
+            className="     h-full"
           >
             <div className="overflow-auto p-6" style={{ maxHeight: "calc(100% - 60px)" }}>
               {cart.length === 0 ? (

@@ -173,7 +173,7 @@ const Top10Products = () => {
           </div>
         </div>
       }
-      className="shadow-drop rounded-nice  transition-shadow w-full"
+      className="      transition-shadow w-full"
     >
       <div className="h-96">
         <Bar {...config} />

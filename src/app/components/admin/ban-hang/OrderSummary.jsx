@@ -10,7 +10,7 @@ const OrderSummary = ({ cart, totalAmount }) => {
   const finalTotal = totalAmount + tax - discount;
   
   return (
-    <Card className="shadow-drop rounded-nice">
+    <Card className="    ">
       <Space direction="vertical" style={{ width: '100%' }}>
         <Row justify="space-between" align="middle">
           <Col>

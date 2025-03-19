@@ -178,7 +178,7 @@ const SalesSummary = () => {
   };
 
   return (
-    <Card className="shadow-drop rounded-nice transition-shadow">
+    <Card className="     transition-shadow">
       <Row gutter={[16, 16]} className="w-full">
         <Col xs={24} md={12}>
           <Title level={4}>Doanh thu thuần</Title>

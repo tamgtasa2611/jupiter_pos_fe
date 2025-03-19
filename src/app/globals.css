@@ -3,24 +3,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --primary-color: #0086d0;
-  --primary-hover: #0099ed;
-  --primary-active: #006ca5;
+  --primary-color: #1a73e8;
+  --primary-hover: #2b7de9;
+  --primary-active: #1765cc;
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  --card-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  --modal-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --popup-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --button-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --button-primary-shadow: 0 8px 16px -4px rgba(26, 115, 232, 0.2);
+  --focus-ring: 0 0 0 2px rgba(26, 115, 232, 0.2);
 }
-
-/* @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
 
 html,
 body {
@@ -37,15 +32,228 @@ body {
   box-sizing: border-box;
 }
 
-.shadow-drop {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-}
+/* ===== COMPONENT STYLING ===== */
 
-.rounded-nice {
+/* Card styling */
+.ant-card {
+  box-shadow: var(--card-shadow) !important;
   border-radius: 16px !important;
+  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+  transition: transform 0.3s, box-shadow 0.3s !important;
 }
 
-/* Style for making the app background transparent during scanning */
+.ant-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Modal styling */
+.ant-modal-content {
+  box-shadow: var(--modal-shadow) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+/* Dropdown styling */
+.ant-dropdown-menu {
+  border-radius: 12px !important;
+  box-shadow: var(--popup-shadow) !important;
+  overflow: hidden;
+}
+
+/* Button enhancements */
+.ant-btn {
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+.ant-btn-primary {
+  box-shadow: var(--button-primary-shadow);
+}
+
+.ant-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -4px rgba(26, 115, 232, 0.25);
+}
+
+/* Form controls */
+.ant-input:focus,
+.ant-input-focused,
+.ant-select-focused .ant-select-selector {
+  box-shadow: var(--focus-ring) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* ===== GLASSMORPHISM UTILITIES ===== */
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-dark {
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-hover:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* ===== ANIMATION CLASSES ===== */
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ===== ELEVATION UTILITIES ===== */
+
+.elevation-1 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.elevation-2 {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+}
+
+.elevation-3 {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+.elevation-4 {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+}
+
+/* ===== GRADIENT BACKGROUNDS ===== */
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+/* ===== TYPOGRAPHY ENHANCEMENTS ===== */
+
+.text-gradient-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* ===== SPECIAL EFFECTS ===== */
+
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+}
+
+.border-gradient {
+  border: double 1px transparent;
+  background-image: linear-gradient(white, white), linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* ===== EXISTING UTILITY CLASSES ===== */
+
+.text-primary {
+  color: var(--primary-color);
+}
+
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+/* ===== SCANNER STYLES ===== */
+
 body.scanner-active {
   background: transparent !important;
 }

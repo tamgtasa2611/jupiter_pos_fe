@@ -85,14 +85,14 @@ export default function MobileNavBar({ onLogout }) {
         >
           <div
             className={`mb-1.5 p-2 rounded-full ${
-              isActive(item.key) ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-500"
+              isActive(item.key) ? "bg-primary text-white" : "bg-gray-100 text-gray-500"
             }`}
           >
             {item.icon}
           </div>
           <div
             className={`text-xs font-medium ${
-              isActive(item.key) ? "text-blue-600" : "text-gray-600"
+              isActive(item.key) ? "text-primary" : "text-gray-600"
             }`}
           >
             {item.label}
@@ -140,20 +140,19 @@ export default function MobileNavBar({ onLogout }) {
           if (item.special) {
             return (
               <Link
-              href={item.href}
-              key={item.key}
-              className="flex flex-col items-center relative -top-3"
+                href={item.href}
+                key={item.key}
+                className="flex flex-col items-center relative -top-3"
               >
-              <div
-                className="flex items-center justify-center w-12 h-12 rounded-full shadow-md"
-                style={{
-                  background: "var(--primary-color)",
-                  boxShadow: "0 4px 8px rgba(59, 130, 246, 0.3)",
-                }}
-              >
-                {item.icon}
-              </div>
-              <span className="text-xs font-medium text-gray-600 mt-1">{item.label}</span>
+                <div
+                  className="flex items-center justify-center w-12 h-12 rounded-full"
+                  style={{
+                    background: "var(--primary-color)",
+                  }}
+                >
+                  {item.icon}
+                </div>
+                <span className="text-xs font-medium text-gray-600 mt-1">{item.label}</span>
               </Link>
             );
           } else {
@@ -165,17 +164,17 @@ export default function MobileNavBar({ onLogout }) {
               >
                 <div
                   className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
-                    isActive(item.key) ? "bg-blue-50 text-blue-500" : "text-gray-500"
+                    isActive(item.key) ? "bg-sky-50 text-primary" : "text-gray-500"
                   }`}
                 >
                   {item.icon}
                   {isActive(item.key) && (
-                    <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-blue-500 rounded-full"></span>
+                    <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-primary rounded-full"></span>
                   )}
                 </div>
                 <span
                   className={`text-xs mt-1 font-medium ${
-                    isActive(item.key) ? "text-blue-600" : "text-gray-500"
+                    isActive(item.key) ? "text-primary" : "text-gray-500"
                   }`}
                 >
                   {item.label}
@@ -201,17 +200,17 @@ export default function MobileNavBar({ onLogout }) {
           <div className="flex flex-col items-center p-2" onClick={() => setVisible(!visible)}>
             <div
               className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
-                visible || isAnyMoreItemActive ? "bg-blue-50 text-blue-500" : "text-gray-500"
+                visible || isAnyMoreItemActive ? "bg-sky-50 text-primary" : "text-gray-500"
               }`}
             >
               <EllipsisOutlined style={{ fontSize: "20px" }} />
               {(visible || isAnyMoreItemActive) && (
-                <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-blue-500 rounded-full"></span>
+                <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-primary rounded-full"></span>
               )}
             </div>
             <span
               className={`text-xs mt-1 font-medium ${
-                visible || isAnyMoreItemActive ? "text-blue-600" : "text-gray-500"
+                visible || isAnyMoreItemActive ? "text-primary" : "text-gray-500"
               }`}
             >
               Xem thêm

@@ -234,9 +234,9 @@ const LoginForm = () => {
             maxWidth: "450px",
             borderRadius: "24px",
             background: "white",
-            border: "none",
+            boxShadow: "0 6px 16px 0 rgba(0, 0, 0, 0.07)",
           }}
-          className="transition-all duration-300 shadow-drop"
+          className="transition-all duration-300  "
         >
           <div className="text-center mb-8">
             <Title level={3} style={{ fontSize: "2rem", marginBottom: "8px", fontWeight: "700" }}>

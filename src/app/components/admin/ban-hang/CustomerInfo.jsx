@@ -23,7 +23,7 @@ const CustomerInfo = ({ customer, onSelectCustomer }) => {
   
   return (
     <>
-      <Card className="shadow-drop rounded-nice">
+      <Card className="    ">
         {customer ? (
           <Space align="start" style={{ width: '100%' }}>
             <Avatar size={48} icon={<UserOutlined />} />

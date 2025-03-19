@@ -404,7 +404,7 @@ const ProductPage = () => {
 
   return (
     <div className="min-h-screen">
-      <Card className="shadow-drop rounded-nice transition-shadow">
+      <Card className="     transition-shadow">
         <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 24 }}>
           <div className="">
             <Title level={4} style={{ margin: 0 }}>
