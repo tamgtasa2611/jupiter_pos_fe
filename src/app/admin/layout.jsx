@@ -49,7 +49,7 @@ export default function AdminLayout({ children }) {
   return (
     <Layout className="h-dvh">
       {!isMobile && <NavBar onLogout={handleLogout} />}
-      <Content className="bg-gradient-to-br from-sky-100 to-white overflow-y-auto px-0 pb-16 md:p-6 h-full">
+      <Content className="bg-gray-50/50 overflow-y-auto px-0 pb-16 md:p-6 h-full">
         {children}
       </Content>
       {isMobile && <MobileNavBar onLogout={handleLogout} />}

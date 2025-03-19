@@ -94,9 +94,7 @@ export default function NavBar({ onLogout }) {
 
   return (
     <div
-      className={`flex bg-white/80 backdrop-blur-xl items-center justify-between px-6 sticky top-0 z-10 w-full h-16 transition-all duration-500 ${
-        scrolled ? "shadow-[0_8px_30px_rgb(0,0,0,0.08)]" : "border-b border-gray-100"
-      } border-slate-200`}
+      className={`flex items-center justify-between px-6 sticky top-0 z-10 w-full h-16 transition-all duration-500 bg-gray-50 border-b border-slate-200 shadow-drop`}
       style={{
         backgroundImage:
           "radial-gradient(circle at top right, rgba(59, 130, 246, 0.05), transparent 80%)",

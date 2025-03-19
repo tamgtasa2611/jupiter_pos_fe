@@ -83,16 +83,18 @@ export default function MobileNavBar({ onLogout }) {
             setVisible(false);
           }}
         >
-          <div 
+          <div
             className={`mb-1.5 p-2 rounded-full ${
-              isActive(item.key)
-                ? "bg-blue-500 text-white"
-                : "bg-gray-100 text-gray-500"
+              isActive(item.key) ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-500"
             }`}
           >
             {item.icon}
           </div>
-          <div className={`text-xs font-medium ${isActive(item.key) ? "text-blue-600" : "text-gray-600"}`}>
+          <div
+            className={`text-xs font-medium ${
+              isActive(item.key) ? "text-blue-600" : "text-gray-600"
+            }`}
+          >
             {item.label}
           </div>
         </Link>
@@ -132,28 +134,25 @@ export default function MobileNavBar({ onLogout }) {
   const isAnyMoreItemActive = moreMenuItems.some((item) => isActive(item.key));
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-2">
-      <div 
-        className="flex items-center justify-around bg-white border-t border-gray-200 h-16 px-2 mx-2 mb-1 rounded-2xl shadow-md"
-        style={{
-          boxShadow: "0 -2px 10px rgba(0, 0, 0, 0.05)"
-        }}
-      >
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 ">
+      <div className="flex items-center justify-around bg-white border-t border-gray-200">
         {navItems.map((item) => {
           if (item.special) {
             return (
-              <Link href={item.href} key={item.key} className="flex flex-col items-center relative -top-3">
+              <Link
+                href={item.href}
+                key={item.key}
+                className="flex flex-col items-center relative -top-3"
+              >
                 <div
                   className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-md"
                   style={{
-                    boxShadow: "0 4px 8px rgba(59, 130, 246, 0.3)"
+                    boxShadow: "0 4px 8px rgba(59, 130, 246, 0.3)",
                   }}
                 >
                   {item.icon}
                 </div>
-                <span className="text-xs font-medium text-gray-600 mt-1">
-                  {item.label}
-                </span>
+                <span className="text-xs font-medium text-gray-600 mt-1">{item.label}</span>
               </Link>
             );
           } else {
@@ -165,9 +164,7 @@ export default function MobileNavBar({ onLogout }) {
               >
                 <div
                   className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
-                    isActive(item.key)
-                      ? "bg-blue-50 text-blue-500"
-                      : "text-gray-500"
+                    isActive(item.key) ? "bg-blue-50 text-blue-500" : "text-gray-500"
                   }`}
                 >
                   {item.icon}
@@ -175,9 +172,11 @@ export default function MobileNavBar({ onLogout }) {
                     <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-blue-500 rounded-full"></span>
                   )}
                 </div>
-                <span className={`text-xs mt-1 font-medium ${
-                  isActive(item.key) ? "text-blue-600" : "text-gray-500"
-                }`}>
+                <span
+                  className={`text-xs mt-1 font-medium ${
+                    isActive(item.key) ? "text-blue-600" : "text-gray-500"
+                  }`}
+                >
                   {item.label}
                 </span>
               </Link>
@@ -192,16 +191,13 @@ export default function MobileNavBar({ onLogout }) {
           open={visible}
           onOpenChange={(newOpen) => setVisible(newOpen)}
           overlayClassName="mobile-nav-popover"
-          overlayStyle={{ 
-            borderRadius: "12px", 
-            overflow: "hidden", 
+          overlayStyle={{
+            borderRadius: "12px",
+            overflow: "hidden",
             boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div
-            className="flex flex-col items-center p-2"
-            onClick={() => setVisible(!visible)}
-          >
+          <div className="flex flex-col items-center p-2" onClick={() => setVisible(!visible)}>
             <div
               className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
                 visible || isAnyMoreItemActive ? "bg-blue-50 text-blue-500" : "text-gray-500"
@@ -212,9 +208,11 @@ export default function MobileNavBar({ onLogout }) {
                 <span className="absolute -bottom-1 inset-x-1 h-0.5 bg-blue-500 rounded-full"></span>
               )}
             </div>
-            <span className={`text-xs mt-1 font-medium ${
-              visible || isAnyMoreItemActive ? "text-blue-600" : "text-gray-500"
-            }`}>
+            <span
+              className={`text-xs mt-1 font-medium ${
+                visible || isAnyMoreItemActive ? "text-blue-600" : "text-gray-500"
+              }`}
+            >
               Khác
             </span>
           </div>
