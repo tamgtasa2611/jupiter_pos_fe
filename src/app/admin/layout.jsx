@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState, useCallback } from "react";
 import { Layout, message } from "antd";
-import NavBar from "../components/admin/common/NavBar";
-import MobileNavBar from "../components/admin/common/MobileNavBar";
+import NavBar from "@components/admin/common/NavBar";
+import MobileNavBar from "@components/admin/common/MobileNavBar";
 import { useRouter } from "next/navigation";
-import { useIsMobile } from "../atoms/common";
+import { useIsMobile } from "@atoms/common";
 import { RecoilRoot } from "recoil";
 
 const { Content } = Layout;

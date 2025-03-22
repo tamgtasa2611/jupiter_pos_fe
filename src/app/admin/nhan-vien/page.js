@@ -1,5 +1,5 @@
 "use client";
-import EmployeePage from "@/app/components/admin/nhan-vien/EmployeePage";
+import EmployeePage from "@components/admin/nhan-vien/EmployeePage";
 import "@ant-design/v5-patch-for-react-19";
 import React from "react";
 

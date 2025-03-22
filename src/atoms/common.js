@@ -1,4 +1,4 @@
-import { atom, useRecoilValue } from "recoil";
+import { atom } from "recoil";
 import { useMediaQuery } from "react-responsive";
 
 // Define the atom for mobile detection state

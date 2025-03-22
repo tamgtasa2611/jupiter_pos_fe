@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Switch, Upload, Button, Divider } from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { useMobileStyles } from "../../../atoms/common";
+import { useMobileStyles } from "@atoms/common";
 
 const { Option } = Select;
 const { TextArea } = Input;
