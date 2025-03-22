@@ -521,7 +521,7 @@ const ProductPage = () => {
                 allowClear
               />
               <Button
-                style={{ width: "48px" }}
+                style={{ width: "48px", height: "40px" }}
                 icon={<ScanOutlined />}
                 onClick={handleScanCode}
               ></Button>

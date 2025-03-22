@@ -116,17 +116,20 @@ const OrderList = ({ orders, loading, hasMore, onLoadMore, onShowDetails }) => {
         overflow: "auto",
         padding: "0 4px",
       }}
-      renderItem={(item) => {
+      renderItem={(item, index) => {
         if (item.isDateHeader) {
           return (
-            <List.Item style={{ padding: "16px 0 8px" }} className="date-head">
-              <Divider orientation="center" plain style={{ margin: "0 0 4px" }}>
+            <List.Item
+              style={{ padding: "16px 0 8px" }}
+              className={`${index > 0 ? "mt-4" : ""} date-head `}
+            >
+              <div orientation="center" plain style={{ margin: "0 0 4px" }}>
                 <div className="text-gray-500 font-medium">
                   {item.formattedDate === dayjs().format("DD/MM/YYYY")
                     ? "Hôm nay"
                     : item.formattedDate}
                 </div>
-              </Divider>
+              </div>
             </List.Item>
           );
         }
