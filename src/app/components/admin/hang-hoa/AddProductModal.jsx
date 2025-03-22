@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, InputNumber, Select, Switch, Upload, Button, Divider } from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { useMobileStyles } from "../../../atoms/common";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -9,13 +10,17 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const mobileStyles = useMobileStyles();
 
   // Mobile style configurations
-  const mobileInputStyle = isMobile ? { height: "44px", fontSize: "16px" } : {};
-  const mobileSelectStyle = isMobile ? { height: "44px" } : {};
-  const mobileSwitchStyle = isMobile ? {} : {};
-  const mobileFormItemStyle = isMobile ? { marginBottom: "20px" } : {};
-  const mobileButtonStyle = isMobile ? { height: "44px", padding: "0 20px", fontSize: "16px" } : {};
+  const mobileInputStyle = isMobile ? { ...mobileStyles.input } : {};
+  const mobileSelectStyle = isMobile ? { ...mobileStyles.select } : {};
+  const mobileSwitchStyle = isMobile ? { ...mobileStyles.switch } : {};
+  const mobileFormItemStyle = isMobile ? { ...mobileStyles.formItem } : {};
+  const mobileButtonStyle = isMobile ? { ...mobileStyles.button } : {};
+
+  console.log(mobileStyles.input);
+  
 
   const handleSubmit = async () => {
     try {
@@ -238,7 +243,11 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
           label="Trạng thái"
           style={mobileFormItemStyle}
         >
-          <Switch checkedChildren="Đang bán" unCheckedChildren="Ngừng bán" style={mobileSwitchStyle} />
+          <Switch
+            checkedChildren="Đang bán"
+            unCheckedChildren="Ngừng bán"
+            style={mobileSwitchStyle}
+          />
         </Form.Item>
       </Form>
     </Modal>

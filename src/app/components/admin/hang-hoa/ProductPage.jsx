@@ -520,7 +520,11 @@ const ProductPage = () => {
                 onChange={(e) => updateSearchText(e.target.value)}
                 allowClear
               />
-              <Button style={{ width: "48px" }} icon={<ScanOutlined />} onClick={handleScanCode}></Button>
+              <Button
+                style={{ width: "48px" }}
+                icon={<ScanOutlined />}
+                onClick={handleScanCode}
+              ></Button>
             </Flex>
             <Divider style={{ marginBottom: 0 }} />
           </>

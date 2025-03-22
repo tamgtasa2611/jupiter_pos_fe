@@ -6,6 +6,7 @@ import NavBar from "../components/admin/common/NavBar";
 import MobileNavBar from "../components/admin/common/MobileNavBar";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "../atoms/common";
+import { RecoilRoot } from "recoil";
 
 const { Content } = Layout;
 
@@ -47,12 +48,14 @@ export default function AdminLayout({ children }) {
   }, [router, message]);
 
   return (
-    <Layout className="h-dvh">
-      {!isMobile && <NavBar onLogout={handleLogout} />}
-      <Content className="bg-gray-50/50 overflow-y-auto px-0 pb-16 md:p-6 h-full">
-        {children}
-      </Content>
-      {isMobile && <MobileNavBar onLogout={handleLogout} />}
-    </Layout>
+    <RecoilRoot>
+      <Layout className="h-dvh">
+        {!isMobile && <NavBar onLogout={handleLogout} />}
+        <Content className="bg-gray-50/50 overflow-y-auto px-0 pb-16 md:p-6 h-full">
+          {children}
+        </Content>
+        {isMobile && <MobileNavBar onLogout={handleLogout} />}
+      </Layout>
+    </RecoilRoot>
   );
 }

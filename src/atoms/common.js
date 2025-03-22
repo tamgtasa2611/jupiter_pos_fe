@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, useRecoilValue } from "recoil";
 import { useMediaQuery } from "react-responsive";
 
 // Define the atom for mobile detection state
@@ -12,4 +12,16 @@ export const useIsMobile = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
 
   return isMobile;
+};
+
+export const useMobileStyles = () => {
+  const defaultStyles = {
+    input: { height: "40px", fontSize: "16px" },
+    select: { height: "40px" },
+    switch: {},
+    formItem: { marginBottom: "16px" },
+    button: { height: "40px", padding: "0 16px", fontSize: "16px" },
+  };
+
+  return defaultStyles;
 };
