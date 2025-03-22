@@ -39,12 +39,16 @@ const OrderList = ({ orders, loading, hasMore, onLoadMore, onShowDetails }) => {
     const result = [];
 
     sortedDates.forEach((date) => {
+      const ordersForDate = ordersByDate[date];
+      const orderCount = ordersForDate.length;
+
       // Add date header
       result.push({
         id: `date-header-${date}`,
         isDateHeader: true,
         date: date,
         formattedDate: dayjs(date).format("DD/MM/YYYY"),
+        orderCount: orderCount,
       });
 
       // Add all orders for this date
@@ -121,13 +125,21 @@ const OrderList = ({ orders, loading, hasMore, onLoadMore, onShowDetails }) => {
           return (
             <List.Item
               style={{ padding: "16px 0 8px" }}
-              className={`${index > 0 ? "mt-4" : ""} date-head `}
+              className={`${index > 0 ? "mt-4" : ""} date-head`}
             >
-              <div orientation="center" plain style={{ margin: "0 0 4px" }}>
-                <div className="text-gray-500 font-medium">
-                  {item.formattedDate === dayjs().format("DD/MM/YYYY")
-                    ? "Hôm nay"
-                    : item.formattedDate}
+              <div style={{ margin: "0 0 4px" }} className="w-full">
+                <div className="text-gray-500 font-medium w-full">
+                  {item.formattedDate === dayjs().format("DD/MM/YYYY") ? (
+                    <Flex justify="space-between" align="center" className="w-full">
+                      <div>Hôm nay</div>
+                      <div>{item.orderCount} đơn hàng</div>
+                    </Flex>
+                  ) : (
+                    <Flex justify="space-between" align="center" className="w-full">
+                      <div> {item.formattedDate}</div>
+                      <div>{item.orderCount} đơn hàng</div>
+                    </Flex>
+                  )}
                 </div>
               </div>
             </List.Item>
