@@ -14,6 +14,7 @@ import {
   Space,
 } from "antd";
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
+import { useMobileStyles } from "@atoms/common";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -22,6 +23,14 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMo
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const mobileStyles = useMobileStyles();
+
+  // Mobile style configurations
+  const mobileInputStyle = { ...mobileStyles.input };
+  const mobileSelectStyle = { ...mobileStyles.select };
+  const mobileSwitchStyle = { ...mobileStyles.switch };
+  const mobileFormItemStyle = { ...mobileStyles.formItem };
+  const mobileButtonStyle = { ...mobileStyles.button };
 
   useEffect(() => {
     if (visible && product) {

@@ -3,11 +3,21 @@
 import React from "react";
 import { Modal, Typography, Button, Space, Alert } from "antd";
 import { ExclamationCircleOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useMobileStyles } from "@atoms/common";
 
 const { Text, Title } = Typography;
 
 const DeleteProductModal = ({ visible, onCancel, onDelete, product }) => {
   if (!product) return null;
+
+  const mobileStyles = useMobileStyles();
+
+  // Mobile style configurations
+  const mobileInputStyle = { ...mobileStyles.input };
+  const mobileSelectStyle = { ...mobileStyles.select };
+  const mobileSwitchStyle = { ...mobileStyles.switch };
+  const mobileFormItemStyle = { ...mobileStyles.formItem };
+  const mobileButtonStyle = { ...mobileStyles.button };
 
   return (
     <Modal
@@ -56,12 +66,7 @@ const DeleteProductModal = ({ visible, onCancel, onDelete, product }) => {
 
         <div className="flex justify-end gap-2">
           <Button onClick={onCancel}>Hủy</Button>
-          <Button
-            danger
-            type="primary"
-            icon={<DeleteOutlined />}
-            onClick={onDelete}
-          >
+          <Button danger type="primary" icon={<DeleteOutlined />} onClick={onDelete}>
             Xác nhận xóa
           </Button>
         </div>

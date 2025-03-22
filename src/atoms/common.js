@@ -23,5 +23,7 @@ export const useMobileStyles = () => {
     button: { height: "40px", padding: "0 16px", fontSize: "16px" },
   };
 
-  return defaultStyles;
+  const isMobile = useIsMobile();
+
+  return isMobile ? defaultStyles : {};
 };

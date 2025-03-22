@@ -13,14 +13,11 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
   const mobileStyles = useMobileStyles();
 
   // Mobile style configurations
-  const mobileInputStyle = isMobile ? { ...mobileStyles.input } : {};
-  const mobileSelectStyle = isMobile ? { ...mobileStyles.select } : {};
-  const mobileSwitchStyle = isMobile ? { ...mobileStyles.switch } : {};
-  const mobileFormItemStyle = isMobile ? { ...mobileStyles.formItem } : {};
-  const mobileButtonStyle = isMobile ? { ...mobileStyles.button } : {};
-
-  console.log(mobileStyles.input);
-  
+  const mobileInputStyle = { ...mobileStyles.input };
+  const mobileSelectStyle = { ...mobileStyles.select };
+  const mobileSwitchStyle = { ...mobileStyles.switch };
+  const mobileFormItemStyle = { ...mobileStyles.formItem };
+  const mobileButtonStyle = { ...mobileStyles.button };
 
   const handleSubmit = async () => {
     try {
