@@ -5,7 +5,7 @@
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@atoms/*": ["src/atoms/*"],
-      // "@utils/*": ["src/utils/*"],
+      "@utils/*": ["src/utils/*"],
       "@config/*": ["src/config/*"]
       // "@styles/*": ["src/styles/*"]
     }
