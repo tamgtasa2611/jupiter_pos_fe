@@ -12,7 +12,13 @@ const MobileFilterDrawer = ({
   onDateChange,
 }) => {
   return (
-    <Drawer title="Bộ lọc" placement="right" open={open} onClose={onClose} width={300}>
+    <Drawer
+      title="Bộ lọc"
+      placement="right"
+      open={open}
+      onClose={onClose}
+      width={300}
+    >
       <Flex vertical gap={12}>
         <Select
           placeholder="Trạng thái"

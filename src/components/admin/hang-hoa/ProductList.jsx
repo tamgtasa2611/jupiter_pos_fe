@@ -1,6 +1,11 @@
 import React from "react";
 import { List, Flex, Dropdown, Button, Empty } from "antd";
-import { EditOutlined, DeleteOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  EyeOutlined,
+  MoreOutlined,
+} from "@ant-design/icons";
 
 const ProductList = ({
   products,
@@ -84,8 +89,8 @@ const ProductList = ({
                       item.stock < 10
                         ? "text-red-500"
                         : item.stock < 30
-                        ? "text-orange-500"
-                        : "text-green-600"
+                          ? "text-orange-500"
+                          : "text-green-600"
                     }`}
                   >
                     Tồn: {item.stock} {item.unit}
@@ -98,7 +103,10 @@ const ProductList = ({
       )}
       locale={{
         emptyText: (
-          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Không tìm thấy sản phẩm nào" />
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description="Không tìm thấy sản phẩm nào"
+          />
         ),
       }}
     />

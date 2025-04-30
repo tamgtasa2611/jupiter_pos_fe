@@ -1,7 +1,15 @@
 "use client";
 
 import React from "react";
-import { Modal, Descriptions, Tag, Image, Button, Typography, Divider } from "antd";
+import {
+  Modal,
+  Descriptions,
+  Tag,
+  Image,
+  Button,
+  Typography,
+  Divider,
+} from "antd";
 import { EditOutlined, BarcodeOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
@@ -10,7 +18,7 @@ const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
   if (!product) return null;
 
   console.log(product);
-  
+
   return (
     <Modal
       title={
@@ -51,14 +59,18 @@ const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
             <Descriptions.Item label="Tên sản phẩm">
               <strong>{product.name}</strong>
             </Descriptions.Item>
-            <Descriptions.Item label="Danh mục">{product.categoryName}</Descriptions.Item>
+            <Descriptions.Item label="Danh mục">
+              {product.categoryName}
+            </Descriptions.Item>
             <Descriptions.Item label="Giá bán">
               <span className="text-blue-600 font-semibold">
                 {new Intl.NumberFormat("vi-VN").format(product.price)}đ
               </span>
             </Descriptions.Item>
             <Descriptions.Item label="Giá nhập">
-              <span>{new Intl.NumberFormat("vi-VN").format(product.costPrice)}đ</span>
+              <span>
+                {new Intl.NumberFormat("vi-VN").format(product.costPrice)}đ
+              </span>
             </Descriptions.Item>
             <Descriptions.Item label="Tồn kho">
               <span
@@ -66,8 +78,8 @@ const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
                   product.stock < 10
                     ? "text-red-500"
                     : product.stock < 30
-                    ? "text-orange-500"
-                    : "text-green-600"
+                      ? "text-orange-500"
+                      : "text-green-600"
                 }`}
               >
                 {product.stock} {product.unit}

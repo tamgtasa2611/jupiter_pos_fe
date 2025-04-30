@@ -1,6 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Menu, Button, Space, Typography, Avatar, Dropdown, Badge, Tooltip } from "antd";
+import {
+  Menu,
+  Button,
+  Space,
+  Typography,
+  Avatar,
+  Dropdown,
+  Badge,
+  Tooltip,
+} from "antd";
 import {
   UserOutlined,
   SettingOutlined,
@@ -224,9 +233,17 @@ export default function NavBar({ onLogout }) {
         <Dropdown
           menu={{
             items: [
-              { key: "1", label: "Cài đặt hệ thống", icon: <SettingOutlined /> },
+              {
+                key: "1",
+                label: "Cài đặt hệ thống",
+                icon: <SettingOutlined />,
+              },
               { key: "2", label: "Cài đặt người dùng", icon: <UserOutlined /> },
-              { key: "3", label: "Cài đặt cửa hàng", icon: <BarcodeOutlined /> },
+              {
+                key: "3",
+                label: "Cài đặt cửa hàng",
+                icon: <BarcodeOutlined />,
+              },
             ],
           }}
           placement="bottomRight"
@@ -303,7 +320,9 @@ export default function NavBar({ onLogout }) {
               className="border-2 border-white shadow-sm"
               size={38}
               style={{
-                boxShadow: scrolled ? "0 0 0 2px rgba(59, 130, 246, 0.3)" : "none",
+                boxShadow: scrolled
+                  ? "0 0 0 2px rgba(59, 130, 246, 0.3)"
+                  : "none",
                 transition: "all 0.3s ease",
               }}
             />

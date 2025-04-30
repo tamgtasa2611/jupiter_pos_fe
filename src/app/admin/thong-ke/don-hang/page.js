@@ -2,6 +2,6 @@
 
 import MainStatisticsPage from "@components/admin/thong-ke/MainStatisticsPage";
 
-export default function SalesReportPage() {
+export default function Page() {
   return <MainStatisticsPage />;
 }

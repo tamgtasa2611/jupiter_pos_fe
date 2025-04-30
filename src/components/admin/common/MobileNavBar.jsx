@@ -85,7 +85,9 @@ export default function MobileNavBar({ onLogout }) {
         >
           <div
             className={`mb-1.5 p-2 rounded-full ${
-              isActive(item.key) ? "bg-primary text-white" : "bg-gray-100 text-gray-500"
+              isActive(item.key)
+                ? "bg-primary text-white"
+                : "bg-gray-100 text-gray-500"
             }`}
           >
             {item.icon}
@@ -117,7 +119,9 @@ export default function MobileNavBar({ onLogout }) {
     },
     {
       key: "/admin/ban-hang",
-      icon: <ShoppingCartOutlined style={{ fontSize: "20px", color: "white" }} />,
+      icon: (
+        <ShoppingCartOutlined style={{ fontSize: "20px", color: "white" }} />
+      ),
       label: "Bán hàng",
       href: "/admin/ban-hang",
       special: true,
@@ -152,7 +156,9 @@ export default function MobileNavBar({ onLogout }) {
                 >
                   {item.icon}
                 </div>
-                <span className="text-xs font-medium text-gray-600 mt-1">{item.label}</span>
+                <span className="text-xs font-medium text-gray-600 mt-1">
+                  {item.label}
+                </span>
               </Link>
             );
           } else {
@@ -164,7 +170,9 @@ export default function MobileNavBar({ onLogout }) {
               >
                 <div
                   className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
-                    isActive(item.key) ? "bg-sky-50 text-primary" : "text-gray-500"
+                    isActive(item.key)
+                      ? "bg-sky-50 text-primary"
+                      : "text-gray-500"
                   }`}
                 >
                   {item.icon}
@@ -197,10 +205,15 @@ export default function MobileNavBar({ onLogout }) {
             boxShadow: "0 10px 25px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <div className="flex flex-col items-center p-2" onClick={() => setVisible(!visible)}>
+          <div
+            className="flex flex-col items-center p-2"
+            onClick={() => setVisible(!visible)}
+          >
             <div
               className={`relative flex items-center justify-center h-8 w-8 rounded-full transition-colors ${
-                visible || isAnyMoreItemActive ? "bg-sky-50 text-primary" : "text-gray-500"
+                visible || isAnyMoreItemActive
+                  ? "bg-sky-50 text-primary"
+                  : "text-gray-500"
               }`}
             >
               <EllipsisOutlined style={{ fontSize: "20px" }} />
@@ -210,7 +223,9 @@ export default function MobileNavBar({ onLogout }) {
             </div>
             <span
               className={`text-xs mt-1 font-medium ${
-                visible || isAnyMoreItemActive ? "text-primary" : "text-gray-500"
+                visible || isAnyMoreItemActive
+                  ? "text-primary"
+                  : "text-gray-500"
               }`}
             >
               Xem thêm

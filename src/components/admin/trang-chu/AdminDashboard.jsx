@@ -9,7 +9,11 @@ export default function AdminDashboard() {
     <Flex gap="large" vertical>
       <TodaySummary />
       <SalesSummary />
-      <Flex gap="large" justify="space-between" className="flex flex-col md:flex-row">
+      <Flex
+        gap="large"
+        justify="space-between"
+        className="flex flex-col md:flex-row"
+      >
         <Top10Products />
         <Top10Customers />
       </Flex>

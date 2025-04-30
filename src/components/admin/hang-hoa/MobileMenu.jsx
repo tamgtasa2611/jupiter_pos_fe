@@ -12,10 +12,18 @@ import {
 const MobileMenu = ({ setAddModalVisible, setImportModalVisible }) => {
   return (
     <Menu>
-      <Menu.Item key="add" icon={<PlusOutlined />} onClick={() => setAddModalVisible(true)}>
+      <Menu.Item
+        key="add"
+        icon={<PlusOutlined />}
+        onClick={() => setAddModalVisible(true)}
+      >
         Thêm sản phẩm
       </Menu.Item>
-      <Menu.Item key="import" icon={<ImportOutlined />} onClick={() => setImportModalVisible(true)}>
+      <Menu.Item
+        key="import"
+        icon={<ImportOutlined />}
+        onClick={() => setImportModalVisible(true)}
+      >
         Nhập từ Excel
       </Menu.Item>
       <Menu.Divider />

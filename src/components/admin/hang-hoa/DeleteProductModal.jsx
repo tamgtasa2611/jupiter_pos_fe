@@ -62,11 +62,18 @@ const DeleteProductModal = ({ visible, onCancel, onDelete, product }) => {
           </div>
         </div>
 
-        <p className="text-center mb-4">Bạn có chắc chắn muốn xóa sản phẩm này?</p>
+        <p className="text-center mb-4">
+          Bạn có chắc chắn muốn xóa sản phẩm này?
+        </p>
 
         <div className="flex justify-end gap-2">
           <Button onClick={onCancel}>Hủy</Button>
-          <Button danger type="primary" icon={<DeleteOutlined />} onClick={onDelete}>
+          <Button
+            danger
+            type="primary"
+            icon={<DeleteOutlined />}
+            onClick={onDelete}
+          >
             Xác nhận xóa
           </Button>
         </div>

@@ -40,7 +40,14 @@ const MainStatisticsPage = () => {
         <StatisticMenu />
       </Sider>
       <Layout>
-        <Content style={{ margin: "0 16px", padding: 24, background: "#fff", minHeight: 360 }}>
+        <Content
+          style={{
+            margin: "0 16px",
+            padding: 24,
+            background: "#fff",
+            minHeight: 360,
+          }}
+        >
           {content}
         </Content>
       </Layout>

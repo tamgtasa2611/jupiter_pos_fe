@@ -12,7 +12,12 @@ const AddCustomerModal = ({ visible, onCancel, onAdd }) => {
   };
 
   return (
-    <Modal title="Thêm khách hàng" visible={visible} onOk={handleOk} onCancel={onCancel}>
+    <Modal
+      title="Thêm khách hàng"
+      visible={visible}
+      onOk={handleOk}
+      onCancel={onCancel}
+    >
       <Form form={form} layout="vertical">
         <Form.Item
           name="name"

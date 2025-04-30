@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Card, Space, Typography, Select } from "antd";
-import { ShoppingOutlined, DollarOutlined, NumberOutlined } from "@ant-design/icons";
+import {
+  ShoppingOutlined,
+  DollarOutlined,
+  NumberOutlined,
+} from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
 
 const { Title } = Typography;
@@ -115,7 +119,7 @@ const Top10Products = () => {
       style: {
         fill: "#000",
         textAlign: "left",
-        dx: 5
+        dx: 5,
       },
     },
     interactions: [{ type: "element-active" }],

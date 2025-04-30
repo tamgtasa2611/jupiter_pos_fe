@@ -10,12 +10,22 @@ const ProductGrid = ({ products, onProductClick }) => {
         <Col xs={12} sm={8} md={6} lg={6} xl={4} key={product.id}>
           <Card
             hoverable
-            cover={<img alt={product.name} src={product.image} style={{ objectFit: "cover" }} />}
+            cover={
+              <img
+                alt={product.name}
+                src={product.image}
+                style={{ objectFit: "cover" }}
+              />
+            }
             onClick={() => onProductClick(product)}
             styles={{ body: { padding: 0 } }}
             style={{ padding: "8px" }}
           >
-            <Space direction="vertical" size={0} style={{ width: "100%", padding: "0" }}>
+            <Space
+              direction="vertical"
+              size={0}
+              style={{ width: "100%", padding: "0" }}
+            >
               <Text ellipsis>{product.name}</Text>
               <Text type="danger">{product.price.toLocaleString()} đ</Text>
             </Space>

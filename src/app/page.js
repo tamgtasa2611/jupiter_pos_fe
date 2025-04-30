@@ -17,7 +17,8 @@ export default function CustomerLandingPage() {
     setAppReady(true);
 
     // Check if running in a Capacitor/Cordova context
-    const isNative = typeof window !== "undefined" && (window.Capacitor || window.cordova);
+    const isNative =
+      typeof window !== "undefined" && (window.Capacitor || window.cordova);
     console.log("Running in native context:", isNative);
 
     // Log if localStorage is accessible

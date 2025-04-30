@@ -1,6 +1,10 @@
 import React from "react";
 import { Calendar, Badge, Select, Row, Col, Typography, Card } from "antd";
-import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 
 const { Text } = Typography;
@@ -17,7 +21,9 @@ const AttendanceCalendar = ({
     if (!selectedEmployee || !attendanceData[selectedEmployee.id]) return null;
 
     const dateStr = date.format("YYYY-MM-DD");
-    const attendance = attendanceData[selectedEmployee.id].find((a) => a.date === dateStr);
+    const attendance = attendanceData[selectedEmployee.id].find(
+      (a) => a.date === dateStr,
+    );
 
     if (!attendance) return null;
 
@@ -40,7 +46,10 @@ const AttendanceCalendar = ({
     }
 
     return (
-      <div title={title} className="flex ant-flex-align-center ant-flex-justify-center">
+      <div
+        title={title}
+        className="flex ant-flex-align-center ant-flex-justify-center"
+      >
         <Badge color={color} count={icon} />
       </div>
     );
@@ -66,16 +75,24 @@ const AttendanceCalendar = ({
           </Select>
         </Col>
         <Col xs={24} md={16}>
-          <Text type="secondary">* Xanh: Có mặt đúng giờ | Cam: Đi muộn | Đỏ: Vắng mặt</Text>
+          <Text type="secondary">
+            * Xanh: Có mặt đúng giờ | Cam: Đi muộn | Đỏ: Vắng mặt
+          </Text>
         </Col>
       </Row>
 
       {selectedEmployee && (
-        <Calendar dateCellRender={dateCellRender} fullscreen={true} mode="month" />
+        <Calendar
+          dateCellRender={dateCellRender}
+          fullscreen={true}
+          mode="month"
+        />
       )}
       {!selectedEmployee && (
         <div style={{ textAlign: "center", padding: "40px 0" }}>
-          <Text type="secondary">Vui lòng chọn nhân viên để xem bảng chấm công</Text>
+          <Text type="secondary">
+            Vui lòng chọn nhân viên để xem bảng chấm công
+          </Text>
         </div>
       )}
     </Card>

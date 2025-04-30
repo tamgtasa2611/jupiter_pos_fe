@@ -43,7 +43,10 @@ const LoginForm = () => {
   return (
     <>
       <div className="text-center mb-8">
-        <Title level={3} style={{ fontSize: "2rem", marginBottom: "8px", fontWeight: "700" }}>
+        <Title
+          level={3}
+          style={{ fontSize: "2rem", marginBottom: "8px", fontWeight: "700" }}
+        >
           Xin chào!
         </Title>
         <Text type="secondary" style={{ fontSize: "1.1rem" }}>
@@ -81,13 +84,19 @@ const LoginForm = () => {
               height: "56px",
               padding: "8px 20px",
               fontSize: "1rem",
-              boxShadow: focused === "email" ? "0 0 0 2px rgba(59, 130, 246, 0.2)" : "none",
+              boxShadow:
+                focused === "email"
+                  ? "0 0 0 2px rgba(59, 130, 246, 0.2)"
+                  : "none",
               transition: "all 0.3s ease",
             }}
           />
         </Form.Item>
 
-        <Form.Item name="password" rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}>
+        <Form.Item
+          name="password"
+          rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+        >
           <Input.Password
             prefix={
               <LockOutlined
@@ -104,7 +113,10 @@ const LoginForm = () => {
               height: "56px",
               padding: "8px 20px",
               fontSize: "1rem",
-              boxShadow: focused === "password" ? "0 0 0 2px rgba(59, 130, 246, 0.2)" : "none",
+              boxShadow:
+                focused === "password"
+                  ? "0 0 0 2px rgba(59, 130, 246, 0.2)"
+                  : "none",
               transition: "all 0.3s ease",
             }}
           />
@@ -113,7 +125,9 @@ const LoginForm = () => {
         <Form.Item>
           <div className="flex justify-between items-center">
             <Form.Item name="remember" valuePropName="checked" noStyle>
-              <Checkbox className="text-gray-600 font-medium">Ghi nhớ đăng nhập</Checkbox>
+              <Checkbox className="text-gray-600 font-medium">
+                Ghi nhớ đăng nhập
+              </Checkbox>
             </Form.Item>
             <Link
               href="/quen-mat-khau"

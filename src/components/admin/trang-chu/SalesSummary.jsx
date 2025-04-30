@@ -48,7 +48,15 @@ const SalesSummary = () => {
     } else if (timeRange === "week") {
       // Data for last 7 days
       if (viewType === "day") {
-        const days = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
+        const days = [
+          "Thứ 2",
+          "Thứ 3",
+          "Thứ 4",
+          "Thứ 5",
+          "Thứ 6",
+          "Thứ 7",
+          "Chủ nhật",
+        ];
         for (let i = 0; i < 7; i++) {
           data.push({
             time: days[i],
@@ -109,7 +117,10 @@ const SalesSummary = () => {
       }
     }
 
-    data = data.map((item) => ({ ...item, revenueFormatted: (item.revenue / 1000000).toFixed(2) + " tr" }));
+    data = data.map((item) => ({
+      ...item,
+      revenueFormatted: (item.revenue / 1000000).toFixed(2) + " tr",
+    }));
 
     setChartData(data);
   }, [timeRange, viewType]);
@@ -142,7 +153,7 @@ const SalesSummary = () => {
     },
     yAxis: {
       label: {
-        text: "revenueFormatted"
+        text: "revenueFormatted",
       },
     },
     meta: {
@@ -197,7 +208,10 @@ const SalesSummary = () => {
               onChange={(value) => {
                 setTimeRange(value);
                 // Reset view type if necessary
-                if ((value === "today" || value === "yesterday") && viewType !== "hour") {
+                if (
+                  (value === "today" || value === "yesterday") &&
+                  viewType !== "hour"
+                ) {
                   setViewType("hour");
                 }
               }}
@@ -209,7 +223,11 @@ const SalesSummary = () => {
               <Option value="lastMonth">Tháng trước</Option>
             </Select>
 
-            <Segmented options={getViewOptions()} value={viewType} onChange={setViewType} />
+            <Segmented
+              options={getViewOptions()}
+              value={viewType}
+              onChange={setViewType}
+            />
           </div>
         </Col>
 

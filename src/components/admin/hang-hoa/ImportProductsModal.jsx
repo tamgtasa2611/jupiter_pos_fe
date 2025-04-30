@@ -47,7 +47,9 @@ const ImportProductsModal = ({ visible, onCancel, onImport }) => {
             key: index,
             barcode: `SP${String(100000 + index).substring(1)}`,
             name: `Sản phẩm nhập từ Excel ${index + 1}`,
-            category: ["beverages", "food", "snacks"][Math.floor(Math.random() * 3)],
+            category: ["beverages", "food", "snacks"][
+              Math.floor(Math.random() * 3)
+            ],
             price: Math.floor(Math.random() * 500000) + 10000,
             costPrice: Math.floor(Math.random() * 300000) + 5000,
             stock: Math.floor(Math.random() * 100) + 10,
@@ -58,7 +60,11 @@ const ImportProductsModal = ({ visible, onCancel, onImport }) => {
           index > 2
             ? [
                 { row: 7, field: "barcode", message: "Mã sản phẩm đã tồn tại" },
-                { row: 12, field: "price", message: "Giá bán không thể nhỏ hơn giá nhập" },
+                {
+                  row: 12,
+                  field: "price",
+                  message: "Giá bán không thể nhỏ hơn giá nhập",
+                },
               ]
             : [];
 
@@ -130,12 +136,18 @@ const ImportProductsModal = ({ visible, onCancel, onImport }) => {
             <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
-            <p className="ant-upload-text">Kéo thả file hoặc click để tải lên</p>
+            <p className="ant-upload-text">
+              Kéo thả file hoặc click để tải lên
+            </p>
             <p className="ant-upload-hint">Hỗ trợ định dạng .xlsx, .xls</p>
           </Dragger>
 
           <div className="flex justify-center mt-4">
-            <Button type="link" icon={<DownloadOutlined />} onClick={handleDownloadTemplate}>
+            <Button
+              type="link"
+              icon={<DownloadOutlined />}
+              onClick={handleDownloadTemplate}
+            >
               Tải xuống file mẫu
             </Button>
           </div>
@@ -201,13 +213,15 @@ const ImportProductsModal = ({ visible, onCancel, onImport }) => {
                 title: "Giá bán",
                 dataIndex: "price",
                 key: "price",
-                render: (price) => new Intl.NumberFormat("vi-VN").format(price) + "đ",
+                render: (price) =>
+                  new Intl.NumberFormat("vi-VN").format(price) + "đ",
               },
               {
                 title: "Giá nhập",
                 dataIndex: "costPrice",
                 key: "costPrice",
-                render: (price) => new Intl.NumberFormat("vi-VN").format(price) + "đ",
+                render: (price) =>
+                  new Intl.NumberFormat("vi-VN").format(price) + "đ",
               },
               {
                 title: "Tồn kho",
@@ -220,7 +234,8 @@ const ImportProductsModal = ({ visible, onCancel, onImport }) => {
 
           <div className="flex items-center mb-2">
             <Text>
-              Hiển thị 5 trên tổng số {previewData.length + Math.floor(Math.random() * 20)} sản phẩm
+              Hiển thị 5 trên tổng số{" "}
+              {previewData.length + Math.floor(Math.random() * 20)} sản phẩm
             </Text>
             <Tooltip title="Chỉ hiển thị 5 dòng đầu tiên để xem trước">
               <QuestionCircleOutlined className="ml-2 text-gray-400" />

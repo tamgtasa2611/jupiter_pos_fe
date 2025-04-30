@@ -1,12 +1,27 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, Divider, Typography, Tabs, message, Modal, Table, Tag, Button, Form } from "antd";
+import {
+  Card,
+  Divider,
+  Typography,
+  Tabs,
+  message,
+  Modal,
+  Table,
+  Tag,
+  Button,
+  Form,
+} from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import EmployeeList from "./EmployeeList";
 import EmployeeSearch from "./EmployeeSearch";
 import EmployeeSales from "./EmployeeSales";
-import { AddEmployeeModal, EditEmployeeModal, DeleteEmployeeModal } from "./EmployeeModals";
+import {
+  AddEmployeeModal,
+  EditEmployeeModal,
+  DeleteEmployeeModal,
+} from "./EmployeeModals";
 import AttendanceCalendar from "./AttendanceCalendar";
 
 const { Title } = Typography;
@@ -142,7 +157,7 @@ const EmployeePage = () => {
         employee.name.toLowerCase().includes(searchText.toLowerCase()) ||
         employee.code.toLowerCase().includes(searchText.toLowerCase()) ||
         employee.position.toLowerCase().includes(searchText.toLowerCase()) ||
-        employee.department.toLowerCase().includes(searchText.toLowerCase())
+        employee.department.toLowerCase().includes(searchText.toLowerCase()),
     );
     setFilteredEmployees(filtered);
   }, [searchText, employees]);
@@ -168,7 +183,7 @@ const EmployeePage = () => {
             ...values,
             joinDate: values.joinDate.format("YYYY-MM-DD"),
           }
-        : employee
+        : employee,
     );
     setEmployees(updatedEmployees);
     setEditModalVisible(false);
@@ -176,7 +191,9 @@ const EmployeePage = () => {
   };
 
   const handleDeleteEmployee = () => {
-    const updatedEmployees = employees.filter((employee) => employee.id !== selectedEmployee.id);
+    const updatedEmployees = employees.filter(
+      (employee) => employee.id !== selectedEmployee.id,
+    );
     setEmployees(updatedEmployees);
     setDeleteModalVisible(false);
     message.success("Xóa nhân viên thành công!");

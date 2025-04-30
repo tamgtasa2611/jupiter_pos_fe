@@ -6,7 +6,7 @@ import LoginPage from "@components/customer/login/LoginPage";
 
 const { Content } = Layout;
 
-export default function Login() {
+export default function Page() {
   return (
     <Layout className="h-screen">
       <Content>

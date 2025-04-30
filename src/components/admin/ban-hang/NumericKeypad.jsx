@@ -4,7 +4,13 @@ import { Modal, Button, Input, Row, Col, Typography, Space } from "antd";
 
 const { Title } = Typography;
 
-const NumericKeypad = ({ visible, onCancel, onConfirm, title, initialValue = "" }) => {
+const NumericKeypad = ({
+  visible,
+  onCancel,
+  onConfirm,
+  title,
+  initialValue = "",
+}) => {
   const [value, setValue] = useState(initialValue);
 
   const handleButtonClick = (digit) => {
@@ -24,7 +30,20 @@ const NumericKeypad = ({ visible, onCancel, onConfirm, title, initialValue = "" 
     setValue("");
   };
 
-  const keypadButtons = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "00", "."];
+  const keypadButtons = [
+    "7",
+    "8",
+    "9",
+    "4",
+    "5",
+    "6",
+    "1",
+    "2",
+    "3",
+    "0",
+    "00",
+    ".",
+  ];
 
   return (
     <Modal
@@ -35,7 +54,7 @@ const NumericKeypad = ({ visible, onCancel, onConfirm, title, initialValue = "" 
       width={400}
       centered
       maskClosable={false}
-    //   closeIcon={<CloseOutlined />}
+      //   closeIcon={<CloseOutlined />}
     >
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <Input
@@ -86,7 +105,7 @@ const NumericKeypad = ({ visible, onCancel, onConfirm, title, initialValue = "" 
               block
               style={{ height: "64px", fontSize: "20px" }}
               onClick={handleBackspace}
-            //   icon={<BackspaceOutlined />}
+              //   icon={<BackspaceOutlined />}
             />
           </Col>
           <Col span={8}>
@@ -97,7 +116,7 @@ const NumericKeypad = ({ visible, onCancel, onConfirm, title, initialValue = "" 
               style={{ height: "64px", fontSize: "20px" }}
               onClick={handleConfirm}
               disabled={!value}
-            //   icon={<CheckOutlined />}
+              //   icon={<CheckOutlined />}
             >
               OK
             </Button>

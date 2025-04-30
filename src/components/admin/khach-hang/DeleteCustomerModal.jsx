@@ -7,7 +7,12 @@ const DeleteCustomerModal = ({ visible, onCancel, onDelete, customer }) => {
   };
 
   return (
-    <Modal title="Xóa khách hàng" visible={visible} onOk={handleOk} onCancel={onCancel}>
+    <Modal
+      title="Xóa khách hàng"
+      visible={visible}
+      onOk={handleOk}
+      onCancel={onCancel}
+    >
       <p>
         Bạn có chắc chắn muốn xóa khách hàng <b>{customer?.name}</b>?
       </p>

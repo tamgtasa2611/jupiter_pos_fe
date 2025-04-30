@@ -19,7 +19,14 @@ import { useMobileStyles } from "@atoms/common";
 const { Option } = Select;
 const { TextArea } = Input;
 
-const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMobile }) => {
+const EditProductModal = ({
+  visible,
+  onCancel,
+  onEdit,
+  product,
+  categories,
+  isMobile,
+}) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -73,7 +80,10 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMo
       const updatedProduct = {
         ...product,
         ...values,
-        image: fileList.length > 0 ? fileList[0].url || fileList[0].response?.url : null,
+        image:
+          fileList.length > 0
+            ? fileList[0].url || fileList[0].response?.url
+            : null,
       };
 
       // Simulate API delay
@@ -117,7 +127,12 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMo
         <Button key="back" onClick={onCancel}>
           Hủy
         </Button>,
-        <Button key="submit" type="primary" loading={loading} onClick={handleSubmit}>
+        <Button
+          key="submit"
+          type="primary"
+          loading={loading}
+          onClick={handleSubmit}
+        >
           Lưu thay đổi
         </Button>,
       ]}
@@ -198,7 +213,9 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMo
               placeholder="Nhập giá bán"
               min={0}
               style={{ width: "100%" }}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
               addonAfter="đ"
             />
           </Form.Item>
@@ -212,7 +229,9 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMo
               placeholder="Nhập giá nhập"
               min={0}
               style={{ width: "100%" }}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
               addonAfter="đ"
             />
           </Form.Item>
@@ -220,9 +239,15 @@ const EditProductModal = ({ visible, onCancel, onEdit, product, categories, isMo
           <Form.Item
             name="stock"
             label="Tồn kho"
-            rules={[{ required: true, message: "Vui lòng nhập số lượng tồn kho!" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập số lượng tồn kho!" },
+            ]}
           >
-            <InputNumber placeholder="Nhập số lượng tồn kho" min={0} style={{ width: "100%" }} />
+            <InputNumber
+              placeholder="Nhập số lượng tồn kho"
+              min={0}
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           <Form.Item name="isActive" label="Trạng thái" valuePropName="checked">

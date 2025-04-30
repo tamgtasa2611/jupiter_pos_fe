@@ -130,12 +130,20 @@ const OrderList = ({ orders, loading, hasMore, onLoadMore, onShowDetails }) => {
               <div style={{ margin: "0 0 4px" }} className="w-full">
                 <div className="text-gray-500 font-medium w-full">
                   {item.formattedDate === dayjs().format("DD/MM/YYYY") ? (
-                    <Flex justify="space-between" align="center" className="w-full">
+                    <Flex
+                      justify="space-between"
+                      align="center"
+                      className="w-full"
+                    >
                       <div>Hôm nay</div>
                       <div>{item.orderCount} đơn hàng</div>
                     </Flex>
                   ) : (
-                    <Flex justify="space-between" align="center" className="w-full">
+                    <Flex
+                      justify="space-between"
+                      align="center"
+                      className="w-full"
+                    >
                       <div> {item.formattedDate}</div>
                       <div>{item.orderCount} đơn hàng</div>
                     </Flex>
@@ -168,12 +176,12 @@ const OrderList = ({ orders, loading, hasMore, onLoadMore, onShowDetails }) => {
                       item.status === "Delivered"
                         ? "success"
                         : item.status === "Shipped"
-                        ? "processing"
-                        : item.status === "Processing"
-                        ? "warning"
-                        : item.status === "Pending"
-                        ? "purple"
-                        : "error"
+                          ? "processing"
+                          : item.status === "Processing"
+                            ? "warning"
+                            : item.status === "Pending"
+                              ? "purple"
+                              : "error"
                     }
                     style={{
                       marginInlineEnd: "0",
@@ -183,8 +191,13 @@ const OrderList = ({ orders, loading, hasMore, onLoadMore, onShowDetails }) => {
                   </Tag>
                 </Flex>
                 <Flex vertical gap="small">
-                  <div type="secondary" strong style={{ display: "flex", alignItems: "center" }}>
-                    <UserOutlined style={{ marginRight: 6 }} /> {item.customerName}
+                  <div
+                    type="secondary"
+                    strong
+                    style={{ display: "flex", alignItems: "center" }}
+                  >
+                    <UserOutlined style={{ marginRight: 6 }} />{" "}
+                    {item.customerName}
                   </div>
                   <Flex justify="space-between" align="center">
                     <div
@@ -195,7 +208,8 @@ const OrderList = ({ orders, loading, hasMore, onLoadMore, onShowDetails }) => {
                       {item.items} sản phẩm
                     </div>
                     <div className="font-medium text-green-600">
-                      {new Intl.NumberFormat("vi-VN").format(item.totalAmount) + "₫"}
+                      {new Intl.NumberFormat("vi-VN").format(item.totalAmount) +
+                        "₫"}
                     </div>
                   </Flex>
                 </Flex>

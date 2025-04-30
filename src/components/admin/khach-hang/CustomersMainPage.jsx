@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Card, Col, Row, Statistic, Table, Tag, Space, Button, Input, Select } from "antd";
+import {
+  Card,
+  Col,
+  Row,
+  Statistic,
+  Table,
+  Tag,
+  Space,
+  Button,
+  Input,
+  Select,
+} from "antd";
 import {
   LikeOutlined,
   ShoppingCartOutlined,
@@ -207,7 +218,10 @@ const CustomersMainPage = () => {
           <Card>
             <Statistic
               title="Tổng đơn hàng"
-              value={customers.reduce((sum, customer) => sum + customer.totalOrders, 0)}
+              value={customers.reduce(
+                (sum, customer) => sum + customer.totalOrders,
+                0,
+              )}
               prefix={<ShoppingCartOutlined />}
             />
           </Card>
@@ -216,18 +230,31 @@ const CustomersMainPage = () => {
           <Card>
             <Statistic
               title="Tổng chi tiêu"
-              value={customers.reduce((sum, customer) => sum + customer.totalSpent, 0)}
+              value={customers.reduce(
+                (sum, customer) => sum + customer.totalSpent,
+                0,
+              )}
               prefix={<LikeOutlined />}
-              formatter={(value) => new Intl.NumberFormat("vi-VN").format(value) + "đ"}
+              formatter={(value) =>
+                new Intl.NumberFormat("vi-VN").format(value) + "đ"
+              }
             />
           </Card>
         </Col>
       </Row>
 
       <Card title="Danh sách khách hàng" style={{ marginTop: 20 }}>
-        <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
+        <Row
+          justify="space-between"
+          align="middle"
+          style={{ marginBottom: 16 }}
+        >
           <Col>
-            <Button type="primary" icon={<UserOutlined />} onClick={() => setAddModalVisible(true)}>
+            <Button
+              type="primary"
+              icon={<UserOutlined />}
+              onClick={() => setAddModalVisible(true)}
+            >
               Thêm khách hàng
             </Button>
           </Col>

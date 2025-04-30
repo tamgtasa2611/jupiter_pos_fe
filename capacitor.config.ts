@@ -16,7 +16,8 @@ const config: CapacitorConfig = {
   plugins: {
     BarcodeScanning: {
       // The following configures the behavior of the camera during barcode scanning
-      cameraPermissionText: "Vui lòng cho phép ứng dụng truy cập camera để quét mã vạch",
+      cameraPermissionText:
+        "Vui lòng cho phép ứng dụng truy cập camera để quét mã vạch",
       detectorMinDistanceToRefocus: 0.5, // in meters
     },
     SplashScreen: {

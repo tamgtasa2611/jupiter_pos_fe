@@ -89,7 +89,7 @@ const Top10Customers = () => {
       text: "name",
       position: "left",
       textAlign: "left",
-      dx: 5
+      dx: 5,
     },
     interactions: [{ type: "element-active" }],
     animation: {
@@ -134,9 +134,7 @@ const Top10Customers = () => {
       }}
     >
       <div className="h-64 sm:h-96">
-        <Bar
-          {...config}
-        />
+        <Bar {...config} />
       </div>
     </Card>
   );

@@ -39,7 +39,9 @@ body {
   box-shadow: var(--card-shadow) !important;
   border-radius: 16px !important;
   border: 1px solid rgba(0, 0, 0, 0.04) !important;
-  transition: transform 0.3s, box-shadow 0.3s !important;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s !important;
 }
 
 .ant-card:hover {
@@ -152,19 +154,27 @@ body {
 /* ===== ELEVATION UTILITIES ===== */
 
 .elevation-1 {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.06);
 }
 
 .elevation-2 {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.08),
+    0 2px 4px -1px rgba(0, 0, 0, 0.04);
 }
 
 .elevation-3 {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 4px 6px -2px rgba(0, 0, 0, 0.04);
 }
 
 .elevation-4 {
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.08),
+    0 10px 10px -5px rgba(0, 0, 0, 0.03);
 }
 
 /* ===== GRADIENT BACKGROUNDS ===== */
@@ -207,7 +217,9 @@ body {
 /* ===== SPECIAL EFFECTS ===== */
 
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {
@@ -217,7 +229,8 @@ body {
 
 .border-gradient {
   border: double 1px transparent;
-  background-image: linear-gradient(white, white), linear-gradient(135deg, #3b82f6, #8b5cf6);
+  background-image:
+    linear-gradient(white, white), linear-gradient(135deg, #3b82f6, #8b5cf6);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }

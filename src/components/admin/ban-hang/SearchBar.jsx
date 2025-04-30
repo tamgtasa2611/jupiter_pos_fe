@@ -1,6 +1,6 @@
-import React from 'react';
-import { Input } from 'antd';
-import { SearchOutlined, BarcodeOutlined } from '@ant-design/icons';
+import React from "react";
+import { Input } from "antd";
+import { SearchOutlined, BarcodeOutlined } from "@ant-design/icons";
 
 const SearchBar = ({ onSearch }) => {
   return (

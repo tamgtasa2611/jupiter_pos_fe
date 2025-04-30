@@ -1,12 +1,28 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, InputNumber, Select, Switch, Upload, Button, Divider } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  Select,
+  Switch,
+  Upload,
+  Button,
+  Divider,
+} from "antd";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
-const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => {
+const AddProductModal = ({
+  visible,
+  onCancel,
+  onAdd,
+  categories,
+  isMobile,
+}) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -86,8 +102,13 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
         ...(isMobile ? { top: "0" } : {}),
       }}
       footer={
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
-          <Button onClick={handleCancel} style={isMobile ? mobileButtonStyle : {}}>
+        <div
+          style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}
+        >
+          <Button
+            onClick={handleCancel}
+            style={isMobile ? mobileButtonStyle : {}}
+          >
             Hủy
           </Button>
           <Button
@@ -117,7 +138,10 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
           rules={[{ required: true, message: "Vui lòng nhập mã sản phẩm!" }]}
           style={mobileFormItemStyle}
         >
-          <Input placeholder="Nhập mã sản phẩm hoặc barcode" style={mobileInputStyle} />
+          <Input
+            placeholder="Nhập mã sản phẩm hoặc barcode"
+            style={mobileInputStyle}
+          />
         </Form.Item>
 
         <Form.Item
@@ -185,7 +209,9 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
               min={0}
               step={1000}
               style={{ width: "100%", ...mobileInputStyle }}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
               placeholder="0"
             />
@@ -201,7 +227,9 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
               min={0}
               step={1000}
               style={{ width: "100%", ...mobileInputStyle }}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              }
               parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
               placeholder="0"
             />
@@ -210,16 +238,26 @@ const AddProductModal = ({ visible, onCancel, onAdd, categories, isMobile }) => 
           <Form.Item
             name="stock"
             label="Số lượng tồn kho"
-            rules={[{ required: true, message: "Vui lòng nhập số lượng tồn kho!" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập số lượng tồn kho!" },
+            ]}
             style={mobileFormItemStyle}
           >
-            <InputNumber min={0} style={{ width: "100%", ...mobileInputStyle }} placeholder="0" />
+            <InputNumber
+              min={0}
+              style={{ width: "100%", ...mobileInputStyle }}
+              placeholder="0"
+            />
           </Form.Item>
         </div>
 
         <Divider orientation="left">Hình ảnh & Thông tin khác</Divider>
 
-        <Form.Item name="image" label="Hình ảnh sản phẩm" style={mobileFormItemStyle}>
+        <Form.Item
+          name="image"
+          label="Hình ảnh sản phẩm"
+          style={mobileFormItemStyle}
+        >
           <Upload {...uploadProps} listType="picture-card" maxCount={1}>
             {fileList.length === 0 && (
               <div>

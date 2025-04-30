@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Card, Table, Input, Button, Space, Typography, DatePicker } from "antd";
+import {
+  Card,
+  Table,
+  Input,
+  Button,
+  Space,
+  Typography,
+  DatePicker,
+} from "antd";
 import { SearchOutlined, ReloadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
@@ -20,10 +28,16 @@ const EmployeeSales = () => {
     const salesRecords = [];
 
     for (let i = 1; i <= 20; i++) {
-      const randomEmployee = Math.random() < 0.5 ? "Nguyễn Văn A" : "Trần Thị B";
-      const employeeCode = randomEmployee === "Nguyễn Văn A" ? "NV001" : "NV002";
-      const randomDate = startDate.add(Math.floor(Math.random() * timeDiff), "day");
-      const salesAmount = Math.floor(Math.random() * (20000000 - 10000000 + 1)) + 10000000; // Random amount between 10M and 20M
+      const randomEmployee =
+        Math.random() < 0.5 ? "Nguyễn Văn A" : "Trần Thị B";
+      const employeeCode =
+        randomEmployee === "Nguyễn Văn A" ? "NV001" : "NV002";
+      const randomDate = startDate.add(
+        Math.floor(Math.random() * timeDiff),
+        "day",
+      );
+      const salesAmount =
+        Math.floor(Math.random() * (20000000 - 10000000 + 1)) + 10000000; // Random amount between 10M and 20M
       const productsSold = Math.floor(Math.random() * (60 - 30 + 1)) + 30; // Random quantity between 30 and 60
 
       salesRecords.push({
@@ -76,12 +90,19 @@ const EmployeeSales = () => {
       title: "Tên nhân viên",
       dataIndex: "employeeName",
       key: "employeeName",
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      filterDropdown: ({
+        setSelectedKeys,
+        selectedKeys,
+        confirm,
+        clearFilters,
+      }) => (
         <div style={{ padding: 8 }}>
           <Input
             placeholder="Tìm kiếm tên"
             value={selectedKeys[0]}
-            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+            onChange={(e) =>
+              setSelectedKeys(e.target.value ? [e.target.value] : [])
+            }
             onPressEnter={() => confirm()}
             style={{ width: 188, marginBottom: 8, display: "block" }}
           />
@@ -95,13 +116,18 @@ const EmployeeSales = () => {
             >
               Tìm
             </Button>
-            <Button onClick={() => clearFilters()} size="small" style={{ width: 90 }}>
+            <Button
+              onClick={() => clearFilters()}
+              size="small"
+              style={{ width: 90 }}
+            >
               Reset
             </Button>
           </Space>
         </div>
       ),
-      onFilter: (value, record) => record.employeeName.toLowerCase().includes(value.toLowerCase()),
+      onFilter: (value, record) =>
+        record.employeeName.toLowerCase().includes(value.toLowerCase()),
       filterSearch: true,
     },
     {

@@ -3,6 +3,6 @@
 import "@ant-design/v5-patch-for-react-19";
 import ProductPage from "@components/admin/hang-hoa/ProductPage";
 
-export default function ProductsPage() {
+export default function Page() {
   return <ProductPage />;
 }

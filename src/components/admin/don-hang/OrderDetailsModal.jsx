@@ -14,9 +14,15 @@ const OrderDetailsModal = ({ visible, onCancel, order }) => {
       footer={null}
     >
       <Descriptions bordered column={1}>
-        <Descriptions.Item label="Mã đơn hàng">{order.orderId}</Descriptions.Item>
-        <Descriptions.Item label="Tên khách hàng">{order.customerName}</Descriptions.Item>
-        <Descriptions.Item label="Ngày đặt hàng">{order.orderDate}</Descriptions.Item>
+        <Descriptions.Item label="Mã đơn hàng">
+          {order.orderId}
+        </Descriptions.Item>
+        <Descriptions.Item label="Tên khách hàng">
+          {order.customerName}
+        </Descriptions.Item>
+        <Descriptions.Item label="Ngày đặt hàng">
+          {order.orderDate}
+        </Descriptions.Item>
         <Descriptions.Item label="Tổng tiền">
           {new Intl.NumberFormat("vi-VN").format(order.totalAmount)}đ
         </Descriptions.Item>
@@ -26,12 +32,12 @@ const OrderDetailsModal = ({ visible, onCancel, order }) => {
               order.status === "Delivered"
                 ? "green"
                 : order.status === "Shipped"
-                ? "blue"
-                : order.status === "Processing"
-                ? "orange"
-                : order.status === "Pending"
-                ? "purple"
-                : "red"
+                  ? "blue"
+                  : order.status === "Processing"
+                    ? "orange"
+                    : order.status === "Pending"
+                      ? "purple"
+                      : "red"
             }
           >
             {order.status}

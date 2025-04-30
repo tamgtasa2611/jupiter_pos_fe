@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useLayoutEffect, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+} from "react";
 import { Card, Button, Flex, Typography, DatePicker } from "antd";
 import {
   FilterOutlined,
@@ -61,7 +66,7 @@ const OrderMainPage = () => {
     debounce((value) => {
       setSearchText(value);
     }, 300),
-    []
+    [],
   );
 
   // Check for mobile screen
@@ -95,14 +100,20 @@ const OrderMainPage = () => {
           id: index + 1,
           orderId: `DH${String(index + 1).padStart(6, "0")}`,
           customerName: `Khách hàng ${index + 1}`,
-          createdAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000),
+          createdAt: new Date(
+            Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
+          ),
           orderDate: new Date(
-            Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
+            Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
           ).toLocaleDateString(),
           totalAmount: Math.floor(Math.random() * 5000000),
-          status: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"][
-            Math.floor(Math.random() * 5)
-          ],
+          status: [
+            "Pending",
+            "Processing",
+            "Shipped",
+            "Delivered",
+            "Cancelled",
+          ][Math.floor(Math.random() * 5)],
           phone: `09${Math.floor(Math.random() * 100000000)}`,
           address: `Địa chỉ ${index + 1}, Phường X, Quận Y, TP.HCM`,
           items: Math.floor(Math.random() * 10) + 1,
@@ -140,7 +151,8 @@ const OrderMainPage = () => {
           if (sortBy === "customerName") {
             comparison = a.customerName.localeCompare(b.customerName);
           } else if (sortBy === "orderDate") {
-            comparison = new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
+            comparison =
+              new Date(a.orderDate).getTime() - new Date(b.orderDate).getTime();
           } else if (sortBy === "totalAmount") {
             comparison = a.totalAmount - b.totalAmount;
           } else if (sortBy === "status") {
@@ -233,7 +245,12 @@ const OrderMainPage = () => {
   return (
     <div className="min-h-screen">
       <Card className="transition-shadow mt-5">
-        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 16 }}>
+        <Flex
+          justify="space-between"
+          align="center"
+          wrap="wrap"
+          style={{ marginBottom: 16 }}
+        >
           <div className="">
             <Title level={4} style={{ margin: 0 }}>
               {isMobile && (
@@ -252,7 +269,11 @@ const OrderMainPage = () => {
           {/* Mobile Filter Button */}
           {isMobile && (
             <Flex gap="middle">
-              <Button size="large" icon={<SortAscendingOutlined />} onClick={() => {}}></Button>
+              <Button
+                size="large"
+                icon={<SortAscendingOutlined />}
+                onClick={() => {}}
+              ></Button>
               <Button
                 size="large"
                 icon={<FilterOutlined />}
@@ -263,7 +284,13 @@ const OrderMainPage = () => {
 
           {/* Action bar - Desktop */}
           {!isMobile && (
-            <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="mb-6">
+            <Flex
+              justify="space-between"
+              align="center"
+              wrap="wrap"
+              gap={16}
+              className="mb-6"
+            >
               <OrderSearchFilters
                 searchText={searchText}
                 selectedStatus={selectedStatus}
@@ -279,7 +306,9 @@ const OrderMainPage = () => {
         </Flex>
 
         {/* Mobile Search Bar */}
-        {isMobile && <MobileHeader searchText={searchText} onSearch={handleSearch} />}
+        {isMobile && (
+          <MobileHeader searchText={searchText} onSearch={handleSearch} />
+        )}
 
         {/* Order Table for Desktop */}
         {!isMobile && (

@@ -2,7 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Input, Row, Col, Button } from "antd";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 
-const EmployeeSearch = ({ searchText, setSearchText, setAddModalVisible, form }) => {
+const EmployeeSearch = ({
+  searchText,
+  setSearchText,
+  setAddModalVisible,
+  form,
+}) => {
   // Debounce the search function
   const debouncedSetSearchText = useCallback(
     (value) => {
@@ -12,7 +17,7 @@ const EmployeeSearch = ({ searchText, setSearchText, setAddModalVisible, form })
 
       return () => clearTimeout(timer);
     },
-    [setSearchText]
+    [setSearchText],
   );
 
   const handleInputChange = (e) => {

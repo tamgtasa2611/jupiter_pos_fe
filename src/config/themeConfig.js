@@ -7,7 +7,8 @@ const themeConfig = {
 
     // Global shadow tokens that will apply to many components
     boxShadow: "0 6px 16px 0 rgba(0, 0, 0, 0.07)",
-    boxShadowSecondary: "0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.07)",
+    boxShadowSecondary:
+      "0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.07)",
 
     motionEaseInOut: "cubic-bezier(0.45, 0, 0.55, 1)",
   },

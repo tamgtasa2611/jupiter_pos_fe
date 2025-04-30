@@ -1,57 +1,78 @@
-import React, { useState } from 'react';
-import { Card, Button, Space, Typography, Avatar, Modal, Input, List } from 'antd';
-import { UserOutlined, PlusOutlined, PhoneOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import {
+  Card,
+  Button,
+  Space,
+  Typography,
+  Avatar,
+  Modal,
+  Input,
+  List,
+} from "antd";
+import { UserOutlined, PlusOutlined, PhoneOutlined } from "@ant-design/icons";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
 
 const CustomerInfo = ({ customer, onSelectCustomer }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  
+  const [searchValue, setSearchValue] = useState("");
+
   // Mock customer data
   const mockCustomers = [
-    { id: 1, name: 'Nguyễn Văn A', phone: '0901234567', points: 150 },
-    { id: 2, name: 'Trần Thị B', phone: '0912345678', points: 80 },
-    { id: 3, name: 'Lê Văn C', phone: '0923456789', points: 210 },
+    { id: 1, name: "Nguyễn Văn A", phone: "0901234567", points: 150 },
+    { id: 2, name: "Trần Thị B", phone: "0912345678", points: 80 },
+    { id: 3, name: "Lê Văn C", phone: "0923456789", points: 210 },
   ];
-  
+
   const filteredCustomers = mockCustomers.filter(
-    cust => cust.name.toLowerCase().includes(searchValue.toLowerCase()) || 
-           cust.phone.includes(searchValue)
+    (cust) =>
+      cust.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      cust.phone.includes(searchValue),
   );
-  
+
   return (
     <>
       <Card className="    ">
         {customer ? (
-          <Space align="start" style={{ width: '100%' }}>
+          <Space align="start" style={{ width: "100%" }}>
             <Avatar size={48} icon={<UserOutlined />} />
             <Space direction="vertical" size={0}>
-              <Text strong style={{ fontSize: '16px' }}>{customer.name}</Text>
+              <Text strong style={{ fontSize: "16px" }}>
+                {customer.name}
+              </Text>
               <Space align="center">
                 <PhoneOutlined />
                 <Text>{customer.phone}</Text>
               </Space>
               <Text type="secondary">Điểm tích lũy: {customer.points}</Text>
             </Space>
-            <Button 
-              type="text" 
-              danger 
+            <Button
+              type="text"
+              danger
               size="small"
-              style={{ marginLeft: 'auto' }}
+              style={{ marginLeft: "auto" }}
               onClick={() => onSelectCustomer(null)}
             >
               Xóa
             </Button>
           </Space>
         ) : (
-          <Space direction="vertical" style={{ width: '100%', textAlign: 'center' }}>
-            <Avatar size={48} icon={<UserOutlined />} style={{ margin: '0 auto' }} />
-            <Title level={5} style={{ margin: '8px 0' }}>Khách hàng mới</Title>
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />} 
+          <Space
+            direction="vertical"
+            style={{ width: "100%", textAlign: "center" }}
+          >
+            <Avatar
+              size={48}
+              icon={<UserOutlined />}
+              style={{ margin: "0 auto" }}
+            />
+            <Title level={5} style={{ margin: "8px 0" }}>
+              Khách hàng mới
+            </Title>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
               onClick={() => setIsModalVisible(true)}
               block
             >
@@ -60,7 +81,7 @@ const CustomerInfo = ({ customer, onSelectCustomer }) => {
           </Space>
         )}
       </Card>
-      
+
       <Modal
         title="Chọn khách hàng"
         open={isModalVisible}
@@ -68,7 +89,7 @@ const CustomerInfo = ({ customer, onSelectCustomer }) => {
         footer={null}
         width={400}
       >
-        <Space direction="vertical" style={{ width: '100%' }}>
+        <Space direction="vertical" style={{ width: "100%" }}>
           <Search
             placeholder="Tìm khách hàng theo tên hoặc SĐT"
             allowClear
@@ -77,9 +98,9 @@ const CustomerInfo = ({ customer, onSelectCustomer }) => {
           />
           <List
             dataSource={filteredCustomers}
-            renderItem={item => (
+            renderItem={(item) => (
               <List.Item
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
                 onClick={() => {
                   onSelectCustomer(item);
                   setIsModalVisible(false);
@@ -94,7 +115,7 @@ const CustomerInfo = ({ customer, onSelectCustomer }) => {
               </List.Item>
             )}
           />
-          <Button 
+          <Button
             type="dashed"
             icon={<PlusOutlined />}
             block

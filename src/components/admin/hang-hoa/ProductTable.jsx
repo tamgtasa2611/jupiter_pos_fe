@@ -74,7 +74,9 @@ const ProductTable = ({
       key: "costPrice",
       sorter: (a, b) => a.costPrice - b.costPrice,
       render: (costPrice) => (
-        <span className="text-gray-600">{new Intl.NumberFormat("vi-VN").format(costPrice)}đ</span>
+        <span className="text-gray-600">
+          {new Intl.NumberFormat("vi-VN").format(costPrice)}đ
+        </span>
       ),
     },
     {
@@ -86,7 +88,11 @@ const ProductTable = ({
         <div>
           <span
             className={`font-semibold ${
-              stock < 10 ? "text-red-500" : stock < 30 ? "text-orange-500" : "text-green-600"
+              stock < 10
+                ? "text-red-500"
+                : stock < 30
+                  ? "text-orange-500"
+                  : "text-green-600"
             }`}
           >
             {stock}
@@ -100,7 +106,9 @@ const ProductTable = ({
       dataIndex: "isActive",
       key: "isActive",
       render: (isActive) => (
-        <Tag color={isActive ? "green" : "red"}>{isActive ? "Đang bán" : "Ngừng bán"}</Tag>
+        <Tag color={isActive ? "green" : "red"}>
+          {isActive ? "Đang bán" : "Ngừng bán"}
+        </Tag>
       ),
     },
     {

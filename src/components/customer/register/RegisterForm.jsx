@@ -1,7 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Form, Input, Button, Checkbox, Card, Typography, Divider, message } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Checkbox,
+  Card,
+  Typography,
+  Divider,
+  message,
+} from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -44,7 +53,9 @@ const RegisterForm = () => {
         <Title level={2} className="mb-1">
           Đăng ký tài khoản
         </Title>
-        <Text className="text-gray-500">Tạo tài khoản để mua sắm tại Jupiter Store</Text>
+        <Text className="text-gray-500">
+          Tạo tài khoản để mua sắm tại Jupiter Store
+        </Text>
       </div>
 
       <Form
@@ -54,7 +65,10 @@ const RegisterForm = () => {
         layout="vertical"
         size="large"
       >
-        <Form.Item name="fullName" rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}>
+        <Form.Item
+          name="fullName"
+          rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
+        >
           <Input prefix={<UserOutlined />} placeholder="Họ tên" />
         </Form.Item>
 
@@ -72,7 +86,10 @@ const RegisterForm = () => {
           name="phone"
           rules={[
             { required: true, message: "Vui lòng nhập số điện thoại!" },
-            { pattern: /^[0-9]{10}$/, message: "Số điện thoại phải có 10 chữ số!" },
+            {
+              pattern: /^[0-9]{10}$/,
+              message: "Số điện thoại phải có 10 chữ số!",
+            },
           ]}
         >
           <Input prefix={<PhoneOutlined />} placeholder="Số điện thoại" />
@@ -98,12 +115,17 @@ const RegisterForm = () => {
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }
-                return Promise.reject(new Error("Mật khẩu xác nhận không khớp!"));
+                return Promise.reject(
+                  new Error("Mật khẩu xác nhận không khớp!"),
+                );
               },
             }),
           ]}
         >
-          <Input.Password prefix={<LockOutlined />} placeholder="Xác nhận mật khẩu" />
+          <Input.Password
+            prefix={<LockOutlined />}
+            placeholder="Xác nhận mật khẩu"
+          />
         </Form.Item>
 
         <Form.Item
@@ -114,7 +136,9 @@ const RegisterForm = () => {
               validator: (_, value) =>
                 value
                   ? Promise.resolve()
-                  : Promise.reject(new Error("Bạn phải đồng ý với điều khoản và điều kiện")),
+                  : Promise.reject(
+                      new Error("Bạn phải đồng ý với điều khoản và điều kiện"),
+                    ),
             },
           ]}
         >
@@ -131,7 +155,12 @@ const RegisterForm = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="w-full" loading={loading}>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="w-full"
+            loading={loading}
+          >
             Đăng ký
           </Button>
         </Form.Item>
@@ -139,7 +168,10 @@ const RegisterForm = () => {
         <div className="text-center mb-4">
           <Text className="text-gray-500">
             Đã có tài khoản?
-            <Link href="/dang-nhap" className="text-blue-500 hover:text-blue-700 ml-1">
+            <Link
+              href="/dang-nhap"
+              className="text-blue-500 hover:text-blue-700 ml-1"
+            >
               Đăng nhập ngay
             </Link>
           </Text>

@@ -1,7 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useLayoutEffect, useCallback, useMemo } from "react";
-import { Card, Button, Select, Dropdown, Flex, Menu, Drawer, Input, Divider } from "antd";
+import React, {
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import {
+  Card,
+  Button,
+  Select,
+  Dropdown,
+  Flex,
+  Menu,
+  Drawer,
+  Input,
+  Divider,
+} from "antd";
 import {
   PlusOutlined,
   SearchOutlined,
@@ -84,7 +100,7 @@ const ProductPage = () => {
       { value: "household", label: "Đồ gia dụng" },
       { value: "personal_care", label: "Chăm sóc cá nhân" },
     ],
-    []
+    [],
   );
 
   // Check for mobile screen
@@ -106,13 +122,19 @@ const ProductPage = () => {
     debounce((value) => {
       setSearchText(value);
     }, 300),
-    []
+    [],
   );
 
   // Mock data fetch
   useEffect(() => {
     fetchProducts();
-  }, [pagination.current, pagination.pageSize, searchText, selectedCategory, selectedStatus]);
+  }, [
+    pagination.current,
+    pagination.pageSize,
+    searchText,
+    selectedCategory,
+    selectedStatus,
+  ]);
 
   const fetchProducts = () => {
     setLoading(true);
@@ -140,10 +162,12 @@ const ProductPage = () => {
             price,
             costPrice,
             stock,
-            unit: ["Thùng", "Hộp", "Chai", "Lốc", "Gói"][Math.floor(Math.random() * 5)],
+            unit: ["Thùng", "Hộp", "Chai", "Lốc", "Gói"][
+              Math.floor(Math.random() * 5)
+            ],
             isActive,
             createdAt: new Date(
-              Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000
+              Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
             ).toISOString(),
             image: "../../../haohao.png",
           };
@@ -162,12 +186,16 @@ const ProductPage = () => {
       }
 
       if (selectedCategory !== "all") {
-        filteredData = filteredData.filter((product) => product.category === selectedCategory);
+        filteredData = filteredData.filter(
+          (product) => product.category === selectedCategory,
+        );
       }
 
       if (selectedStatus !== "all") {
         const isActive = selectedStatus === "active";
-        filteredData = filteredData.filter((product) => product.isActive === isActive);
+        filteredData = filteredData.filter(
+          (product) => product.isActive === isActive,
+        );
       }
 
       // Total and pagination
@@ -193,7 +221,7 @@ const ProductPage = () => {
       setAddModalVisible(false);
       fetchProducts(); // Refresh data
     },
-    [fetchProducts]
+    [fetchProducts],
   );
 
   const handleEditProduct = useCallback(
@@ -203,7 +231,7 @@ const ProductPage = () => {
       setEditModalVisible(false);
       fetchProducts(); // Refresh data
     },
-    [fetchProducts]
+    [fetchProducts],
   );
 
   const handleDeleteProduct = useCallback(
@@ -213,7 +241,7 @@ const ProductPage = () => {
       setDeleteModalVisible(false);
       fetchProducts(); // Refresh data
     },
-    [fetchProducts]
+    [fetchProducts],
   );
 
   const handleImportProducts = useCallback(
@@ -223,7 +251,7 @@ const ProductPage = () => {
       setImportModalVisible(false);
       fetchProducts(); // Refresh data
     },
-    [fetchProducts]
+    [fetchProducts],
   );
 
   // Handle table change
@@ -405,7 +433,12 @@ const ProductPage = () => {
   return (
     <div className="min-h-screen">
       <Card className="     transition-shadow">
-        <Flex justify="space-between" align="center" wrap="wrap" style={{ marginBottom: 16 }}>
+        <Flex
+          justify="space-between"
+          align="center"
+          wrap="wrap"
+          style={{ marginBottom: 16 }}
+        >
           <div className="">
             <Title level={4} style={{ margin: 0 }}>
               {isMobile && (
@@ -423,7 +456,13 @@ const ProductPage = () => {
 
           {/* Action bar - Desktop */}
           {!isMobile && (
-            <Flex justify="space-between" align="center" wrap="wrap" gap={16} className="mb-6">
+            <Flex
+              justify="space-between"
+              align="center"
+              wrap="wrap"
+              gap={16}
+              className="mb-6"
+            >
               {/* Search and filters */}
               <MemoizedProductFilters
                 searchText={searchText}
@@ -446,7 +485,10 @@ const ProductPage = () => {
                   Thêm sản phẩm
                 </Button>
 
-                <Button icon={<ImportOutlined />} onClick={() => setImportModalVisible(true)}>
+                <Button
+                  icon={<ImportOutlined />}
+                  onClick={() => setImportModalVisible(true)}
+                >
                   Nhập từ Excel
                 </Button>
 
@@ -473,7 +515,10 @@ const ProductPage = () => {
                 >
                   <Button icon={<ExportOutlined />}>
                     Xuất
-                    <svg className="inline-block w-2 h-2 ml-1 -mt-1" viewBox="0 0 6 3">
+                    <svg
+                      className="inline-block w-2 h-2 ml-1 -mt-1"
+                      viewBox="0 0 6 3"
+                    >
                       <polygon points="0,0 6,0 3,3" fill="currentColor" />
                     </svg>
                   </Button>
@@ -485,7 +530,11 @@ const ProductPage = () => {
           {/* Mobile Filter Button */}
           {isMobile && (
             <Flex gap="middle">
-              <Button size="large" icon={<SortAscendingOutlined />} onClick={() => {}}></Button>
+              <Button
+                size="large"
+                icon={<SortAscendingOutlined />}
+                onClick={() => {}}
+              ></Button>
               <Button
                 size="large"
                 icon={<FilterOutlined />}

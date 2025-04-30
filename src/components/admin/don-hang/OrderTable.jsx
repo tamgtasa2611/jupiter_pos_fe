@@ -1,7 +1,13 @@
 import React from "react";
 import { Table, Button, Tag, Space } from "antd";
 
-const OrderTable = ({ orders, loading, pagination, onTableChange, onShowDetails }) => {
+const OrderTable = ({
+  orders,
+  loading,
+  pagination,
+  onTableChange,
+  onShowDetails,
+}) => {
   // Table columns
   const columns = [
     {
@@ -49,12 +55,12 @@ const OrderTable = ({ orders, loading, pagination, onTableChange, onShowDetails 
             status === "Delivered"
               ? "green"
               : status === "Shipped"
-              ? "blue"
-              : status === "Processing"
-              ? "orange"
-              : status === "Pending"
-              ? "purple"
-              : "red"
+                ? "blue"
+                : status === "Processing"
+                  ? "orange"
+                  : status === "Pending"
+                    ? "purple"
+                    : "red"
           }
         >
           {status}

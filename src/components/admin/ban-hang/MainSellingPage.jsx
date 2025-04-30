@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Row, Col, Card, Button, Badge, Typography, Space, theme, Flex } from "antd";
+import {
+  Layout,
+  Row,
+  Col,
+  Card,
+  Button,
+  Badge,
+  Typography,
+  Space,
+  theme,
+  Flex,
+} from "antd";
 import { ShoppingCartOutlined, DollarOutlined } from "@ant-design/icons";
 import SearchBar from "./SearchBar";
 import CategorySelector from "./CategorySelector";
@@ -30,8 +41,25 @@ const MainSellingPage = () => {
     // Generate 20 random products
     const productCategories = ["grocery", "snacks", "beverages", "household"];
     const productNames = {
-      grocery: ["Gạo", "Đường", "Muối", "Bột ngọt", "Dầu ăn", "Nước mắm", "Tương ớt", "Bột giặt"],
-      snacks: ["Bánh quy", "Kẹo", "Snack mực", "Bim bim", "Hạt dưa", "Mít sấy", "Chuối sấy"],
+      grocery: [
+        "Gạo",
+        "Đường",
+        "Muối",
+        "Bột ngọt",
+        "Dầu ăn",
+        "Nước mắm",
+        "Tương ớt",
+        "Bột giặt",
+      ],
+      snacks: [
+        "Bánh quy",
+        "Kẹo",
+        "Snack mực",
+        "Bim bim",
+        "Hạt dưa",
+        "Mít sấy",
+        "Chuối sấy",
+      ],
       beverages: [
         "Nước lọc",
         "Nước ngọt",
@@ -40,13 +68,22 @@ const MainSellingPage = () => {
         "Sữa tươi",
         "Nước tăng lực",
       ],
-      household: ["Khăn giấy", "Bàn chải", "Kem đánh răng", "Dầu gội", "Xà phòng", "Nước rửa chén"],
+      household: [
+        "Khăn giấy",
+        "Bàn chải",
+        "Kem đánh răng",
+        "Dầu gội",
+        "Xà phòng",
+        "Nước rửa chén",
+      ],
     };
 
     const randomProducts = Array.from({ length: 20 }, (_, index) => {
-      const category = productCategories[Math.floor(Math.random() * productCategories.length)];
+      const category =
+        productCategories[Math.floor(Math.random() * productCategories.length)];
       const namesForCategory = productNames[category];
-      const name = namesForCategory[Math.floor(Math.random() * namesForCategory.length)];
+      const name =
+        namesForCategory[Math.floor(Math.random() * namesForCategory.length)];
       const price = Math.floor(Math.random() * 5 + 1) * 10000 + 5000; // Random price between 15000 and 55000
 
       return {
@@ -91,7 +128,9 @@ const MainSellingPage = () => {
       return;
     }
 
-    const updatedCart = cart.map((item) => (item.id === productId ? { ...item, quantity } : item));
+    const updatedCart = cart.map((item) =>
+      item.id === productId ? { ...item, quantity } : item,
+    );
     setCart(updatedCart);
   };
 
@@ -108,11 +147,14 @@ const MainSellingPage = () => {
   const filteredProducts = products.filter(
     (product) =>
       (selectedCategory === "all" || product.category === selectedCategory) &&
-      product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
 
   const handleCheckout = () => {
     setIsPaymentModalVisible(true);
@@ -146,7 +188,10 @@ const MainSellingPage = () => {
                 selectedCategory={selectedCategory}
                 onSelectCategory={setSelectedCategory}
               />
-              <ProductGrid products={filteredProducts} onProductClick={addToCart} />
+              <ProductGrid
+                products={filteredProducts}
+                onProductClick={addToCart}
+              />
             </Flex>
           </Card>
         </div>
@@ -155,7 +200,11 @@ const MainSellingPage = () => {
         <div className="h-full w-1/4">
           <Card
             title={
-              <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+              <Flex
+                justify="space-between"
+                align="center"
+                style={{ width: "100%" }}
+              >
                 <Text strong>Giỏ hàng</Text>
                 <Badge count={totalItems} showZero />
               </Flex>
@@ -165,11 +214,24 @@ const MainSellingPage = () => {
             }}
             className="     h-full"
           >
-            <div className="overflow-auto p-6" style={{ maxHeight: "calc(100% - 60px)" }}>
+            <div
+              className="overflow-auto p-6"
+              style={{ maxHeight: "calc(100% - 60px)" }}
+            >
               {cart.length === 0 ? (
-                <Flex vertical justify="center" align="center" className="h-full">
-                  <ShoppingCartOutlined style={{ fontSize: 32, divor: token.divorTextSecondary }} />
-                  <Text type="secondary" style={{ display: "block", marginTop: 8 }}>
+                <Flex
+                  vertical
+                  justify="center"
+                  align="center"
+                  className="h-full"
+                >
+                  <ShoppingCartOutlined
+                    style={{ fontSize: 32, divor: token.divorTextSecondary }}
+                  />
+                  <Text
+                    type="secondary"
+                    style={{ display: "block", marginTop: 8 }}
+                  >
                     Giỏ hàng trống
                   </Text>
                 </Flex>
@@ -191,7 +253,10 @@ const MainSellingPage = () => {
         {/* Customer info and order summary */}
         <div className="w-1/4 h-full">
           <Flex vertical style={{ height: "100%", width: "100%" }} gap="large">
-            <CustomerInfo customer={customerInfo} onSelectCustomer={setCustomerInfo} />
+            <CustomerInfo
+              customer={customerInfo}
+              onSelectCustomer={setCustomerInfo}
+            />
 
             <OrderSummary cart={cart} totalAmount={totalAmount} />
 

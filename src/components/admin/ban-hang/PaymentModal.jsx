@@ -91,7 +91,10 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
                         <Text strong>Tổng tiền:</Text>
                       </Col>
                       <Col span={16}>
-                        <Text strong style={{ fontSize: "18px", float: "right" }}>
+                        <Text
+                          strong
+                          style={{ fontSize: "18px", float: "right" }}
+                        >
                           {totalAmount.toLocaleString()}đ
                         </Text>
                       </Col>
@@ -107,7 +110,9 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
                           size="large"
                           value={cashReceived}
                           onChange={setCashReceived}
-                          formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          formatter={(value) =>
+                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                          }
                           parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
                           min={0}
                         />
@@ -155,12 +160,20 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
       case "card":
         return (
           <Form layout="vertical">
-            <Form.Item label="Số thẻ" name="cardNumber" rules={[{ required: true }]}>
+            <Form.Item
+              label="Số thẻ"
+              name="cardNumber"
+              rules={[{ required: true }]}
+            >
               <Input placeholder="Nhập số thẻ" />
             </Form.Item>
             <Row gutter={16}>
               <Col span={12}>
-                <Form.Item label="Ngày hết hạn" name="expiry" rules={[{ required: true }]}>
+                <Form.Item
+                  label="Ngày hết hạn"
+                  name="expiry"
+                  rules={[{ required: true }]}
+                >
                   <Input placeholder="MM/YY" />
                 </Form.Item>
               </Col>
@@ -182,10 +195,13 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
               <Text>Ngân hàng: BIDV</Text>
               <Text>Chủ tài khoản: CÔNG TY ABC</Text>
               <Text type="secondary">
-                Nội dung: Thanh toán đơn hàng #{Math.floor(Math.random() * 10000)}
+                Nội dung: Thanh toán đơn hàng #
+                {Math.floor(Math.random() * 10000)}
               </Text>
               <Divider />
-              <Text>Vui lòng xác nhận sau khi khách hàng đã chuyển khoản thành công</Text>
+              <Text>
+                Vui lòng xác nhận sau khi khách hàng đã chuyển khoản thành công
+              </Text>
             </Space>
           </Card>
         );
@@ -193,7 +209,11 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
       case "momo":
         return (
           <Card>
-            <Space direction="vertical" align="center" style={{ width: "100%" }}>
+            <Space
+              direction="vertical"
+              align="center"
+              style={{ width: "100%" }}
+            >
               <img
                 src="https://via.placeholder.com/200x200?text=QR+Code"
                 alt="QR code"
@@ -239,18 +259,38 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
     >
       <Row gutter={[24, 16]}>
         <Col span={8}>
-          <Card title="Chi tiết đơn hàng" size="small" className="overflow-y-auto h-dvh">
+          <Card
+            title="Chi tiết đơn hàng"
+            size="small"
+            className="overflow-y-auto h-dvh"
+          >
             <List
               size="small"
               dataSource={cart}
               renderItem={(item) => (
                 <List.Item>
-                  <Space style={{ width: "100%" }} direction="vertical" size={0}>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <Space
+                    style={{ width: "100%" }}
+                    direction="vertical"
+                    size={0}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Text>{item.name}</Text>
-                      <Text strong>{(item.price * item.quantity).toLocaleString()}đ</Text>
+                      <Text strong>
+                        {(item.price * item.quantity).toLocaleString()}đ
+                      </Text>
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
                       <Text type="secondary">
                         {item.quantity} x {item.price.toLocaleString()}đ
                       </Text>
@@ -260,7 +300,9 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
               )}
               footer={
                 <Space direction="vertical" style={{ width: "100%" }} size={2}>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <div
+                    style={{ display: "flex", justifyContent: "space-between" }}
+                  >
                     <Text>Tổng tiền</Text>
                     <Text strong>{totalAmount.toLocaleString()}đ</Text>
                   </div>

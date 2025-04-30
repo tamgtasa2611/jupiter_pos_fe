@@ -1,9 +1,24 @@
 import React from "react";
-import { Modal, Form, Input, Row, Col, Select, DatePicker, Space, Button } from "antd";
+import {
+  Modal,
+  Form,
+  Input,
+  Row,
+  Col,
+  Select,
+  DatePicker,
+  Space,
+  Button,
+} from "antd";
 
 const { Option } = Select;
 
-const AddEmployeeModal = ({ addModalVisible, setAddModalVisible, handleAddEmployee, form }) => {
+const AddEmployeeModal = ({
+  addModalVisible,
+  setAddModalVisible,
+  handleAddEmployee,
+  form,
+}) => {
   return (
     <Modal
       title="Thêm nhân viên mới"
@@ -61,7 +76,9 @@ const AddEmployeeModal = ({ addModalVisible, setAddModalVisible, handleAddEmploy
             <Form.Item
               name="phone"
               label="Số điện thoại"
-              rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập số điện thoại!" },
+              ]}
             >
               <Input />
             </Form.Item>
@@ -163,7 +180,9 @@ const EditEmployeeModal = ({
             <Form.Item
               name="phone"
               label="Số điện thoại"
-              rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+              rules={[
+                { required: true, message: "Vui lòng nhập số điện thoại!" },
+              ]}
             >
               <Input />
             </Form.Item>
