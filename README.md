@@ -19,6 +19,7 @@ bun dev
 ```
 
 To auto format all files, run:
+
 ```
 npm run format
 ```

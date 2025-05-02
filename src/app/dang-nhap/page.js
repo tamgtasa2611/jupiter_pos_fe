@@ -2,7 +2,7 @@
 
 import "@ant-design/v5-patch-for-react-19";
 import { Layout } from "antd";
-import LoginPage from "@components/customer/login/LoginPage";
+import LoginPage from "@components/common/login/LoginPage";
 
 const { Content } = Layout;
 

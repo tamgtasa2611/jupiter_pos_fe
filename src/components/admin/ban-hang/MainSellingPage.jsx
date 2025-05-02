@@ -1,27 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  Layout,
-  Row,
-  Col,
-  Card,
-  Button,
-  Badge,
-  Typography,
-  Space,
-  theme,
-  Flex,
-} from "antd";
-import { ShoppingCartOutlined, DollarOutlined } from "@ant-design/icons";
-import SearchBar from "./SearchBar";
-import CategorySelector from "./CategorySelector";
-import ProductGrid from "./ProductGrid";
-import CartItem from "./CartItem";
+import { Button, Typography, theme, Flex, Row, Col } from "antd";
+import { DollarOutlined } from "@ant-design/icons";
+import ProductsSection from "./ProductsSection";
+import CartSection from "./CartSection";
 import OrderSummary from "./OrderSummary";
 import CustomerInfo from "./CustomerInfo";
 import PaymentModal from "./PaymentModal";
 import NumericKeypad from "./NumericKeypad";
 
-const { Content } = Layout;
 const { Text } = Typography;
 
 const MainSellingPage = () => {
@@ -169,111 +155,73 @@ const MainSellingPage = () => {
 
   return (
     <>
-      <Flex
-        gap="large"
-        align="center"
-        justify="space-between"
-        className="w-full"
-        style={{
-          height: "100%",
-        }}
+      <Row
+        gutter={[token.marginLG, 0]}
+        style={{ height: "100%", width: "100%" }}
       >
-        {/* Products */}
-        <div className="h-full w-1/2">
-          <Card className="     h-full">
-            <Flex vertical gap="large" className="w-full h-full">
-              <SearchBar onSearch={setSearchQuery} />
-              <CategorySelector
-                categories={categories}
-                selectedCategory={selectedCategory}
-                onSelectCategory={setSelectedCategory}
-              />
-              <ProductGrid
-                products={filteredProducts}
-                onProductClick={addToCart}
-              />
-            </Flex>
-          </Card>
-        </div>
+        {/* Products - takes 14/24 of the width */}
+        <Col span={14} style={{ height: "100%" }}>
+          <ProductsSection
+            categories={categories}
+            products={products}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+            onProductClick={addToCart}
+          />
+        </Col>
 
-        {/* Cart */}
-        <div className="h-full w-1/4">
-          <Card
-            title={
-              <Flex
-                justify="space-between"
-                align="center"
-                style={{ width: "100%" }}
-              >
-                <Text strong>Giỏ hàng</Text>
-                <Badge count={totalItems} showZero />
-              </Flex>
-            }
-            styles={{
-              body: { padding: 0, height: "100%" },
-            }}
-            className="     h-full"
-          >
-            <div
-              className="overflow-auto p-6"
-              style={{ maxHeight: "calc(100% - 60px)" }}
-            >
-              {cart.length === 0 ? (
-                <Flex
-                  vertical
-                  justify="center"
-                  align="center"
-                  className="h-full"
-                >
-                  <ShoppingCartOutlined
-                    style={{ fontSize: 32, divor: token.divorTextSecondary }}
-                  />
-                  <Text
-                    type="secondary"
-                    style={{ display: "block", marginTop: 8 }}
-                  >
-                    Giỏ hàng trống
-                  </Text>
-                </Flex>
-              ) : (
-                cart.map((item) => (
-                  <CartItem
-                    key={item.id}
-                    item={item}
-                    onRemove={removeFromCart}
-                    onUpdateQuantity={updateQuantity}
-                    onOpenKeypad={openKeypad}
-                  />
-                ))
-              )}
+        {/* Cart - takes 5/24 of the width */}
+        <Col span={5} style={{ height: "100%" }}>
+          <CartSection
+            cart={cart}
+            totalItems={totalItems}
+            onRemove={removeFromCart}
+            onUpdateQuantity={updateQuantity}
+            onOpenKeypad={openKeypad}
+            theme={{ token }}
+          />
+        </Col>
+
+        {/* Customer info and order summary - takes 5/24 of the width */}
+        <Col span={5} style={{ height: "100%" }}>
+          <Flex vertical style={{ height: "100%" }} gap={token.marginMD}>
+            {/* CustomerInfo with fixed height */}
+            <div style={{ flexShrink: 0 }}>
+              <CustomerInfo
+                customer={customerInfo}
+                onSelectCustomer={setCustomerInfo}
+              />
             </div>
-          </Card>
-        </div>
 
-        {/* Customer info and order summary */}
-        <div className="w-1/4 h-full">
-          <Flex vertical style={{ height: "100%", width: "100%" }} gap="large">
-            <CustomerInfo
-              customer={customerInfo}
-              onSelectCustomer={setCustomerInfo}
-            />
-
-            <OrderSummary cart={cart} totalAmount={totalAmount} />
-
-            <Button
-              type="primary"
-              size="large"
-              icon={<DollarOutlined />}
-              onClick={handleCheckout}
-              disabled={cart.length === 0}
-              block
-              style={{ height: 50 }}
+            {/* OrderSummary with fixed container height but scrollable content */}
+            <div
+              style={{
+                flexGrow: 1,
+                display: "flex",
+                flexDirection: "column",
+                minHeight: 0, // Critical for Firefox to respect flex constraints
+              }}
             >
-              Thanh toán
-            </Button>
+              <OrderSummary cart={cart} totalAmount={totalAmount} />
+            </div>
+
+            {/* Payment button with fixed height */}
+            <div style={{ flexShrink: 0 }}>
+              <Button
+                type="primary"
+                size="large"
+                icon={<DollarOutlined />}
+                onClick={handleCheckout}
+                disabled={cart.length === 0}
+                block
+                style={{ height: 50 }}
+              >
+                Thanh toán
+              </Button>
+            </div>
           </Flex>
-        </div>
-      </Flex>
+        </Col>
+      </Row>
 
       <PaymentModal
         visible={isPaymentModalVisible}

@@ -17,7 +17,11 @@ const CategorySelector = ({
         key: category.id,
         label: category.name,
       }))}
-      style={{ marginBottom: "8px" }}
+      size="middle"
+      tabBarStyle={{
+        marginBottom: token.marginXS, // Using Ant Design's token system
+      }}
+      tabBarGutter={token.marginSM} // Adding standardized spacing between tabs
     />
   );
 };

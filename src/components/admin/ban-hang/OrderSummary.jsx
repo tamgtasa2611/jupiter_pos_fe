@@ -1,58 +1,68 @@
 import React from "react";
-import { Card, Statistic, Divider, Space, Typography, Row, Col } from "antd";
-import { DollarOutlined } from "@ant-design/icons";
+import { Card, Typography, Space, Divider } from "antd";
 
 const { Text } = Typography;
 
 const OrderSummary = ({ cart, totalAmount }) => {
-  const discount = 0; // Calculate discount if needed
-  const tax = Math.round(totalAmount * 0.1); // 10% tax example
-  const finalTotal = totalAmount + tax - discount;
+  // Calculate total number of products
+  const totalProducts = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <Card className="    ">
-      <Space direction="vertical" style={{ width: "100%" }}>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Text>Tạm tính ({cart.length} sản phẩm):</Text>
-          </Col>
-          <Col>
-            <Text>{totalAmount.toLocaleString()} đ</Text>
-          </Col>
-        </Row>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Text>Thuế (10%):</Text>
-          </Col>
-          <Col>
-            <Text>{tax.toLocaleString()} đ</Text>
-          </Col>
-        </Row>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Text>Giảm giá:</Text>
-          </Col>
-          <Col>
-            <Text>{discount.toLocaleString()} đ</Text>
-          </Col>
-        </Row>
-        <Divider style={{ margin: "12px 0" }} />
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Text strong style={{ fontSize: 16 }}>
-              Tổng cộng:
-            </Text>
-          </Col>
-          <Col>
-            <Statistic
-              value={finalTotal}
-              suffix="đ"
-              valueStyle={{ color: "#cf1322", fontSize: 20 }}
-              prefix={<DollarOutlined />}
-            />
-          </Col>
-        </Row>
-      </Space>
+    <Card
+      title="Tổng đơn hàng"
+      className="h-full"
+      bodyStyle={{
+        height: "calc(100% - 46px)", // Account for header height
+        padding: "16px",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden", // Prevent the card body from expanding
+      }}
+    >
+      {/* Scrollable product list */}
+      <div
+        style={{
+          flex: "1 1 0%", // Important: 0% base size forces scrolling
+          minHeight: 0, // Critical for Firefox
+          overflowY: "auto",
+          overflowX: "hidden",
+        }}
+        className="p-2"
+      >
+        {cart.map((item) => (
+          <div key={item.id} style={{ marginBottom: 8 }}>
+            <Space style={{ width: "100%", justifyContent: "space-between" }}>
+              <Text>
+                {item.name} x {item.quantity}
+              </Text>
+              <Text>{(item.price * item.quantity).toLocaleString()} đ</Text>
+            </Space>
+          </div>
+        ))}
+      </div>
+
+      {/* Fixed footer area */}
+      <div style={{ flexShrink: 0 }} className="p-2">
+        <Divider style={{ margin: "8px 0" }} />
+
+        {/* Total products line */}
+        <Space
+          style={{
+            width: "100%",
+            justifyContent: "space-between",
+            marginBottom: 8,
+          }}
+        >
+          <Text strong>Tổng số sản phẩm</Text>
+          <Text strong>{totalProducts}</Text>
+        </Space>
+
+        {/* Total amount line */}
+        <Space style={{ width: "100%", justifyContent: "space-between" }}>
+          <Text strong>Tổng tiền</Text>
+          <Text strong>{totalAmount.toLocaleString()} đ</Text>
+        </Space>
+      </div>
     </Card>
   );
 };

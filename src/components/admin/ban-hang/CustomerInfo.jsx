@@ -1,15 +1,6 @@
 import React, { useState } from "react";
-import {
-  Card,
-  Button,
-  Space,
-  Typography,
-  Avatar,
-  Modal,
-  Input,
-  List,
-} from "antd";
-import { UserOutlined, PlusOutlined, PhoneOutlined } from "@ant-design/icons";
+import { Card, Button, Space, Typography, Modal, Input, List } from "antd";
+import { PlusOutlined, PhoneOutlined } from "@ant-design/icons";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
@@ -33,40 +24,40 @@ const CustomerInfo = ({ customer, onSelectCustomer }) => {
 
   return (
     <>
-      <Card className="    ">
+      <Card>
         {customer ? (
-          <Space align="start" style={{ width: "100%" }}>
-            <Avatar size={48} icon={<UserOutlined />} />
-            <Space direction="vertical" size={0}>
-              <Text strong style={{ fontSize: "16px" }}>
-                {customer.name}
-              </Text>
-              <Space align="center">
-                <PhoneOutlined />
-                <Text>{customer.phone}</Text>
-              </Space>
-              <Text type="secondary">Điểm tích lũy: {customer.points}</Text>
+          <Space direction="vertical" size={0} style={{ width: "100%" }}>
+            <Text strong style={{ fontSize: "16px" }}>
+              {customer.name}
+            </Text>
+            <Space align="center">
+              <PhoneOutlined />
+              <Text>{customer.phone}</Text>
             </Space>
-            <Button
-              type="text"
-              danger
-              size="small"
-              style={{ marginLeft: "auto" }}
-              onClick={() => onSelectCustomer(null)}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 8,
+              }}
             >
-              Xóa
-            </Button>
+              <Text type="secondary">Điểm tích lũy: {customer.points}</Text>
+              <Button
+                type="text"
+                danger
+                size="small"
+                onClick={() => onSelectCustomer(null)}
+              >
+                Xóa
+              </Button>
+            </div>
           </Space>
         ) : (
           <Space
             direction="vertical"
             style={{ width: "100%", textAlign: "center" }}
           >
-            <Avatar
-              size={48}
-              icon={<UserOutlined />}
-              style={{ margin: "0 auto" }}
-            />
             <Title level={5} style={{ margin: "8px 0" }}>
               Khách hàng mới
             </Title>
@@ -106,11 +97,7 @@ const CustomerInfo = ({ customer, onSelectCustomer }) => {
                   setIsModalVisible(false);
                 }}
               >
-                <List.Item.Meta
-                  avatar={<Avatar icon={<UserOutlined />} />}
-                  title={item.name}
-                  description={item.phone}
-                />
+                <List.Item.Meta title={item.name} description={item.phone} />
                 <Text>{item.points} điểm</Text>
               </List.Item>
             )}
