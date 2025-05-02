@@ -9,8 +9,8 @@ import ProductFilters from "./ProductFilters";
 import MobileMenu from "./MobileMenu";
 
 // Import custom hooks
-import useProductData from "@hooks/useProductData";
-import useBarcodeScan from "@hooks/useBarcodeScan";
+import useProductData from "@hooks/hang-hoa/useProductData";
+import useBarcodeScan from "@hooks/hang-hoa/useBarcodeScan";
 
 // Import components
 import ProductHeader from "./ProductHeader";

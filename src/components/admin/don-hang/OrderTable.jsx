@@ -89,7 +89,9 @@ const OrderTable = ({
       loading={loading}
       pagination={pagination}
       onChange={onTableChange}
-      scroll={{ x: 1000, y: 600 }}
+      scroll={{ x: 1000, y: "calc(100vh - 368px)" }}
+      style={{ height: "100%" }}
+      sticky
       size="middle"
     />
   );
