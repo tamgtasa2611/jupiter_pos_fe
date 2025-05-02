@@ -31,13 +31,13 @@ const ProductsSection = ({
     >
       <Flex vertical gap={16} className="h-full">
         <SearchBar onSearch={setSearchQuery} />
-        
+
         <CategorySelector
           categories={categories}
           selectedCategory={selectedCategory}
           onSelectCategory={onSelectCategory}
         />
-        
+
         <div className="flex-grow overflow-y-auto overflow-x-hidden">
           <ProductGrid
             products={filteredProducts}

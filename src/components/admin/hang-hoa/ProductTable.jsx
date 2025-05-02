@@ -166,8 +166,9 @@ const ProductTable = ({
       loading={loading}
       pagination={pagination}
       onChange={handleTableChange}
-      scroll={{ x: 1000, y: 600 }}
-      className=""
+      scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
+      style={{ height: "100%" }}
+      sticky
       size="middle"
     />
   );

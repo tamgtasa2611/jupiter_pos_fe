@@ -6,6 +6,7 @@
       "@components/*": ["src/components/*"],
       "@atoms/*": ["src/atoms/*"],
       "@utils/*": ["src/utils/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@config/*": ["src/config/*"]
       // "@styles/*": ["src/styles/*"]
     }

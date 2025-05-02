@@ -14,8 +14,8 @@ const themeConfig = {
   },
   components: {
     Button: {
-      // paddingInline: 16,
-      // controlHeight: 40,
+      paddingInline: 16,
+      controlHeight: 36,
       borderRadiusSM: 8,
       borderRadiusLG: 16,
       // For buttons, we need to use this specific token
