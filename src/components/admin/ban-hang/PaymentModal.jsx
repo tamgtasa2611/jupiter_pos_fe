@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
   Modal,
   Button,
-  Tabs,
   Form,
   Input,
   Row,
@@ -12,10 +11,11 @@ import {
   Divider,
   Space,
   InputNumber,
-  List,
-  Tag,
   Radio,
   message,
+  Badge,
+  Steps,
+  Flex,
 } from "antd";
 import {
   CreditCardOutlined,
@@ -25,6 +25,8 @@ import {
   PrinterOutlined,
   CheckCircleFilled,
   CloseCircleOutlined,
+  ArrowRightOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -45,6 +47,9 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
   const quickAmounts = [
     { value: totalAmount, label: "Đủ" },
     { value: Math.ceil(totalAmount / 10000) * 10000, label: "Làm tròn" },
+    { value: 10000, label: "10,000đ" },
+    { value: 20000, label: "20,000đ" },
+    { value: 50000, label: "50,000đ" },
     { value: 100000, label: "100,000đ" },
     { value: 200000, label: "200,000đ" },
     { value: 500000, label: "500,000đ" },
@@ -81,80 +86,75 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
     switch (paymentMethod) {
       case "cash":
         return (
-          <Space direction="vertical" size="large" style={{ width: "100%" }}>
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <Card>
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <Row gutter={8} align="middle">
-                      <Col span={8}>
-                        <Text strong>Tổng tiền:</Text>
-                      </Col>
-                      <Col span={16}>
-                        <Text
-                          strong
-                          style={{ fontSize: "18px", float: "right" }}
-                        >
-                          {totalAmount.toLocaleString()}đ
-                        </Text>
-                      </Col>
-                    </Row>
+          <div className="payment-details">
+            <Card
+              className="payment-summary-card"
+              bordered={false}
+              style={{ background: "#f9f9f9", marginBottom: 16 }}
+            >
+              <Row gutter={[16, 20]} align="middle">
+                <Col span={12}>
+                  <Text type="secondary">Tổng tiền:</Text>
+                </Col>
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <Text strong style={{ fontSize: "16px" }}>
+                    {totalAmount.toLocaleString()}đ
+                  </Text>
+                </Col>
 
-                    <Row gutter={8} align="middle">
-                      <Col span={8}>
-                        <Text strong>Khách trả:</Text>
-                      </Col>
-                      <Col span={16}>
-                        <InputNumber
-                          style={{ width: "100%" }}
-                          size="large"
-                          value={cashReceived}
-                          onChange={setCashReceived}
-                          formatter={(value) =>
-                            `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                          }
-                          parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                          min={0}
-                        />
-                      </Col>
-                    </Row>
+                <Col span={12}>
+                  <Text type="secondary">Khách trả:</Text>
+                </Col>
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    size="large"
+                    value={cashReceived}
+                    onChange={setCashReceived}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                    min={0}
+                  />
+                </Col>
 
-                    <Row gutter={8} align="middle">
-                      <Col span={8}>
-                        <Text strong>Tiền thừa:</Text>
-                      </Col>
-                      <Col span={16}>
-                        <Text
-                          strong
-                          style={{
-                            fontSize: "18px",
-                            float: "right",
-                            color: changeAmount < 0 ? "#ff4d4f" : "#52c41a",
-                          }}
-                        >
-                          {changeAmount.toLocaleString()}đ
-                        </Text>
-                      </Col>
-                    </Row>
-                  </Space>
-                </Card>
-              </Col>
-
-              <Col span={24}>
-                <Space wrap>
-                  {quickAmounts.map((option) => (
-                    <Button
-                      key={option.value}
-                      onClick={() => handleQuickAmount(option.value)}
-                      size="large"
-                    >
-                      {option.label}
-                    </Button>
-                  ))}
-                </Space>
-              </Col>
-            </Row>
-          </Space>
+                <Col span={12}>
+                  <Text type="secondary">Tiền thừa:</Text>
+                </Col>
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <Text
+                    strong
+                    style={{
+                      fontSize: "18px",
+                      color: changeAmount < 0 ? "#ff4d4f" : "#52c41a",
+                    }}
+                  >
+                    {changeAmount.toLocaleString()}đ
+                  </Text>
+                </Col>
+              </Row>
+            </Card>
+            <div className="quick-amount-buttons">
+              <Text
+                type="secondary"
+                style={{ marginBottom: 8, display: "block" }}
+              >
+                Chọn nhanh:
+              </Text>
+              <Space wrap style={{ justifyContent: "flex-start" }}>
+                {quickAmounts.map((option) => (
+                  <Button
+                    key={option.value}
+                    onClick={() => handleQuickAmount(option.value)}
+                    style={{ minWidth: 100 }}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </Space>
+            </div>
+          </div>
         );
 
       case "card":
@@ -188,39 +188,76 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
 
       case "bank":
         return (
-          <Card>
-            <Space direction="vertical" style={{ width: "100%" }}>
-              <Text>Chuyển khoản đến số tài khoản:</Text>
-              <Title level={4}>1234 5678 9012</Title>
-              <Text>Ngân hàng: BIDV</Text>
-              <Text>Chủ tài khoản: CÔNG TY ABC</Text>
-              <Text type="secondary">
-                Nội dung: Thanh toán đơn hàng #
-                {Math.floor(Math.random() * 10000)}
-              </Text>
-              <Divider />
-              <Text>
-                Vui lòng xác nhận sau khi khách hàng đã chuyển khoản thành công
-              </Text>
-            </Space>
-          </Card>
+          <div className="bank-transfer-info">
+            <Card bordered={false} style={{ background: "#f9f9f9" }}>
+              <Space
+                direction="vertical"
+                style={{ width: "100%", textAlign: "center" }}
+              >
+                <Badge.Ribbon text="Chuyển khoản" color="blue">
+                  <div style={{ padding: "8px 0" }}>
+                    <Title level={4}>1234 5678 9012</Title>
+                    <div>
+                      <Text strong>Ngân hàng: BIDV</Text>
+                    </div>
+                    <div>
+                      <Text strong>Chủ TK: CÔNG TY ABC</Text>
+                    </div>
+                    <Divider style={{ margin: "12px 0" }} />
+                    <div>
+                      <Text type="secondary">Nội dung chuyển khoản:</Text>
+                      <div
+                        style={{
+                          margin: "8px 0",
+                          background: "#e6f7ff",
+                          padding: "8px",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        <Text copyable strong>
+                          Thanh toán #{Math.floor(Math.random() * 10000)}
+                        </Text>
+                      </div>
+                    </div>
+                  </div>
+                </Badge.Ribbon>
+              </Space>
+            </Card>
+          </div>
         );
 
       case "momo":
         return (
-          <Card>
+          <Card
+            bordered={false}
+            style={{ background: "#f9f9f9", textAlign: "center" }}
+          >
             <Space
               direction="vertical"
               align="center"
               style={{ width: "100%" }}
             >
-              <img
-                src="https://via.placeholder.com/200x200?text=QR+Code"
-                alt="QR code"
-                style={{ width: "200px", height: "200px" }}
-              />
-              <Text>Số tiền: {totalAmount.toLocaleString()}đ</Text>
-              <Text type="secondary">Quét mã QR để thanh toán qua ví MoMo</Text>
+              <div
+                style={{
+                  width: 200,
+                  height: 200,
+                  margin: "0 auto",
+                  background: "white",
+                  padding: 16,
+                  borderRadius: 8,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                }}
+              >
+                <img
+                  src="https://via.placeholder.com/200x200?text=QR+Code"
+                  alt="QR code"
+                  style={{ width: "100%", height: "100%" }}
+                />
+              </div>
+              <Text strong style={{ fontSize: 16, marginTop: 12 }}>
+                {totalAmount.toLocaleString()}đ
+              </Text>
+              <Text type="secondary">Quét mã để thanh toán qua ví MoMo</Text>
             </Space>
           </Card>
         );
@@ -232,99 +269,47 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
 
   return (
     <Modal
-      title={<Title level={4}>Thanh toán</Title>}
+      title={null}
       open={visible}
       onCancel={onCancel}
-      width={700}
+      width={800}
       centered
       maskClosable={false}
-      footer={[
-        <Button key="back" onClick={onCancel} icon={<CloseCircleOutlined />}>
-          Hủy
-        </Button>,
-        <Button key="print" type="default" icon={<PrinterOutlined />}>
-          In trước
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          loading={isProcessing}
-          onClick={handleCompletePayment}
-          disabled={paymentMethod === "cash" && changeAmount < 0}
-          icon={<CheckCircleFilled />}
-        >
-          Hoàn tất
-        </Button>,
-      ]}
+      footer={null}
+      styles={{}}
+      className="payment-modal"
     >
-      <Row gutter={[24, 16]}>
-        <Col span={8}>
-          <Card
-            title="Chi tiết đơn hàng"
-            size="small"
-            className="overflow-y-auto h-dvh"
-          >
-            <List
-              size="small"
-              dataSource={cart}
-              renderItem={(item) => (
-                <List.Item>
-                  <Space
-                    style={{ width: "100%" }}
-                    direction="vertical"
-                    size={0}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text>{item.name}</Text>
-                      <Text strong>
-                        {(item.price * item.quantity).toLocaleString()}đ
-                      </Text>
-                    </div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text type="secondary">
-                        {item.quantity} x {item.price.toLocaleString()}đ
-                      </Text>
-                    </div>
-                  </Space>
-                </List.Item>
-              )}
-              footer={
-                <Space direction="vertical" style={{ width: "100%" }} size={2}>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Text>Tổng tiền</Text>
-                    <Text strong>{totalAmount.toLocaleString()}đ</Text>
-                  </div>
-                </Space>
-              }
-              style={{ height: "100%", overflow: "auto" }}
-            />
-          </Card>
-        </Col>
+      <div
+        style={{
+          borderBottom: "1px solid #f0f0f0",
+          padding: "16px 24px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Title level={4} style={{ margin: 0 }}>
+          Thanh toán
+        </Title>
+        <Text strong style={{ fontSize: "18px", color: "#1890ff" }}>
+          {totalAmount.toLocaleString()}đ
+        </Text>
+      </div>
 
-        <Col span={16}>
-          <Card>
-            <Space style={{ width: "100%" }} direction="vertical" size="large">
+      <div style={{ padding: "24px" }}>
+        <Row gutter={[24, 24]}>
+          <Col span={24}>
+            <div styles={{ padding: "16px" }}>
               <Radio.Group
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 buttonStyle="solid"
+                size="large"
                 style={{ width: "100%" }}
               >
-                <Row gutter={[16, 16]}>
+                <Row gutter={[12, 12]}>
                   {paymentOptions.map((option) => (
-                    <Col span={12} key={option.key}>
+                    <Col span={6} key={option.key}>
                       <Radio.Button
                         value={option.key}
                         style={{
@@ -335,23 +320,48 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
                           justifyContent: "center",
                         }}
                       >
-                        <Space>
+                        <Flex align="center" justify="center" gap={8}>
                           {option.icon}
                           {option.label}
-                        </Space>
+                        </Flex>
                       </Radio.Button>
                     </Col>
                   ))}
                 </Row>
               </Radio.Group>
+            </div>
+          </Col>
 
-              <Divider />
+          <Col span={24}>{renderPaymentForm()}</Col>
+        </Row>
+      </div>
 
-              {renderPaymentForm()}
-            </Space>
-          </Card>
-        </Col>
-      </Row>
+      <div
+        style={{
+          borderTop: "1px solid #f0f0f0",
+          padding: "16px 24px",
+          // background: "#fafafa",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Button onClick={onCancel} icon={<CloseCircleOutlined />}>
+          Hủy
+        </Button>
+
+        <Space>
+          <Button icon={<PrinterOutlined />}>In trước</Button>
+          <Button
+            type="primary"
+            loading={isProcessing}
+            onClick={handleCompletePayment}
+            disabled={paymentMethod === "cash" && changeAmount < 0}
+            icon={<CheckCircleFilled />}
+          >
+            Hoàn tất
+          </Button>
+        </Space>
+      </div>
     </Modal>
   );
 };
