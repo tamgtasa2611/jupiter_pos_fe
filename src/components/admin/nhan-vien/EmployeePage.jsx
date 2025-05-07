@@ -22,7 +22,6 @@ import {
   EditEmployeeModal,
   DeleteEmployeeModal,
 } from "./EmployeeModals";
-import AttendanceCalendar from "./AttendanceCalendar";
 
 const { Title } = Typography;
 
@@ -243,19 +242,7 @@ const EmployeePage = () => {
         ),
       },
       {
-        key: "attendance",
-        label: "Bảng chấm công",
-        children: (
-          <AttendanceCalendar
-            employees={employees}
-            selectedEmployee={selectedEmployee}
-            setSelectedEmployee={setSelectedEmployee}
-            attendanceData={attendanceData}
-          />
-        ),
-      },
-      {
-        key: "sales", // Add a new tab for Employee Sales
+        key: "sales",
         label: "Doanh số",
         children: <EmployeeSales />,
       },
