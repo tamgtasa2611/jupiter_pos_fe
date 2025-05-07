@@ -14,19 +14,15 @@ import {
   Radio,
   message,
   Badge,
-  Steps,
   Flex,
 } from "antd";
 import {
-  CreditCardOutlined,
   MoneyCollectOutlined,
   BankOutlined,
   MobileOutlined,
   PrinterOutlined,
   CheckCircleFilled,
   CloseCircleOutlined,
-  ArrowRightOutlined,
-  CheckOutlined,
 } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -39,7 +35,6 @@ const PaymentModal = ({ visible, onCancel, onComplete, totalAmount, cart }) => {
 
   const paymentOptions = [
     { key: "cash", label: "Tiền mặt", icon: <MoneyCollectOutlined /> },
-    { key: "card", label: "Thẻ ATM/VISA", icon: <CreditCardOutlined /> },
     { key: "bank", label: "Chuyển khoản", icon: <BankOutlined /> },
     { key: "momo", label: "Ví MoMo", icon: <MobileOutlined /> },
   ];
