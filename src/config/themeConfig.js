@@ -11,6 +11,9 @@ const themeConfig = {
       "0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 6px 16px 0 rgba(0, 0, 0, 0.07)",
 
     motionEaseInOut: "cubic-bezier(0.45, 0, 0.55, 1)",
+    motionDurationFast: "0.15s",
+    motionDurationMid: "0.15s",
+    motionDurationSlow: "0.15s",
   },
   components: {
     Button: {
@@ -33,6 +36,8 @@ const themeConfig = {
       // Modal uses this token for shadow
       boxShadowPopoverArrow: "2px 2px 5px rgba(0, 0, 0, 0.05)",
       boxShadowPopover: "0 6px 16px rgba(0, 0, 0, 0.07)",
+      motionDurationSlow: "0.15s", // Giảm thời gian animation
+      motionDurationMid: "0.15s",
     },
     // Add shadow for other components you need to customize
     Select: {

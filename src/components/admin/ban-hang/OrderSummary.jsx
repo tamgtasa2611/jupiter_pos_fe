@@ -1,9 +1,10 @@
-import React from "react";
+import React, { memo } from "react";
 import { Card, Typography, Space, Divider } from "antd";
 
 const { Text } = Typography;
 
-const OrderSummary = ({ cart, totalAmount }) => {
+// Giảm thiểu render với memo
+const OrderSummary = memo(({ cart, totalAmount }) => {
   // Calculate total number of products
   const totalProducts = cart.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -45,7 +46,6 @@ const OrderSummary = ({ cart, totalAmount }) => {
       <div style={{ flexShrink: 0 }} className="p-2">
         <Divider style={{ margin: "8px 0" }} />
 
-        {/* Total products line */}
         <Space
           style={{
             width: "100%",
@@ -57,7 +57,6 @@ const OrderSummary = ({ cart, totalAmount }) => {
           <Text strong>{totalProducts}</Text>
         </Space>
 
-        {/* Total amount line */}
         <Space style={{ width: "100%", justifyContent: "space-between" }}>
           <Text strong>Tổng tiền</Text>
           <Text strong>{totalAmount.toLocaleString()} đ</Text>
@@ -65,6 +64,8 @@ const OrderSummary = ({ cart, totalAmount }) => {
       </div>
     </Card>
   );
-};
+});
+
+OrderSummary.displayName = "OrderSummary";
 
 export default OrderSummary;

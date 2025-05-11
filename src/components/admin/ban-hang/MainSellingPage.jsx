@@ -22,9 +22,22 @@ const MainSellingPage = () => {
   const [showNumericKeypad, setShowNumericKeypad] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
 
+  // Tính toán tổng đơn hàng
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalAmount = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
+
+  // Tối ưu: tạo cartSummary để truyền vào PaymentModal thay vì toàn bộ cart
+  const cartSummary = {
+    items: totalItems,
+    totalAmount: totalAmount,
+  };
+
   // Mock data - replace with API calls
   useEffect(() => {
-    // Generate 20 random products
+    // Generate products and categories...
     const productCategories = ["grocery", "snacks", "beverages", "household"];
     const productNames = {
       grocery: [
@@ -70,7 +83,7 @@ const MainSellingPage = () => {
       const namesForCategory = productNames[category];
       const name =
         namesForCategory[Math.floor(Math.random() * namesForCategory.length)];
-      const price = Math.floor(Math.random() * 5 + 1) * 10000 + 5000; // Random price between 15000 and 55000
+      const price = Math.floor(Math.random() * 5 + 1) * 10000 + 5000;
 
       return {
         id: index + 1,
@@ -83,7 +96,6 @@ const MainSellingPage = () => {
 
     setProducts(randomProducts);
 
-    // Simulate fetching categories
     setCategories([
       { id: "all", name: "Tất cả" },
       { id: "coffee", name: "Cà phê" },
@@ -129,18 +141,6 @@ const MainSellingPage = () => {
     updateQuantity(selectedProductId, parseInt(value));
     setShowNumericKeypad(false);
   };
-
-  const filteredProducts = products.filter(
-    (product) =>
-      (selectedCategory === "all" || product.category === selectedCategory) &&
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
 
   const handleCheckout = () => {
     setIsPaymentModalVisible(true);
@@ -199,7 +199,7 @@ const MainSellingPage = () => {
                 flexGrow: 1,
                 display: "flex",
                 flexDirection: "column",
-                minHeight: 0, // Critical for Firefox to respect flex constraints
+                minHeight: 0,
               }}
             >
               <OrderSummary cart={cart} totalAmount={totalAmount} />
@@ -223,13 +223,16 @@ const MainSellingPage = () => {
         </Col>
       </Row>
 
-      <PaymentModal
-        visible={isPaymentModalVisible}
-        onCancel={() => setIsPaymentModalVisible(false)}
-        onComplete={handlePaymentComplete}
-        totalAmount={totalAmount}
-        cart={cart}
-      />
+      {/* Chỉ render modals khi chúng được hiển thị */}
+      {isPaymentModalVisible && (
+        <PaymentModal
+          visible={isPaymentModalVisible}
+          onCancel={() => setIsPaymentModalVisible(false)}
+          onComplete={handlePaymentComplete}
+          totalAmount={totalAmount}
+          cartSummary={cartSummary} // Chỉ truyền thông tin cần thiết
+        />
+      )}
 
       {showNumericKeypad && (
         <NumericKeypad

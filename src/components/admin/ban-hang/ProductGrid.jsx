@@ -1,9 +1,10 @@
-import React from "react";
+import React, { memo } from "react";
 import { Row, Col, Card, Typography, Space } from "antd";
 
 const { Text } = Typography;
 
-const ProductGrid = ({ products, onProductClick }) => {
+// Memoize để tránh re-render không cần thiết
+const ProductGrid = memo(({ products, onProductClick }) => {
   return (
     <Row gutter={[16, 16]}>
       {products.map((product) => (
@@ -37,6 +38,8 @@ const ProductGrid = ({ products, onProductClick }) => {
       ))}
     </Row>
   );
-};
+});
+
+ProductGrid.displayName = "ProductGrid";
 
 export default ProductGrid;

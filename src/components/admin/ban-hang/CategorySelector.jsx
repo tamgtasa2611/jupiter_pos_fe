@@ -1,29 +1,30 @@
-import React from "react";
+import React, { memo } from "react";
 import { Tabs, theme } from "antd";
 
-const CategorySelector = ({
-  categories,
-  selectedCategory,
-  onSelectCategory,
-}) => {
-  const { token } = theme.useToken();
+// Memoize component
+const CategorySelector = memo(
+  ({ categories, selectedCategory, onSelectCategory }) => {
+    const { token } = theme.useToken();
 
-  return (
-    <Tabs
-      type="card"
-      activeKey={selectedCategory}
-      onChange={onSelectCategory}
-      items={categories.map((category) => ({
-        key: category.id,
-        label: category.name,
-      }))}
-      size="middle"
-      tabBarStyle={{
-        marginBottom: token.marginXS, // Using Ant Design's token system
-      }}
-      tabBarGutter={token.marginSM} // Adding standardized spacing between tabs
-    />
-  );
-};
+    return (
+      <Tabs
+        type="card"
+        activeKey={selectedCategory}
+        onChange={onSelectCategory}
+        items={categories.map((category) => ({
+          key: category.id,
+          label: category.name,
+        }))}
+        size="middle"
+        tabBarStyle={{
+          marginBottom: token.marginXS,
+        }}
+        tabBarGutter={token.marginSM}
+      />
+    );
+  },
+);
+
+CategorySelector.displayName = "CategorySelector";
 
 export default CategorySelector;

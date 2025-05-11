@@ -1,10 +1,11 @@
-import React from "react";
-import { Card, Button, Typography, Space, InputNumber, Divider } from "antd";
+import React, { memo } from "react";
+import { Button, Typography, Divider } from "antd";
 import { MinusOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
-const CartItem = ({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
+// Memoize để giảm render không cần thiết
+const CartItem = memo(({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
   return (
     <div style={{ marginBottom: "12px" }}>
       <div
@@ -78,6 +79,8 @@ const CartItem = ({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
       <Divider style={{ margin: "12px 0" }} />
     </div>
   );
-};
+});
+
+CartItem.displayName = "CartItem";
 
 export default CartItem;

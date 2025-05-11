@@ -1,8 +1,9 @@
-import React from "react";
+import React, { memo } from "react";
 import { Input } from "antd";
 import { SearchOutlined, BarcodeOutlined } from "@ant-design/icons";
 
-const SearchBar = ({ onSearch }) => {
+// Memoize để tránh re-render khi không cần
+const SearchBar = memo(({ onSearch }) => {
   return (
     <Input.Search
       placeholder="Tìm kiếm sản phẩm hoặc quét mã vạch"
@@ -13,6 +14,8 @@ const SearchBar = ({ onSearch }) => {
       prefix={<BarcodeOutlined />}
     />
   );
-};
+});
+
+SearchBar.displayName = "SearchBar";
 
 export default SearchBar;
