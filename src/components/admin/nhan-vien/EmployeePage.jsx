@@ -22,6 +22,7 @@ import {
   EditEmployeeModal,
   DeleteEmployeeModal,
 } from "./EmployeeModals";
+import { fetchUsers } from "@requests/user";
 
 const { Title } = Typography;
 
@@ -147,6 +148,8 @@ const EmployeePage = () => {
       setAttendanceData(generateMockAttendanceData());
       setLoading(false);
     }, 1000);
+
+    fetchUsers();
   }, []);
 
   // Filter employees when search text changes
