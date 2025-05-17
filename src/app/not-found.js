@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 export default function Page() {
   const router = useRouter();
 
-  const handleRedirectToLogin = () => {
-    router.push("/dang-nhap");
+  const handleRedirectBack = () => {
+    router.back();
   };
 
   return (
@@ -25,8 +25,8 @@ export default function Page() {
         title="404"
         subTitle="Xin lỗi, trang bạn đang tìm kiếm không tồn tại."
         extra={
-          <Button type="primary" onClick={handleRedirectToLogin}>
-            Đăng nhập
+          <Button type="primary" onClick={handleRedirectBack}>
+            Quay lại
           </Button>
         }
       />
