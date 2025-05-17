@@ -2,7 +2,9 @@ import axios from "axios";
 
 // Tạo instance mặc định
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://66a484f95dc27a3c19091759.mockapi.io/api/v1", // Sửa lại baseURL cho phù hợp
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ||
+    "https://66a484f95dc27a3c19091759.mockapi.io/api/v1", // Sửa lại baseURL cho phù hợp
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -12,7 +14,8 @@ const api = axios.create({
 // Thêm interceptor cho request (ví dụ: thêm token)
 api.interceptors.request.use(
   (config) => {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

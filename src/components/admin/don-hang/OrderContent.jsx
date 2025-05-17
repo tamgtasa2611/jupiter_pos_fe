@@ -1,6 +1,6 @@
 import React from "react";
 import OrderTable from "./OrderTable";
-import OrderList from "./OrderList";
+import MobileOrderList from "./mobile/MobileOrderList";
 
 const OrderContent = ({
   isMobile,
@@ -13,7 +13,7 @@ const OrderContent = ({
   onShowDetails,
 }) => {
   return isMobile ? (
-    <OrderList
+    <MobileOrderList
       orders={orders}
       loading={loading}
       hasMore={hasMore}

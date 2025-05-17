@@ -10,19 +10,17 @@ import {
   Result,
   Alert,
   Table,
-  Space,
   Tooltip,
 } from "antd";
 import {
   InboxOutlined,
   FileExcelOutlined,
   CheckCircleOutlined,
-  ExclamationCircleOutlined,
   DownloadOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
 
-const { Title, Text, Link } = Typography;
+const { Title, Text } = Typography;
 const { Dragger } = Upload;
 const { Step } = Steps;
 

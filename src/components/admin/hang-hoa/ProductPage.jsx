@@ -4,9 +4,9 @@ import React, { useState, useLayoutEffect } from "react";
 import { Card, Button, Drawer, Flex } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ProductTable from "./ProductTable";
-import ProductList from "./ProductList";
+import MobileProductList from "./mobile/MobileProductList";
 import ProductFilters from "./ProductFilters";
-import MobileMenu from "./MobileMenu";
+import MobileMenu from "./mobile/MobileMenu";
 
 // Import custom hooks
 import useProductData from "@hooks/hang-hoa/useProductData";
@@ -15,13 +15,13 @@ import useBarcodeScan from "@hooks/hang-hoa/useBarcodeScan";
 // Import components
 import ProductHeader from "./ProductHeader";
 import ProductActionBar from "./ProductActionBar";
-import MobileSearchBar from "./MobileSearchBar";
+import MobileSearchBar from "./mobile/MobileSearchBar";
 import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./ModalManager";
 
-// Memoize ProductTable, ProductList, and ProductFilters for performance
+// Memoize ProductTable, MobileProductList, and ProductFilters for performance
 const MemoizedProductTable = React.memo(ProductTable);
-const MemoizedProductList = React.memo(ProductList);
+const MemoizedMobileProductList = React.memo(MobileProductList);
 const MemoizedProductFilters = React.memo(ProductFilters);
 
 const ProductPage = () => {
@@ -114,7 +114,7 @@ const ProductPage = () => {
 
           {/* Product List for Mobile */}
           {isMobile && (
-            <MemoizedProductList
+            <MemoizedMobileProductList
               products={productData.products}
               loading={productData.loading}
               pagination={productData.pagination}
