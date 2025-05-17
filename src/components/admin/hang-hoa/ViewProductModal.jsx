@@ -10,11 +10,13 @@ import {
   Typography,
   Divider,
 } from "antd";
+import { useRouter } from "next/navigation";
 import { EditOutlined, BarcodeOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
 const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
+  const router = useRouter();
   if (!product) return null;
 
   console.log(product);
@@ -33,6 +35,16 @@ const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
       footer={[
         <Button key="back" onClick={onCancel}>
           Đóng
+        </Button>,
+        <Button
+          key="detail"
+          type="primary"
+          onClick={() => {
+            onCancel(); // Đóng modal trước
+            router.push(`/admin/hang-hoa/${product.id}`);
+          }}
+        >
+          Xem chi tiết sản phẩm
         </Button>,
       ]}
     >
