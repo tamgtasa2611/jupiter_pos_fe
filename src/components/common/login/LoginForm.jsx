@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Form, Input, Button, Checkbox, Typography, message } from "antd";
+import { Form, Input, Button, Checkbox, Typography } from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -14,31 +14,9 @@ import { useRouter } from "next/navigation";
 
 const { Title, Text } = Typography;
 
-const LoginForm = () => {
-  const [loading, setLoading] = useState(false);
+const LoginForm = ({ onFinish, loading, setLoading }) => {
   const [focused, setFocused] = useState("");
   const router = useRouter();
-
-  const onFinish = async (values) => {
-    setLoading(true);
-
-    try {
-      // Giả lập API call đăng nhập - thay thế bằng API thực tế sau này
-      console.log("Login values:", values);
-
-      // Simulate login success and saving token
-      setTimeout(() => {
-        // Store token in localStorage for authentication
-        localStorage.setItem("token", "example-token-value");
-        message.success("Đăng nhập thành công!");
-        router.push("/admin/trang-chu"); // Chuyển về trang chủ sau khi đăng nhập
-        setLoading(false);
-      }, 1000);
-    } catch (error) {
-      message.error("Đăng nhập thất bại. Vui lòng thử lại!");
-      setLoading(false);
-    }
-  };
 
   return (
     <>
@@ -62,22 +40,38 @@ const LoginForm = () => {
         size="large"
       >
         <Form.Item
-          name="email"
+          name="account"
           rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không hợp lệ!" },
+            {
+              required: true,
+              message: "Vui lòng nhập email hoặc số điện thoại!",
+            },
+            {
+              validator: (_, value) => {
+                if (
+                  !value ||
+                  /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value) || // email
+                  /^(0|\+84)\d{9,10}$/.test(value) // số điện thoại VN
+                ) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  "Vui lòng nhập đúng email hoặc số điện thoại!",
+                );
+              },
+            },
           ]}
         >
           <Input
             prefix={
               <UserOutlined
                 className={`text-gray-400 transition-colors ${
-                  focused === "email" ? "text-blue-500" : ""
+                  focused === "account" ? "text-blue-500" : ""
                 }`}
               />
             }
-            placeholder="Email của bạn"
-            onFocus={() => setFocused("email")}
+            placeholder="Email hoặc số điện thoại"
+            onFocus={() => setFocused("account")}
             onBlur={() => setFocused("")}
             style={{
               borderRadius: "16px",
@@ -85,7 +79,7 @@ const LoginForm = () => {
               padding: "8px 20px",
               fontSize: "1rem",
               boxShadow:
-                focused === "email"
+                focused === "account"
                   ? "0 0 0 2px rgba(59, 130, 246, 0.2)"
                   : "none",
               transition: "all 0.3s ease",

@@ -1,12 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
-import { Card } from "antd";
+import { useEffect, useState } from "react";
+import { Card, Form, message } from "antd";
 import { useRouter } from "next/navigation";
 import LoginForm from "./LoginForm";
+import { login } from "@/requests/auth";
 
 const LoginPage = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState("");
+  const [form] = Form.useForm();
+  const [isMobile, setIsMobile] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     // Check if token exists
@@ -16,6 +22,33 @@ const LoginPage = () => {
       router.push("/admin/trang-chu");
     }
   }, [router]);
+
+  const onFinish = async (values) => {
+    setLoading(true);
+    try {
+      const res = await login({
+        account: values.account,
+        password: values.password,
+      });
+      if (res.token) {
+        localStorage.setItem("token", res.token);
+        message.success(res.message || "Đăng nhập thành công!");
+        router.push("/admin/trang-chu");
+      } else {
+        message.error(
+          res.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!",
+        );
+      }
+    } catch (error) {
+      message.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Đăng nhập thất bại. Vui lòng thử lại!",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex flex-row bg-white overflow-hidden">
@@ -48,7 +81,11 @@ const LoginPage = () => {
           }}
           className="transition-all duration-300"
         >
-          <LoginForm />
+          <LoginForm
+            onFinish={onFinish}
+            loading={loading}
+            setLoading={setLoading}
+          />
         </Card>
       </div>
     </div>

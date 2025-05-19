@@ -4,7 +4,8 @@ import axios from "axios";
 const api = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_URL ||
-    "https://66a484f95dc27a3c19091759.mockapi.io/api/v1", // Sửa lại baseURL cho phù hợp
+    // "https://66a484f95dc27a3c19091759.mockapi.io/api/v1", // Sửa lại baseURL cho phù hợp
+    "http://localhost:8080/api", // Sửa lại baseURL cho phù hợp
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
