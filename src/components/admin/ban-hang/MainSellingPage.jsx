@@ -7,6 +7,7 @@ import OrderSummary from "./OrderSummary";
 import CustomerInfo from "./CustomerInfo";
 import PaymentModal from "./PaymentModal";
 import NumericKeypad from "./NumericKeypad";
+import { getProducts, getProductsWithVariants } from "@requests/product";
 
 const { Text } = Typography;
 
@@ -21,6 +22,39 @@ const MainSellingPage = () => {
   const [customerInfo, setCustomerInfo] = useState(null);
   const [showNumericKeypad, setShowNumericKeypad] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+
+  const fetchProducts = async ({
+    search = "",
+    page = 1,
+    size = 20,
+    category,
+    productId,
+  } = {}) => {
+    try {
+      const params = {
+        search,
+        page,
+        size,
+        category,
+        productId,
+      };
+      const productVariants = await getProductsWithVariants(params);
+      // setProducts(productVariants);
+      console.log("Kết quả tìm kiếm sản phẩm:", productVariants);
+    } catch (e) {
+      console.log("Lỗi khi tìm kiếm sản phẩm:", e);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch products when the component mounts
+    fetchProducts({
+      // search: searchQuery,
+      page: 0,
+      size: 5,
+      // category: selectedCategory,
+    });
+  }, []);
 
   // Tính toán tổng đơn hàng
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -167,6 +201,7 @@ const MainSellingPage = () => {
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
             onProductClick={addToCart}
+            onSearch={fetchProducts}
           />
         </Col>
 

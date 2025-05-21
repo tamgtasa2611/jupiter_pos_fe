@@ -3,6 +3,7 @@ import { Card, Flex } from "antd";
 import SearchBar from "./SearchBar";
 import CategorySelector from "./CategorySelector";
 import ProductGrid from "./ProductGrid";
+import { getProducts } from "@/requests/product";
 
 const ProductsSection = memo(
   ({
@@ -11,15 +12,26 @@ const ProductsSection = memo(
     selectedCategory,
     onSelectCategory,
     onProductClick,
+    onSearch,
   }) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [searchResult, setSearchResult] = useState([]);
+
+    const handleSearch = async (value) => {
+      setSearchQuery(value);
+      // onSearch(value);
+      onSearch({ page: 0, size: 5 });
+    };
 
     // Chỉ lọc khi cần thiết để tăng hiệu suất
-    const filteredProducts = products.filter(
-      (product) =>
-        (selectedCategory === "all" || product.category === selectedCategory) &&
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+    const filteredProducts = Array.isArray(products)
+      ? products.filter(
+          (product) =>
+            (selectedCategory === "all" ||
+              product.category === selectedCategory) &&
+            product.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        )
+      : [];
 
     return (
       <Card
@@ -32,7 +44,7 @@ const ProductsSection = memo(
         }}
       >
         <Flex vertical gap={16} className="h-full">
-          <SearchBar onSearch={setSearchQuery} />
+          <SearchBar onSearch={handleSearch} />
 
           <CategorySelector
             categories={categories}
