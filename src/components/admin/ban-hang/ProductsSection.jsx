@@ -1,9 +1,8 @@
-import React, { useState, memo } from "react";
-import { Card, Flex } from "antd";
+import React, { useState, memo, useRef, useEffect, useMemo } from "react";
+import { Card, Button, Spin, Flex } from "antd";
 import SearchBar from "./SearchBar";
 import CategorySelector from "./CategorySelector";
 import ProductGrid from "./ProductGrid";
-import { getProducts } from "@/requests/product";
 
 const ProductsSection = memo(
   ({
@@ -12,26 +11,48 @@ const ProductsSection = memo(
     selectedCategory,
     onSelectCategory,
     onProductClick,
-    onSearch,
+    onSearch, // onSearch callback receives { page, size, search }
   }) => {
     const [searchQuery, setSearchQuery] = useState("");
-    const [searchResult, setSearchResult] = useState([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [loadingProducts, setLoadingProducts] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
+    // When searching from the SearchBar, reset page and load the first page.
     const handleSearch = async (value) => {
-      setSearchQuery(value);
-      // onSearch(value);
-      onSearch({ page: 0, size: 5 });
+      const trimmedValue = value.trim();
+      setSearchQuery(trimmedValue);
+      setCurrentPage(0);
+      setLoadingProducts(true);
+      await onSearch({ page: 0, size: 5, search: trimmedValue });
+      setLoadingProducts(false);
     };
 
-    // Chỉ lọc khi cần thiết để tăng hiệu suất
-    const filteredProducts = Array.isArray(products)
-      ? products.filter(
-          (product) =>
-            (selectedCategory === "all" ||
-              product.category === selectedCategory) &&
-            product.name.toLowerCase().includes(searchQuery.toLowerCase()),
-        )
-      : [];
+    // Load more products when button "Load More" is clicked.
+    const handleLoadMore = async () => {
+      const nextPage = currentPage + 1;
+      setLoadingMore(true);
+      try {
+        await onSearch({ page: nextPage, size: 5, search: searchQuery });
+        setCurrentPage(nextPage);
+      } catch (error) {
+        console.error("Lỗi load thêm sản phẩm:", error);
+      } finally {
+        setLoadingMore(false);
+      }
+    };
+
+    // Filter products by category and search text for immediate UI display.
+    const filteredProducts = useMemo(() => {
+      return Array.isArray(products)
+        ? products.filter(
+            (product) =>
+              (selectedCategory === "all" ||
+                product.category === selectedCategory) &&
+              product.name.toLowerCase().includes(searchQuery.toLowerCase()),
+          )
+        : [];
+    }, [products, selectedCategory, searchQuery]);
 
     return (
       <Card
@@ -45,18 +66,38 @@ const ProductsSection = memo(
       >
         <Flex vertical gap={16} className="h-full">
           <SearchBar onSearch={handleSearch} />
-
           <CategorySelector
             categories={categories}
             selectedCategory={selectedCategory}
             onSelectCategory={onSelectCategory}
           />
-
-          <div className="flex-grow overflow-y-auto overflow-x-hidden">
-            <ProductGrid
-              products={filteredProducts}
-              onProductClick={onProductClick}
-            />
+          <div
+            style={{
+              flexGrow: 1,
+              overflowY: "auto",
+              overflowX: "hidden",
+              position: "relative",
+            }}
+          >
+            {loadingProducts ? (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                }}
+              >
+                <Spin size="large" />
+              </div>
+            ) : (
+              <ProductGrid
+                products={filteredProducts}
+                onProductClick={onProductClick}
+                loadingMore={loadingMore}
+                handleLoadMore={handleLoadMore}
+              />
+            )}
           </div>
         </Flex>
       </Card>

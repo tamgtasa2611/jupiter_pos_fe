@@ -25,8 +25,8 @@ const MainSellingPage = () => {
 
   const fetchProducts = async ({
     search = "",
-    page = 1,
-    size = 20,
+    page = 0,
+    size = 5,
     category,
     productId,
   } = {}) => {
@@ -38,9 +38,36 @@ const MainSellingPage = () => {
         category,
         productId,
       };
-      const productVariants = await getProductsWithVariants(params);
-      // setProducts(productVariants);
-      console.log("Kết quả tìm kiếm sản phẩm:", productVariants);
+      const response = await getProductsWithVariants(params);
+      const mappedProducts = [];
+      response.content.forEach((item) => {
+        const parent = item.product;
+        // Each variant is mapped as a separate product with parent's name
+        item.variants.forEach((variant) => {
+          mappedProducts.push({
+            id: variant.id,
+            name: parent.productName,
+            description: parent.description,
+            category:
+              parent.category && Array.isArray(parent.category)
+                ? parent.category.map((c) => c.categoryName).join(", ")
+                : "",
+            price: variant.price,
+            costPrice: variant.costPrice,
+            quantity: variant.quantity,
+            sku: variant.sku,
+            barcode: variant.barcode,
+            expiryDate: variant.expiryDate,
+            image: parent.image || "../../../haohao.png",
+          });
+        });
+      });
+      // If loading the first page, replace. Otherwise, append.
+      if (page === 0) {
+        setProducts(mappedProducts);
+      } else {
+        setProducts((prev) => [...prev, ...mappedProducts]);
+      }
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
     }
@@ -68,76 +95,6 @@ const MainSellingPage = () => {
     items: totalItems,
     totalAmount: totalAmount,
   };
-
-  // Mock data - replace with API calls
-  useEffect(() => {
-    // Generate products and categories...
-    const productCategories = ["grocery", "snacks", "beverages", "household"];
-    const productNames = {
-      grocery: [
-        "Gạo",
-        "Đường",
-        "Muối",
-        "Bột ngọt",
-        "Dầu ăn",
-        "Nước mắm",
-        "Tương ớt",
-        "Bột giặt",
-      ],
-      snacks: [
-        "Bánh quy",
-        "Kẹo",
-        "Snack mực",
-        "Bim bim",
-        "Hạt dưa",
-        "Mít sấy",
-        "Chuối sấy",
-      ],
-      beverages: [
-        "Nước lọc",
-        "Nước ngọt",
-        "Trà đóng chai",
-        "Cà phê hòa tan",
-        "Sữa tươi",
-        "Nước tăng lực",
-      ],
-      household: [
-        "Khăn giấy",
-        "Bàn chải",
-        "Kem đánh răng",
-        "Dầu gội",
-        "Xà phòng",
-        "Nước rửa chén",
-      ],
-    };
-
-    const randomProducts = Array.from({ length: 20 }, (_, index) => {
-      const category =
-        productCategories[Math.floor(Math.random() * productCategories.length)];
-      const namesForCategory = productNames[category];
-      const name =
-        namesForCategory[Math.floor(Math.random() * namesForCategory.length)];
-      const price = Math.floor(Math.random() * 5 + 1) * 10000 + 5000;
-
-      return {
-        id: index + 1,
-        name: `${name}`,
-        price: price,
-        category: category,
-        image: "../../../haohao.png",
-      };
-    });
-
-    setProducts(randomProducts);
-
-    setCategories([
-      { id: "all", name: "Tất cả" },
-      { id: "coffee", name: "Cà phê" },
-      { id: "tea", name: "Trà" },
-      { id: "food", name: "Đồ ăn" },
-      { id: "drinks", name: "Nước uống" },
-    ]);
-  }, []);
 
   const addToCart = (product) => {
     const existingItemIndex = cart.findIndex((item) => item.id === product.id);
