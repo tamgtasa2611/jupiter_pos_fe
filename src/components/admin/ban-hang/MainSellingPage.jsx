@@ -26,7 +26,7 @@ const MainSellingPage = () => {
   const fetchProducts = async ({
     search = "",
     page = 0,
-    size = 5,
+    size = 20,
     category,
     productId,
   } = {}) => {
@@ -42,24 +42,28 @@ const MainSellingPage = () => {
       const mappedProducts = [];
       response.content.forEach((item) => {
         const parent = item.product;
-        // Each variant is mapped as a separate product with parent's name
-        item.variants.forEach((variant) => {
-          mappedProducts.push({
-            id: variant.id,
-            name: parent.productName,
-            description: parent.description,
-            category:
-              parent.category && Array.isArray(parent.category)
-                ? parent.category.map((c) => c.categoryName).join(", ")
-                : "",
-            price: variant.price,
-            costPrice: variant.costPrice,
-            quantity: variant.quantity,
-            sku: variant.sku,
-            barcode: variant.barcode,
-            expiryDate: variant.expiryDate,
-            image: parent.image || "../../../haohao.png",
-          });
+        // Bắt đầu với tên sản phẩm cha
+        let productName = parent.productName;
+        // Nếu variant có attrValues và mảng không rỗng, thêm vào sau tên theo định dạng: "Tên sản phẩm (attr1, attr2)"
+        if (item.attrValues && item.attrValues.length > 0) {
+          productName = `${productName} (${item.attrValues.join(", ")})`;
+        }
+        mappedProducts.push({
+          id: item.id,
+          name: productName,
+          description: parent.description,
+          category:
+            parent.category && Array.isArray(parent.category)
+              ? parent.category.map((c) => c.categoryName).join(", ")
+              : "",
+          price: item.price,
+          costPrice: item.costPrice,
+          quantity: item.quantity,
+          sku: item.sku,
+          barcode: item.barcode,
+          expiryDate: item.expiryDate,
+          image: parent.image || "../../../haohao.png",
+          attrValues: item.attrValues,
         });
       });
       // If loading the first page, replace. Otherwise, append.
@@ -68,6 +72,7 @@ const MainSellingPage = () => {
       } else {
         setProducts((prev) => [...prev, ...mappedProducts]);
       }
+      console.log("Products fetched:", mappedProducts);
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
     }
@@ -75,12 +80,7 @@ const MainSellingPage = () => {
 
   useEffect(() => {
     // Fetch products when the component mounts
-    fetchProducts({
-      // search: searchQuery,
-      page: 0,
-      size: 5,
-      // category: selectedCategory,
-    });
+    fetchProducts();
   }, []);
 
   // Tính toán tổng đơn hàng
