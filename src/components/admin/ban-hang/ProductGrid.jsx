@@ -3,7 +3,13 @@ import { Row, Col, Button, Spin } from "antd";
 import ProductCard from "./ProductCard";
 
 const ProductGrid = memo(
-  ({ products, onProductClick, loadingMore, handleLoadMore }) => {
+  ({
+    products,
+    onProductClick,
+    loadingMore,
+    handleLoadMore,
+    isInitial,
+  }) => {
     return (
       <>
         <Row gutter={[16, 16]}>
@@ -13,15 +19,19 @@ const ProductGrid = memo(
             </Col>
           ))}
         </Row>
-        <div style={{ textAlign: "center", marginTop: 16 }}>
-          {loadingMore ? (
-            <Spin />
+        {/* Chỉ hiển thị nút "Xem thêm sản phẩm" nếu không phải load đầu */}
+        {!isInitial &&
+          (loadingMore ? (
+            <div style={{ textAlign: "center", marginTop: 16 }}>
+              <Spin />
+            </div>
           ) : (
-            <Button onClick={handleLoadMore} type="default">
-              Xem thêm sản phẩm
-            </Button>
-          )}
-        </div>
+            <div style={{ textAlign: "center", marginTop: 16 }}>
+              <Button onClick={handleLoadMore} type="default">
+                Xem thêm sản phẩm
+              </Button>
+            </div>
+          ))}
       </>
     );
   },

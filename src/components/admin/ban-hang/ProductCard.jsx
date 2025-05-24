@@ -22,10 +22,8 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
       hoverable
       onClick={() => onProductClick(product)}
       style={{
-        borderRadius: 8,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
-        cursor: "pointer",
+        cursor: "pointer"
       }}
       bodyStyle={{ padding: 12 }}
       cover={
@@ -43,7 +41,7 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
           />
           {product.expiryDate && (
             <Tag
-              style={{ position: "absolute", top: 8, right: 8, fontSize: 10 }}
+              style={{ position: "absolute", top: 8, right: 8, fontSize: 11 }}
               color="red"
             >
               HSD: {new Date(product.expiryDate).toLocaleDateString("vi-VN")}
@@ -52,7 +50,7 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
         </div>
       }
     >
-      {/* Header: tên sản phẩm & category */}
+      {/* Header: tên sản phẩm & category  */}
       <div style={{ marginBottom: 8 }}>
         <Title level={5} style={{ margin: 0 }} ellipsis>
           {product.name}
@@ -63,7 +61,7 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
           </Text>
         )}
       </div>
-      {/* Các thuộc tính được hiển thị dưới dạng thẻ nếu có */}
+
       {renderAttributes() && (
         <div style={{ marginBottom: 8 }}>{renderAttributes()}</div>
       )}
@@ -90,9 +88,21 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
       </div>
       {/* Thông tin tồn kho và tooltip SKU / Mã vạch */}
       <Flex justify="space-between" align="center" style={{ marginTop: 8 }}>
-        <Text style={{ fontSize: 12 }}>
-          Tồn: {product.quantity != null ? product.quantity : "N/A"}
-        </Text>
+        <div>
+          <span
+            className={`font-semibold ${
+              product.quantity != null
+                ? product.quantity <= 10
+                  ? "text-red-500"
+                  : product.quantity <= 30
+                    ? "text-orange-500"
+                    : "text-green-600"
+                : ""
+            }`}
+          >
+            Tồn: {product.quantity != null ? product.quantity : "N/A"}
+          </span>
+        </div>
         <Tooltip
           title={
             <>

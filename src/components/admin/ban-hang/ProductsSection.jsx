@@ -12,10 +12,12 @@ const ProductsSection = memo(
     onSelectCategory,
     onProductClick,
     onSearch, // onSearch callback receives { page, size, search }
+    loading,
+    setLoading,
+    initLoading, // Initial loading state for the first load
   }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(0);
-    const [loadingProducts, setLoadingProducts] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
 
     // When searching from the SearchBar, reset page and load the first page.
@@ -23,9 +25,9 @@ const ProductsSection = memo(
       const trimmedValue = value.trim();
       setSearchQuery(trimmedValue);
       setCurrentPage(0);
-      setLoadingProducts(true);
+      setLoading(true);
       await onSearch({ page: 0, size: 5, search: trimmedValue });
-      setLoadingProducts(false);
+      setLoading(false);
     };
 
     // Load more products when button "Load More" is clicked.
@@ -79,7 +81,7 @@ const ProductsSection = memo(
               position: "relative",
             }}
           >
-            {loadingProducts ? (
+            {loading && initLoading ? (
               <div
                 style={{
                   display: "flex",
@@ -96,6 +98,7 @@ const ProductsSection = memo(
                 onProductClick={onProductClick}
                 loadingMore={loadingMore}
                 handleLoadMore={handleLoadMore}
+                isInitial={initLoading} // Ẩn nút khi là lần load đầu
               />
             )}
           </div>

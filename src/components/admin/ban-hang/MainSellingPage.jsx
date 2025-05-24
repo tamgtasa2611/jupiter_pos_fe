@@ -17,11 +17,12 @@ const MainSellingPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
   const [customerInfo, setCustomerInfo] = useState(null);
   const [showNumericKeypad, setShowNumericKeypad] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [initLoading, setInitLoading] = useState(true);
 
   const fetchProducts = async ({
     search = "",
@@ -31,6 +32,7 @@ const MainSellingPage = () => {
     productId,
   } = {}) => {
     try {
+      setLoading(true);
       const params = {
         search,
         page,
@@ -46,7 +48,10 @@ const MainSellingPage = () => {
         let productName = parent.productName;
         // Nếu variant có attrValues và mảng không rỗng, thêm vào sau tên theo định dạng: "Tên sản phẩm (attr1, attr2)"
         if (item.attrValues && item.attrValues.length > 0) {
-          productName = `${productName} (${item.attrValues.join(", ")})`;
+          const attrs = item.attrValues.map(
+            (attr) => `${attr.attrName}: ${attr.attrValue}`,
+          );
+          productName = `${productName} (${attrs.join(", ")})`;
         }
         mappedProducts.push({
           id: item.id,
@@ -75,6 +80,9 @@ const MainSellingPage = () => {
       console.log("Products fetched:", mappedProducts);
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
+    } finally {
+      setLoading(false);
+      setInitLoading(false);
     }
   };
 
@@ -159,6 +167,9 @@ const MainSellingPage = () => {
             onSelectCategory={setSelectedCategory}
             onProductClick={addToCart}
             onSearch={fetchProducts}
+            loading={loading}
+            setLoading={setLoading}
+            initLoading={initLoading}
           />
         </Col>
 
