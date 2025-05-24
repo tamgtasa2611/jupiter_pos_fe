@@ -14,6 +14,7 @@ import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./ModalManager";
 
 import { getProductsVariants, createProduct } from "@/requests/product";
+import { getCategories } from "@/requests/category";
 
 // Memoize các component để tối ưu performance
 const MemoizedProductTable = React.memo(ProductTable);
@@ -37,8 +38,8 @@ const ProductPage = () => {
   // States cho product và bộ lọc
   const [products, setProducts] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("0"); // "0" là tất cả danh mục
+  const [selectedStatus, setSelectedStatus] = useState("0"); // "0" là tất cả trạng thái
   const [categories, setCategories] = useState([]); // Giả sử danh mục sẽ được load riêng
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
@@ -46,6 +47,18 @@ const ProductPage = () => {
     pageSize: 20,
     total: 0,
   });
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        const categoryResponse = await getCategories();
+        setCategories(categoryResponse);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh mục:", error);
+      }
+    }
+    loadCategories();
+  }, []);
 
   // Dummy handleScanCode (bạn có thể điều chỉnh lại theo logic thực tế)
   const handleScanCode = (code) => {

@@ -32,10 +32,10 @@ const ProductFilters = ({
         onChange={setSelectedCategory}
         allowClear
       >
-        <Option value="all">Tất cả danh mục</Option>
+        <Option value="0">Tất cả danh mục</Option>
         {categories.map((category) => (
-          <Option key={category.value} value={category.value}>
-            {category.label}
+          <Option key={category.id} value={category.categoryName}>
+            {category.categoryName}
           </Option>
         ))}
       </Select>
@@ -47,7 +47,7 @@ const ProductFilters = ({
         onChange={setSelectedStatus}
         allowClear
       >
-        <Option value="all">Tất cả trạng thái</Option>
+        <Option value="0">Tất cả trạng thái</Option>
         <Option value="active">Đang bán</Option>
         <Option value="inactive">Ngừng bán</Option>
       </Select>
