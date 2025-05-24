@@ -13,12 +13,34 @@ export const getProducts = async (data) => {
   }
 };
 
-export const getProductsWithVariants = async (params = {}) => {
+export const getProductsVariants = async (params = {}) => {
   try {
-    const res = await api.get("/products/search-variant", { params });
+    const res = await api.get("/product-variants/search", { params });
     return res;
   } catch (error) {
     console.error("Lỗi khi lấy productVariants:", error);
     return [];
+  }
+};
+
+export const getProductVariantById = async (id) => {
+  try {
+    const res = await api.get(`/product-variants/search-variant/${id}`);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi lấy productVariants:", error);
+    return [];
+  }
+};
+
+export const getAllIds = async () => {
+  try {
+    const res = await api.get(`/product-variants/get-all-ids`);
+    // Assuming your backend returns the array of IDs in res.data
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi lấy productVariants:", error);
+    // Return an empty array as default
+    return { data: [] };
   }
 };

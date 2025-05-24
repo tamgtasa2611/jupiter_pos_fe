@@ -1,31 +1,28 @@
 "use client";
 
-import React, { useState, useLayoutEffect } from "react";
-import { Card, Button, Drawer, Flex } from "antd";
+import React, { useState, useLayoutEffect, useEffect } from "react";
+import { Card, Button, Drawer } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import ProductTable from "./ProductTable";
-import MobileProductList from "./mobile/MobileProductList";
-import ProductFilters from "./ProductFilters";
-import MobileMenu from "./mobile/MobileMenu";
-
-// Import custom hooks
-import useProductData from "@hooks/hang-hoa/useProductData";
-import useBarcodeScan from "@hooks/hang-hoa/useBarcodeScan";
-
-// Import components
 import ProductHeader from "./ProductHeader";
 import ProductActionBar from "./ProductActionBar";
 import MobileSearchBar from "./mobile/MobileSearchBar";
+import ProductFilters from "./ProductFilters";
+import MobileMenu from "./mobile/MobileMenu";
+import ProductTable from "./ProductTable";
+import MobileProductList from "./mobile/MobileProductList";
 import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./ModalManager";
 
-// Memoize ProductTable, MobileProductList, and ProductFilters for performance
+// Giả sử bạn đã import hàm getProductsVariants từ API
+import { getProductsVariants } from "@/requests/product";
+
+// Memoize các component để tối ưu performance
 const MemoizedProductTable = React.memo(ProductTable);
 const MemoizedMobileProductList = React.memo(MobileProductList);
 const MemoizedProductFilters = React.memo(ProductFilters);
 
 const ProductPage = () => {
-  // Mobile and drawer states
+  // Mobile và trạng thái drawer
   const [isMobile, setIsMobile] = useState(false);
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
@@ -38,40 +35,133 @@ const ProductPage = () => {
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // Custom hooks
-  const productData = useProductData();
-  const { handleScanCode } = useBarcodeScan(productData.setSearchText);
+  // States cho product và bộ lọc
+  const [products, setProducts] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [categories, setCategories] = useState([]); // Giả sử danh mục sẽ được load riêng
+  const [loading, setLoading] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0,
+  });
 
-  // Check for mobile screen
+  // Dummy handleScanCode (bạn có thể điều chỉnh lại theo logic thực tế)
+  const handleScanCode = (code) => {
+    setSearchText(code);
+  };
+
+  // Hàm fetch sản phẩm
+  const fetchProducts = async ({
+    search = "",
+    page = 0,
+    size = 20,
+    category,
+    productId,
+  } = {}) => {
+    try {
+      setLoading(true);
+      const params = { search, page, size, category, productId };
+      const response = await getProductsVariants(params);
+      const mappedProducts = [];
+      response.content.forEach((item) => {
+        const parent = item.product;
+        // Lưu trữ tên sản phẩm gốc
+        const originName = parent.productName;
+        // Nếu variant có attrValues, tạo tên variant theo định dạng: "Tên gốc (attr1, attr2)"
+        let productName = originName;
+        if (item.attrValues && item.attrValues.length > 0) {
+          const attrs = item.attrValues
+            .map((attr) => `${attr.attrName}: ${attr.attrValue}`)
+            .join(", ");
+          productName = `${originName} (${attrs})`;
+        }
+        mappedProducts.push({
+          id: item.id,
+          originName, // Sản phẩm gốc
+          name: productName, // Tên variant đã nối attrValues nếu có
+          description: parent.description,
+          category:
+            parent.category && Array.isArray(parent.category)
+              ? parent.category.map((c) => c.categoryName).join(", ")
+              : "",
+          price: item.price,
+          costPrice: item.costPrice,
+          quantity: item.quantity,
+          sku: item.sku,
+          barcode: item.barcode,
+          expiryDate: item.expiryDate,
+          image: parent.image || "../../../haohao.png",
+          attrValues: item.attrValues,
+        });
+      });
+      // Cập nhật pagination dựa trên giá trị trả về từ API
+      setPagination({
+        current: page + 1,
+        pageSize: size,
+        total: response.totalElements,
+      });
+      // Luôn cập nhật dataSource bằng dữ liệu mới (không nối thêm dữ liệu cũ)
+      setProducts(mappedProducts);
+    } catch (e) {
+      console.log("Lỗi khi tìm kiếm sản phẩm:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Khi component mount, fetch dữ liệu trang đầu tiên
+  useEffect(() => {
+    fetchProducts({ page: 0, size: pagination.pageSize });
+  }, []);
+
+  // Kiểm tra kích thước màn hình
   useLayoutEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
-
-    return () => {
-      window.removeEventListener("resize", checkScreenSize);
-    };
+    return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  // Filter props for ProductFilters component
+  // Props cho bộ lọc
   const filterProps = {
-    searchText: productData.searchText,
-    setSearchText: productData.updateSearchText,
-    selectedCategory: productData.selectedCategory,
-    setSelectedCategory: productData.setSelectedCategory,
-    selectedStatus: productData.selectedStatus,
-    setSelectedStatus: productData.setSelectedStatus,
-    categories: productData.categories,
+    searchText,
+    setSearchText,
+    selectedCategory,
+    setSelectedCategory,
+    selectedStatus,
+    setSelectedStatus,
+    categories,
     isMobile,
   };
+
+  // Xử lý thay đổi bảng: pagination, lọc, sắp xếp, ...
+  const handleTableChange = (newPagination, filters, sorter) => {
+    const { current, pageSize } = newPagination;
+    // Cập nhật lại pagination state, sau đó fetch lại dữ liệu theo trang mới
+    setPagination((prev) => ({ ...prev, current, pageSize }));
+    fetchProducts({
+      search: searchText,
+      page: current - 1,
+      size: pageSize,
+      category: selectedCategory,
+    });
+  };
+
+  // Các hàm dummy cho hành động modal (thêm, sửa, xóa, import)
+  const handleAddProduct = () => {};
+  const handleEditProduct = () => {};
+  const handleDeleteProduct = () => {};
+  const handleImportProducts = () => {};
 
   return (
     <div>
       <Card className="transition-shadow h-fit-screen">
-        <Flex vertical gap={16}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {/* Page header */}
           <ProductHeader
             isMobile={isMobile}
@@ -92,10 +182,10 @@ const ProductPage = () => {
           {/* Product Table for Desktop */}
           {!isMobile && (
             <MemoizedProductTable
-              products={productData.products}
-              loading={productData.loading}
-              pagination={productData.pagination}
-              handleTableChange={productData.handleTableChange}
+              products={products}
+              loading={loading}
+              pagination={pagination}
+              handleTableChange={handleTableChange}
               setSelectedProduct={setSelectedProduct}
               setViewModalVisible={setViewModalVisible}
               setEditModalVisible={setEditModalVisible}
@@ -106,8 +196,8 @@ const ProductPage = () => {
           {/* Mobile search bar */}
           {isMobile && (
             <MobileSearchBar
-              searchText={productData.searchText}
-              updateSearchText={productData.updateSearchText}
+              searchText={searchText}
+              updateSearchText={setSearchText}
               handleScanCode={handleScanCode}
             />
           )}
@@ -115,16 +205,16 @@ const ProductPage = () => {
           {/* Product List for Mobile */}
           {isMobile && (
             <MemoizedMobileProductList
-              products={productData.products}
-              loading={productData.loading}
-              pagination={productData.pagination}
+              products={products}
+              loading={loading}
+              pagination={pagination}
               setSelectedProduct={setSelectedProduct}
               setViewModalVisible={setViewModalVisible}
               setEditModalVisible={setEditModalVisible}
               setDeleteModalVisible={setDeleteModalVisible}
             />
           )}
-        </Flex>
+        </div>
       </Card>
 
       {/* Mobile Menu Drawer */}
@@ -150,16 +240,16 @@ const ProductPage = () => {
         width={300}
       >
         <FilterDrawerContent
-          selectedCategory={productData.selectedCategory}
-          setSelectedCategory={productData.setSelectedCategory}
-          selectedStatus={productData.selectedStatus}
-          setSelectedStatus={productData.setSelectedStatus}
-          categories={productData.categories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
+          categories={categories}
           setFilterDrawerOpen={setFilterDrawerOpen}
         />
       </Drawer>
 
-      {/* All modals */}
+      {/* Modal Manager */}
       <ModalManager
         addModalVisible={addModalVisible}
         editModalVisible={editModalVisible}
@@ -172,21 +262,20 @@ const ProductPage = () => {
         setDeleteModalVisible={setDeleteModalVisible}
         setImportModalVisible={setImportModalVisible}
         selectedProduct={selectedProduct}
-        handleAddProduct={productData.handleAddProduct}
-        handleEditProduct={productData.handleEditProduct}
-        handleDeleteProduct={productData.handleDeleteProduct}
-        handleImportProducts={productData.handleImportProducts}
-        categories={productData.categories}
+        handleAddProduct={handleAddProduct}
+        handleEditProduct={handleEditProduct}
+        handleDeleteProduct={handleDeleteProduct}
+        handleImportProducts={handleImportProducts}
+        categories={categories}
         isMobile={isMobile}
       />
 
-      {/* Floating action button for mobile */}
+      {/* Floating action button cho mobile */}
       <Button
         type="primary"
         shape="circle"
         onClick={() => setAddModalVisible(true)}
         icon={<PlusOutlined />}
-        className="right-4 shadow-sm"
         style={{
           zIndex: 2,
           position: "fixed",
@@ -195,7 +284,8 @@ const ProductPage = () => {
           height: "48px",
           display: isMobile ? "block" : "none",
         }}
-      ></Button>
+        className="right-4 shadow-sm"
+      />
     </div>
   );
 };

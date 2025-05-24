@@ -10,7 +10,7 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
     if (product.attrValues && product.attrValues.length > 0) {
       return product.attrValues.map((attr, index) => (
         <Tag key={index} color="blue" style={{ marginRight: 4 }}>
-          {attr}
+          {attr.attrName}: {attr.attrValue}
         </Tag>
       ));
     }

@@ -26,7 +26,6 @@ import {
   BarcodeOutlined,
   PrinterOutlined,
   ShopOutlined,
-  StockOutlined,
   CalendarOutlined,
   DollarOutlined,
   UserOutlined,
@@ -34,7 +33,11 @@ import {
   AppstoreOutlined,
   CheckCircleOutlined,
   WarningOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
+
+// Import your API function to fetch product details
+import { getProductVariantById } from "@/requests/product";
 
 const { Title, Text } = Typography;
 
@@ -43,53 +46,25 @@ const ProductDetailPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState(null);
-
-  // Lấy id từ URL
   const productId = params?.id;
 
   useEffect(() => {
-    setLoading(true);
-    // Fake dữ liệu sản phẩm
-    setTimeout(() => {
-      setProduct({
-        id: productId,
-        barcode: "SP000123",
-        name: "Mì ăn liền Hảo Hảo",
-        categoryName: "Thực phẩm",
-        price: 4500,
-        costPrice: 3500,
-        stock: 120,
-        unit: "gói",
-        isActive: true,
-        createdAt: "2023-05-01T10:00:00Z",
-        image: "/haohao.png",
-        description: "Mì ăn liền Hảo Hảo vị tôm chua cay, thơm ngon, tiện lợi.",
-        supplier: "Công ty Acecook Việt Nam",
-        salesMonth: 1200,
-        salesTotal: 15000,
-        importHistory: [
-          { date: "2024-05-01", qty: 500, price: 3400 },
-          { date: "2024-04-01", qty: 700, price: 3350 },
-        ],
-        exportHistory: [
-          { date: "2024-05-10", qty: 200 },
-          { date: "2024-05-12", qty: 100 },
-        ],
-        extraBarcodes: ["8934567890123", "8934567890456"],
-        internalCode: "HH-TCC-001",
-        minStock: 50,
-        maxStock: 500,
-        lastSold: "2024-05-15",
-        lastImported: "2024-05-01",
-        bestSeller: true,
-        tags: ["Bán chạy", "Khuyến mãi"],
-        relatedProducts: [
-          { id: "2", name: "Mì Omachi", price: 5500 },
-          { id: "3", name: "Mì 3 Miền", price: 4000 },
-        ],
-      });
-      setLoading(false);
-    }, 500);
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        // Call your real API to get product details
+        const data = await getProductVariantById(productId);
+        setProduct(data);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchProduct();
+    }
   }, [productId]);
 
   if (loading) {
@@ -115,17 +90,17 @@ const ProductDetailPage = () => {
     );
   }
 
-  // Tính phần trăm tồn kho
+  // Calculate stock percentage based on quantity and maxStock
   const stockPercent = Math.min(
     100,
-    Math.round((product.stock / (product.maxStock || 500)) * 100),
+    Math.round((product.quantity / (product.maxStock || 500)) * 100),
   );
 
   return (
     <div className="w-full">
       <Card
         bodyStyle={{ padding: 0 }}
-        bordered={false}
+        variant="borderless"
         className="overflow-hidden"
         style={{ boxShadow: "0 2px 8px #f0f1f2" }}
       >
@@ -147,16 +122,21 @@ const ProductDetailPage = () => {
           />
           <Title level={4} style={{ margin: 0, flex: 1 }}>
             {product.name}
+            {product.originName && (
+              <Tag color="blue" style={{ marginLeft: 12 }}>
+                Sản phẩm gốc: {product.originName}
+              </Tag>
+            )}
             {product.bestSeller && (
               <Tag color="volcano" style={{ marginLeft: 12 }}>
                 <FireOutlined /> Bán chạy
               </Tag>
             )}
-            {product.tags?.map((tag) => (
-              <Tag key={tag} color="blue" style={{ marginLeft: 8 }}>
-                {tag}
+            {/* {product.tags?.map((tag, idx) => (
+              <Tag key={idx} color="blue" style={{ marginLeft: 8 }}>
+                {tag.tagName || tag.name || JSON.stringify(tag)}
               </Tag>
-            ))}
+            ))} */}
           </Title>
           <Space>
             <Tooltip title="In mã vạch">
@@ -174,7 +154,7 @@ const ProductDetailPage = () => {
 
         {/* Main content */}
         <Row gutter={[32, 0]} style={{ padding: 32 }}>
-          {/* Left: Image & status & quick info */}
+          {/* Left: Image & quick info */}
           <Col xs={24} md={7} lg={6}>
             <div className="flex flex-col items-center">
               <Badge.Ribbon
@@ -197,24 +177,24 @@ const ProductDetailPage = () => {
               <Space direction="vertical" size={8} className="mt-4 w-full">
                 <Statistic
                   title="Tồn kho"
-                  value={product.stock}
+                  value={product.quantity}
                   suffix={product.unit}
                   valueStyle={{
                     color:
-                      product.stock < 10
+                      product.quantity < 10
                         ? "#ff4d4f"
-                        : product.stock < 30
+                        : product.quantity < 30
                           ? "#faad14"
                           : "#52c41a",
                   }}
-                  prefix={<StockOutlined />}
+                  prefix={<BarcodeOutlined />}
                 />
                 <Progress
                   percent={stockPercent}
                   status={
-                    product.stock < product.minStock
+                    product.quantity < product.minStock
                       ? "exception"
-                      : product.stock > product.maxStock
+                      : product.quantity > product.maxStock
                         ? "active"
                         : "normal"
                   }
@@ -258,7 +238,7 @@ const ProductDetailPage = () => {
             </div>
           </Col>
 
-          {/* Right: Info */}
+          {/* Right: Product Information */}
           <Col xs={24} md={17} lg={18}>
             <Descriptions
               bordered
@@ -279,15 +259,16 @@ const ProductDetailPage = () => {
               </Descriptions.Item>
               <Descriptions.Item label="Barcode phụ">
                 <Space>
-                  {product.extraBarcodes.map((b, idx) => (
-                    <Tag key={b} color="blue">
-                      {b}
-                    </Tag>
-                  ))}
+                  {product.extraBarcodes &&
+                    product.extraBarcodes.map((b) => (
+                      <Tag key={b} color="blue">
+                        {b}
+                      </Tag>
+                    ))}
                 </Space>
               </Descriptions.Item>
               <Descriptions.Item label="Danh mục">
-                <Tag color="purple">{product.categoryName}</Tag>
+                <Tag color="purple">{product.category}</Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Nhà cung cấp">
                 <Space>
@@ -308,12 +289,12 @@ const ProductDetailPage = () => {
               </Descriptions.Item>
               <Descriptions.Item label="Loại sản phẩm">
                 <Tag color="cyan">
-                  <AppstoreOutlined /> Thực phẩm đóng gói
+                  <AppstoreOutlined /> Sản phẩm đóng gói
                 </Tag>
               </Descriptions.Item>
             </Descriptions>
 
-            {/* Mô tả */}
+            {/* Product Description */}
             <Divider orientation="left" plain className="mt-6 mb-2">
               Mô tả sản phẩm
             </Divider>
@@ -323,7 +304,7 @@ const ProductDetailPage = () => {
               )}
             </div>
 
-            {/* Sản phẩm liên quan */}
+            {/* Related Products */}
             <Divider orientation="left" plain className="mt-6 mb-2">
               Sản phẩm liên quan
             </Divider>
@@ -351,7 +332,7 @@ const ProductDetailPage = () => {
           </Col>
         </Row>
 
-        {/* Quản lý bán hàng */}
+        {/* Sales Management Info */}
         <Divider orientation="left" plain className="mt-0 mb-2">
           Thông tin quản lý bán hàng
         </Divider>
@@ -382,8 +363,9 @@ const ProductDetailPage = () => {
               </Title>
               <div>
                 <Text strong>Nhập kho:</Text>
+                {/* Import History */}
                 <ul style={{ margin: 0, paddingLeft: 20 }}>
-                  {product.importHistory.map((item, idx) => (
+                  {(product.importHistory || []).map((item, idx) => (
                     <li key={idx}>
                       <CheckCircleOutlined style={{ color: "#52c41a" }} />{" "}
                       {item.date}: +{item.qty} ({item.price.toLocaleString()}đ)
@@ -391,8 +373,9 @@ const ProductDetailPage = () => {
                   ))}
                 </ul>
                 <Text strong>Xuất kho:</Text>
+                {/* Export History */}
                 <ul style={{ margin: 0, paddingLeft: 20 }}>
-                  {product.exportHistory.map((item, idx) => (
+                  {(product.exportHistory || []).map((item, idx) => (
                     <li key={idx}>
                       <WarningOutlined style={{ color: "#faad14" }} />{" "}
                       {item.date}: -{item.qty}

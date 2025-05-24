@@ -7,7 +7,7 @@ import OrderSummary from "./OrderSummary";
 import CustomerInfo from "./CustomerInfo";
 import PaymentModal from "./PaymentModal";
 import NumericKeypad from "./NumericKeypad";
-import { getProducts, getProductsWithVariants } from "@requests/product";
+import { getProducts, getProductsVariants } from "@requests/product";
 
 const { Text } = Typography;
 
@@ -38,7 +38,7 @@ const MainSellingPage = () => {
         category,
         productId,
       };
-      const response = await getProductsWithVariants(params);
+      const response = await getProductsVariants(params);
       const mappedProducts = [];
       response.content.forEach((item) => {
         const parent = item.product;

@@ -1,78 +1,69 @@
 "use client";
 
-import React from "react";
-import {
-  Modal,
-  Descriptions,
-  Tag,
-  Image,
-  Button,
-  Typography,
-  Divider,
-} from "antd";
+import { BarcodeOutlined, EyeOutlined } from "@ant-design/icons";
+import { Button, Descriptions, Image, Modal, Space, Tag } from "antd";
 import { useRouter } from "next/navigation";
-import { EditOutlined, BarcodeOutlined } from "@ant-design/icons";
-
-const { Title } = Typography;
 
 const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
   const router = useRouter();
   if (!product) return null;
 
-  console.log(product);
-
   return (
     <Modal
-      title={
-        <Title level={5} className="m-0">
-          Chi tiết sản phẩm
-        </Title>
-      }
-      {...(isMobile && { centered: true })}
+      title="Chi tiết sản phẩm"
       open={visible}
       onCancel={onCancel}
-      width={700}
+      width={isMobile ? "90%" : 700}
       footer={[
-        <Button key="back" onClick={onCancel}>
+        <Button key="close" onClick={onCancel}>
           Đóng
         </Button>,
         <Button
           key="detail"
           type="primary"
+          icon={<EyeOutlined />}
           onClick={() => {
-            onCancel(); // Đóng modal trước
             router.push(`/admin/hang-hoa/${product.id}`);
           }}
         >
-          Xem chi tiết sản phẩm
+          Xem chi tiết
         </Button>,
       ]}
+      centered={!isMobile}
     >
       <div className="flex flex-col md:flex-row gap-6">
-        <div className="md:w-1/3 mb-4">
+        {/* Left: Image */}
+        <div className="md:w-1/3">
           <div className="bg-gray-50 rounded-lg p-2 flex items-center justify-center">
             <Image
               alt={product.name}
               src={product.image}
-              className="max-w-full rounded"
-              style={{ maxHeight: "200px", objectFit: "contain" }}
+              className="rounded"
+              style={{ maxHeight: "220px", objectFit: "contain" }}
+              fallback="https://via.placeholder.com/220x220?text=No+Image"
+              preview={false}
             />
           </div>
         </div>
 
+        {/* Right: Details */}
         <div className="md:w-2/3">
-          <Descriptions bordered column={1} size="small" className="bg-white">
-            <Descriptions.Item label="Mã sản phẩm">
-              <div className="flex items-center">
-                <BarcodeOutlined className="mr-2" />
-                <span className="font-mono">{product.barcode}</span>
+          <Descriptions bordered column={1} size="small">
+            <Descriptions.Item label="Tên biến thể">
+              <div>
+                <div className="font-medium text-lg">{product.name}</div>
+                {product.originName && (
+                  <div className="text-xs text-gray-500">
+                    Sản phẩm gốc: {product.originName}
+                  </div>
+                )}
               </div>
             </Descriptions.Item>
-            <Descriptions.Item label="Tên sản phẩm">
-              <strong>{product.name}</strong>
-            </Descriptions.Item>
-            <Descriptions.Item label="Danh mục">
-              {product.categoryName}
+            <Descriptions.Item label="Mã sản phẩm">
+              <Space>
+                <BarcodeOutlined />
+                <span className="font-mono">{product.barcode}</span>
+              </Space>
             </Descriptions.Item>
             <Descriptions.Item label="Giá bán">
               <span className="text-blue-600 font-semibold">
@@ -80,43 +71,48 @@ const ViewProductModal = ({ visible, onCancel, product, isMobile }) => {
               </span>
             </Descriptions.Item>
             <Descriptions.Item label="Giá nhập">
-              <span>
+              <span className="text-gray-600">
                 {new Intl.NumberFormat("vi-VN").format(product.costPrice)}đ
               </span>
             </Descriptions.Item>
             <Descriptions.Item label="Tồn kho">
               <span
                 className={`font-semibold ${
-                  product.stock < 10
+                  product.quantity <= 10
                     ? "text-red-500"
-                    : product.stock < 30
+                    : product.quantity <= 30
                       ? "text-orange-500"
                       : "text-green-600"
                 }`}
               >
-                {product.stock} {product.unit}
+                {product.quantity}
               </span>
             </Descriptions.Item>
-            <Descriptions.Item label="Trạng thái">
-              <Tag color={product.isActive ? "green" : "red"}>
-                {product.isActive ? "Đang bán" : "Ngừng bán"}
-              </Tag>
-            </Descriptions.Item>
-            <Descriptions.Item label="Ngày tạo">
-              {new Date(product.createdAt).toLocaleDateString("vi-VN")}
-            </Descriptions.Item>
+            {product.expiryDate && (
+              <Descriptions.Item label="Hạn sử dụng">
+                {new Date(product.expiryDate).toLocaleDateString("vi-VN")}
+              </Descriptions.Item>
+            )}
+            {product.attrValues && product.attrValues.length > 0 && (
+              <Descriptions.Item label="Thuộc tính">
+                {product.attrValues.map((attr, idx) => (
+                  <Tag key={idx} color="blue" className="mb-1">
+                    {attr.attrName}: {attr.attrValue}
+                  </Tag>
+                ))}
+              </Descriptions.Item>
+            )}
+            {product.description && (
+              <Descriptions.Item label="Mô tả sản phẩm">
+                {product.description}
+              </Descriptions.Item>
+            )}
+            {product.category && (
+              <Descriptions.Item label="Danh mục">
+                {product.category}
+              </Descriptions.Item>
+            )}
           </Descriptions>
-
-          {product.description && (
-            <>
-              <Divider orientation="left" plain className="mt-4 mb-2">
-                Mô tả sản phẩm
-              </Divider>
-              <div className="bg-gray-50 p-3 rounded">
-                {product.description || "Không có mô tả"}
-              </div>
-            </>
-          )}
         </div>
       </div>
     </Modal>

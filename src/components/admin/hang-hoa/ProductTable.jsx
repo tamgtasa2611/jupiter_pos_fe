@@ -30,9 +30,22 @@ const ProductTable = ({
 
   const columns = [
     {
+      title: "Tên biến thể sản phẩm",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record) => (
+        <div>
+          <div className="font-medium">{text}</div>
+          <div className="text-xs text-gray-500">{record.originName}</div>
+        </div>
+      ),
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
       title: "Mã sản phẩm",
       dataIndex: "barcode",
       key: "barcode",
+      width: 200,
       render: (barcode) => (
         <Tooltip title={barcode}>
           <div className="flex items-center">
@@ -44,23 +57,10 @@ const ProductTable = ({
       sorter: (a, b) => a.barcode.localeCompare(b.barcode),
     },
     {
-      title: "Tên sản phẩm",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (text) => <span className="font-medium">{text}</span>,
-    },
-    {
-      title: "Danh mục",
-      dataIndex: "categoryName",
-      key: "categoryName",
-      filters: categories.map((cat) => ({ text: cat.label, value: cat.value })),
-      onFilter: (value, record) => record.category === value,
-    },
-    {
       title: "Giá bán",
       dataIndex: "price",
       key: "price",
+      width: 200,
       sorter: (a, b) => a.price - b.price,
       render: (price) => (
         <span className="font-semibold text-blue-600">
@@ -72,6 +72,7 @@ const ProductTable = ({
       title: "Giá nhập",
       dataIndex: "costPrice",
       key: "costPrice",
+      width: 200,
       sorter: (a, b) => a.costPrice - b.costPrice,
       render: (costPrice) => (
         <span className="text-gray-600">
@@ -81,23 +82,23 @@ const ProductTable = ({
     },
     {
       title: "Tồn kho",
-      dataIndex: "stock",
-      key: "stock",
-      sorter: (a, b) => a.stock - b.stock,
-      render: (stock, record) => (
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 120,
+      sorter: (a, b) => a.quantity - b.quantity,
+      render: (quantity, record) => (
         <div>
           <span
             className={`font-semibold ${
-              stock < 10
+              quantity <= 10
                 ? "text-red-500"
-                : stock < 30
+                : quantity <= 30
                   ? "text-orange-500"
                   : "text-green-600"
             }`}
           >
-            {stock}
+            {quantity}
           </span>
-          <span className="text-gray-500 ml-1">{record.unit}</span>
         </div>
       ),
     },
@@ -105,6 +106,7 @@ const ProductTable = ({
       title: "Trạng thái",
       dataIndex: "isActive",
       key: "isActive",
+      width: 160,
       render: (isActive) => (
         <Tag color={isActive ? "green" : "red"}>
           {isActive ? "Đang bán" : "Ngừng bán"}
