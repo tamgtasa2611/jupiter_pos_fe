@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useLayoutEffect, useEffect } from "react";
-import { Card, Button, Drawer } from "antd";
+import { Card, Button, Drawer, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import ProductHeader from "./ProductHeader";
 import ProductActionBar from "./ProductActionBar";
@@ -13,8 +13,7 @@ import MobileProductList from "./mobile/MobileProductList";
 import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./ModalManager";
 
-// Giả sử bạn đã import hàm getProductsVariants từ API
-import { getProductsVariants } from "@/requests/product";
+import { getProductsVariants, createProduct } from "@/requests/product";
 
 // Memoize các component để tối ưu performance
 const MemoizedProductTable = React.memo(ProductTable);
@@ -60,10 +59,11 @@ const ProductPage = () => {
     size = 20,
     category,
     productId,
+    sort = "createdDate,desc",
   } = {}) => {
     try {
       setLoading(true);
-      const params = { search, page, size, category, productId };
+      const params = { search, page, size, category, productId, sort };
       const response = await getProductsVariants(params);
       const mappedProducts = [];
       response.content.forEach((item) => {
@@ -95,6 +95,9 @@ const ProductPage = () => {
           expiryDate: item.expiryDate,
           image: parent.image || "../../../haohao.png",
           attrValues: item.attrValues,
+          createdDate: item.createdDate,
+          lastModifiedDate: item.lastModifiedDate,
+          status: item.status,
         });
       });
       // Cập nhật pagination dựa trên giá trị trả về từ API
@@ -142,18 +145,47 @@ const ProductPage = () => {
   // Xử lý thay đổi bảng: pagination, lọc, sắp xếp, ...
   const handleTableChange = (newPagination, filters, sorter) => {
     const { current, pageSize } = newPagination;
-    // Cập nhật lại pagination state, sau đó fetch lại dữ liệu theo trang mới
     setPagination((prev) => ({ ...prev, current, pageSize }));
+    // Nếu có sorter, truyền theo định dạng ?sort=field,order (order: asc hoặc desc)
+    const sortParam = sorter.field
+      ? `${sorter.field},${sorter.order === "ascend" ? "asc" : "desc"}`
+      : undefined;
     fetchProducts({
       search: searchText,
       page: current - 1,
       size: pageSize,
       category: selectedCategory,
+      sort: sortParam,
     });
   };
 
   // Các hàm dummy cho hành động modal (thêm, sửa, xóa, import)
-  const handleAddProduct = () => {};
+  const handleAddProduct = async (payload) => {
+    try {
+      setLoading(true);
+      // Tạo một promise timeout 10 giây
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 10000),
+      );
+      // Đợi tạo sản phẩm hoặc timeout
+      const response = await Promise.race([
+        createProduct(payload),
+        timeoutPromise,
+      ]);
+      if (!response || response.error) {
+        throw new Error(response?.error || "API error");
+      }
+      message.success("Thêm sản phẩm thành công");
+      setAddModalVisible(false);
+      // Refresh product list after adding
+      fetchProducts({ page: 0, size: pagination.pageSize });
+    } catch (error) {
+      console.error("Lỗi khi thêm sản phẩm:", error);
+      message.error("Thêm sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!");
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleEditProduct = () => {};
   const handleDeleteProduct = () => {};
   const handleImportProducts = () => {};
@@ -167,6 +199,9 @@ const ProductPage = () => {
             isMobile={isMobile}
             setMenuDrawerOpen={setMenuDrawerOpen}
             setFilterDrawerOpen={setFilterDrawerOpen}
+            onRefresh={() =>
+              fetchProducts({ page: 0, size: pagination.pageSize })
+            }
           />
 
           {/* Action bar - Desktop */}
@@ -176,6 +211,10 @@ const ProductPage = () => {
               setImportModalVisible={setImportModalVisible}
               ProductFilters={MemoizedProductFilters}
               filterProps={filterProps}
+              loading={loading}
+              onRefresh={() =>
+                fetchProducts({ page: 0, size: pagination.pageSize })
+              }
             />
           )}
 

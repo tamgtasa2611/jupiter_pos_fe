@@ -44,3 +44,13 @@ export const getAllIds = async () => {
     return { data: [] };
   }
 };
+
+export const createProduct = async (data) => {
+  try {
+    const res = await api.post("/products/create", data);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi tạo sản phẩm:", error);
+    return [];
+  }
+};

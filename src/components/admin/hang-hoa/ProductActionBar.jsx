@@ -7,6 +7,7 @@ import {
   FileExcelOutlined,
   FilePdfOutlined,
   PrinterOutlined,
+  ReloadOutlined,
 } from "@ant-design/icons";
 
 const ProductActionBar = ({
@@ -14,6 +15,8 @@ const ProductActionBar = ({
   setImportModalVisible,
   ProductFilters,
   filterProps,
+  loading,
+  onRefresh,
 }) => {
   return (
     <Flex
@@ -71,6 +74,8 @@ const ProductActionBar = ({
             </svg>
           </Button>
         </Dropdown>
+
+        <Button icon={<ReloadOutlined />} onClick={onRefresh} loading={loading}>Tải lại</Button>
       </Flex>
     </Flex>
   );

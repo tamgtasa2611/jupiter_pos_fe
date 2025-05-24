@@ -19,33 +19,25 @@ const ProductTable = ({
   setEditModalVisible,
   setDeleteModalVisible,
 }) => {
-  const router = useRouter();
-  const categories = [
-    { value: "beverages", label: "Đồ uống" },
-    { value: "food", label: "Thực phẩm" },
-    { value: "snacks", label: "Bánh kẹo" },
-    { value: "household", label: "Đồ gia dụng" },
-    { value: "personal_care", label: "Chăm sóc cá nhân" },
-  ];
-
   const columns = [
     {
       title: "Tên biến thể sản phẩm",
       dataIndex: "name",
       key: "name",
+      sorter: true,
       render: (text, record) => (
         <div>
           <div className="font-medium">{text}</div>
           <div className="text-xs text-gray-500">{record.originName}</div>
         </div>
       ),
-      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Mã sản phẩm",
       dataIndex: "barcode",
       key: "barcode",
       width: 200,
+      sorter: true,
       render: (barcode) => (
         <Tooltip title={barcode}>
           <div className="flex items-center">
@@ -54,14 +46,13 @@ const ProductTable = ({
           </div>
         </Tooltip>
       ),
-      sorter: (a, b) => a.barcode.localeCompare(b.barcode),
     },
     {
       title: "Giá bán",
       dataIndex: "price",
       key: "price",
       width: 200,
-      sorter: (a, b) => a.price - b.price,
+      sorter: true,
       render: (price) => (
         <span className="font-semibold text-blue-600">
           {new Intl.NumberFormat("vi-VN").format(price)}đ
@@ -73,7 +64,7 @@ const ProductTable = ({
       dataIndex: "costPrice",
       key: "costPrice",
       width: 200,
-      sorter: (a, b) => a.costPrice - b.costPrice,
+      sorter: true,
       render: (costPrice) => (
         <span className="text-gray-600">
           {new Intl.NumberFormat("vi-VN").format(costPrice)}đ
@@ -85,7 +76,7 @@ const ProductTable = ({
       dataIndex: "quantity",
       key: "quantity",
       width: 120,
-      sorter: (a, b) => a.quantity - b.quantity,
+      sorter: true,
       render: (quantity, record) => (
         <div>
           <span
@@ -107,10 +98,30 @@ const ProductTable = ({
       dataIndex: "isActive",
       key: "isActive",
       width: 160,
+      sorter: true,
       render: (isActive) => (
         <Tag color={isActive ? "green" : "red"}>
           {isActive ? "Đang bán" : "Ngừng bán"}
         </Tag>
+      ),
+    },
+    {
+      title: "Tạo lúc",
+      dataIndex: "createdDate",
+      key: "createdDate",
+      width: 160,
+      sorter: true,
+      render: (createdDate) => (
+        <span>
+          {createdDate &&
+            new Intl.DateTimeFormat("vi-VN", {
+              hour: "2-digit",
+              minute: "2-digit",
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            }).format(new Date(createdDate))}
+        </span>
       ),
     },
     {
@@ -172,6 +183,7 @@ const ProductTable = ({
       style={{ height: "100%" }}
       sticky
       size="middle"
+      locale={{ emptyText: "Không có dữ liệu" }}
     />
   );
 };
