@@ -7,6 +7,7 @@ import MobileNavBar from "@components/admin/common/MobileNavBar";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@atoms/common";
 import { RecoilRoot } from "recoil";
+import { getToken } from "@/utils/utils";
 
 const { Content } = Layout;
 
@@ -19,12 +20,10 @@ export default function AdminLayout({ children }) {
 
   // Check authentication on component mount
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (!token) {
-      console.log("No token found, redirecting to login");
       router.push("/dang-nhap");
     } else {
-      console.log("Token found, user is authenticated");
       setIsAuthenticated(true);
     }
   }, [router]);

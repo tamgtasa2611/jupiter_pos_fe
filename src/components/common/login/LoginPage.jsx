@@ -5,18 +5,15 @@ import { Card, Form, message } from "antd";
 import { useRouter } from "next/navigation";
 import LoginForm from "./LoginForm";
 import { login } from "@/requests/auth";
+import { setTokenWithExpiry, getToken } from "@/utils/utils";
 
 const LoginPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [focused, setFocused] = useState("");
-  const [form] = Form.useForm();
-  const [isMobile, setIsMobile] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     // Check if token exists
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (token) {
       console.log("Token found, redirecting to dashboard");
       router.push("/admin/trang-chu");
@@ -31,7 +28,7 @@ const LoginPage = () => {
         password: values.password,
       });
       if (res.token) {
-        localStorage.setItem("token", res.token);
+        setTokenWithExpiry(res.token);
         message.success(res.message || "Đăng nhập thành công!");
         router.push("/admin/trang-chu");
       } else {
