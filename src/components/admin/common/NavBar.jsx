@@ -199,7 +199,7 @@ export default function NavBar({ onLogout }) {
           placement="bottomRight"
           trigger={["click"]}
           overlayClassName="w-80"
-          dropdownRender={(menu) => (
+          popupRender={(menu) => (
             <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
               <div className="px-4 py-3 bg-gray-50 border-gray-100 border-b">
                 <span className="font-bold">Thông báo</span>
@@ -249,7 +249,7 @@ export default function NavBar({ onLogout }) {
           placement="bottomRight"
           trigger={["click"]}
           overlayClassName="w-56"
-          dropdownRender={(menu) => (
+          popupRender={(menu) => (
             <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
               {menu}
             </div>
@@ -294,7 +294,7 @@ export default function NavBar({ onLogout }) {
           placement="bottomRight"
           trigger={["click"]}
           overlayClassName="w-56"
-          dropdownRender={(menu) => (
+          popupRender={(menu) => (
             <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
               <div className="px-4 py-3 flex items-center gap-3 border-b border-gray-100 bg-gray-50">
                 <Avatar

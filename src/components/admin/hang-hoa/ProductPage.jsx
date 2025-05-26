@@ -11,10 +11,12 @@ import MobileMenu from "./mobile/MobileMenu";
 import ProductTable from "./ProductTable";
 import MobileProductList from "./mobile/MobileProductList";
 import FilterDrawerContent from "./FilterDrawerContent";
-import ModalManager from "./ModalManager";
+import ModalManager from "./modal/ModalManager";
 
 import { getProductsVariants, createProduct } from "@/requests/product";
 import { getCategories } from "@/requests/category";
+import { getAttributes } from "@/requests/attribute";
+import { getUnits } from "@/requests/unit";
 
 // Memoize các component để tối ưu performance
 const MemoizedProductTable = React.memo(ProductTable);
@@ -41,6 +43,8 @@ const ProductPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("0"); // "0" là tất cả danh mục
   const [selectedStatus, setSelectedStatus] = useState("0"); // "0" là tất cả trạng thái
   const [categories, setCategories] = useState([]); // Giả sử danh mục sẽ được load riêng
+  const [units, setUnits] = useState([]); // Giả sử đơn vị sẽ được load riêng
+  const [attributes, setAttributes] = useState([]); // Giả sử thuộc tính sẽ được load riêng
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -58,6 +62,30 @@ const ProductPage = () => {
       }
     }
     loadCategories();
+  }, []);
+
+  useEffect(() => {
+    async function loadAttributes() {
+      try {
+        const attributeResponse = await getAttributes();
+        setAttributes(attributeResponse);
+      } catch (error) {
+        console.error("Lỗi khi lấy thuộc tính:", error);
+      }
+    }
+    loadAttributes();
+  }, []);
+
+  useEffect(() => {
+    async function loadUnits() {
+      try {
+        const unitResponse = await getUnits();
+        setUnits(unitResponse);
+      } catch (error) {
+        console.error("Lỗi khi lấy đơn vị:", error);
+      }
+    }
+    loadUnits();
   }, []);
 
   // Dummy handleScanCode (bạn có thể điều chỉnh lại theo logic thực tế)
@@ -203,6 +231,34 @@ const ProductPage = () => {
   const handleDeleteProduct = () => {};
   const handleImportProducts = () => {};
 
+  // Định nghĩa hàm reloadCategories để tải lại danh mục từ API
+  const reloadCategories = async () => {
+    try {
+      const categoryResponse = await getCategories();
+      setCategories(categoryResponse);
+    } catch (error) {
+      console.error("Lỗi khi tải lại danh mục:", error);
+    }
+  };
+
+  const reloadAttributes = async () => {
+    try {
+      const attributeResponse = await getAttributes();
+      setAttributes(attributeResponse);
+    } catch (error) {
+      console.error("Lỗi khi tải lại thuộc tính:", error);
+    }
+  };
+
+  const reloadUnits = async () => {
+    try {
+      const unitResponse = await getUnits();
+      setUnits(unitResponse);
+    } catch (error) {
+      console.error("Lỗi khi tải lại đơn vị:", error);
+    }
+  };
+
   return (
     <div>
       <Card className="transition-shadow h-fit-screen">
@@ -319,6 +375,11 @@ const ProductPage = () => {
         handleDeleteProduct={handleDeleteProduct}
         handleImportProducts={handleImportProducts}
         categories={categories}
+        reloadCategories={reloadCategories}
+        attributes={attributes}
+        reloadAttributes={reloadAttributes}
+        units={units}
+        reloadUnits={reloadUnits}
         isMobile={isMobile}
       />
 

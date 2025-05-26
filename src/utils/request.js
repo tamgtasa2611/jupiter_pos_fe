@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "@utils/utils";
 
 // Tạo instance mặc định
 const api = axios.create({
@@ -13,8 +14,7 @@ const api = axios.create({
 // Thêm interceptor cho request (ví dụ: thêm token)
 api.interceptors.request.use(
   (config) => {
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const token = typeof window !== "undefined" ? getToken() : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

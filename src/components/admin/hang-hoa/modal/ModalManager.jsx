@@ -8,7 +8,7 @@ const AddProductModal = dynamic(() => import("./AddProductModal"), {
 const EditProductModal = dynamic(() => import("./EditProductModal"), {
   loading: () => <p>Loading...</p>,
 });
-const ViewProductModal = dynamic(() => import("./ViewProductModal"), {
+const ViewProductModal = dynamic(() => import("../ViewProductModal"), {
   loading: () => <p>Loading...</p>,
 });
 const DeleteProductModal = dynamic(() => import("./DeleteProductModal"), {
@@ -35,6 +35,11 @@ const ModalManager = ({
   handleDeleteProduct,
   handleImportProducts,
   categories,
+  reloadCategories,
+  units,
+  reloadUnits,
+  attributes,
+  reloadAttributes,
   isMobile,
 }) => {
   return (
@@ -44,6 +49,11 @@ const ModalManager = ({
         onCancel={() => setAddModalVisible(false)}
         onAdd={handleAddProduct}
         categories={categories}
+        reloadCategories={reloadCategories}
+        units={units}
+        reloadUnits={reloadUnits}
+        attributes={attributes}
+        reloadAttributes={reloadAttributes}
         isMobile={isMobile}
       />
 

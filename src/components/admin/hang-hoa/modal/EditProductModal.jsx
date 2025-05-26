@@ -185,7 +185,7 @@ const EditProductModal = ({
           >
             <Select
               placeholder="Chọn đơn vị tính"
-              dropdownRender={(menu) => (
+              popupRender={(menu) => (
                 <>
                   {menu}
                   <Divider style={{ margin: "8px 0" }} />
