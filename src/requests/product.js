@@ -5,8 +5,17 @@ export const getProducts = async (data) => {
     const productVariants = await api.get(
       `/product-variants/search/${data.productId}`,
     );
-    console.log(productVariants);
     return productVariants;
+  } catch (error) {
+    console.error("Lỗi khi lấy productVariants:", error);
+    return [];
+  }
+};
+
+export const getProductsWithVariants = async (params = {}) => {
+  try {
+    const products = await api.get(`/products/search-with-variants`, { params });
+    return products;
   } catch (error) {
     console.error("Lỗi khi lấy productVariants:", error);
     return [];

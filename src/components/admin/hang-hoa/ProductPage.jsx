@@ -14,6 +14,7 @@ import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./modal/ModalManager";
 
 import {
+  getProductsWithVariants,
   getProductsVariants,
   createProduct,
   updateProduct,
@@ -56,6 +57,8 @@ const ProductPage = () => {
     total: 0,
   });
 
+  const [editVariantModalVisible, setEditVariantModalVisible] = useState(false);
+
   useEffect(() => {
     async function loadCategories() {
       try {
@@ -97,11 +100,47 @@ const ProductPage = () => {
     setSearchText(code);
   };
 
+  function mapProductsFromApi(data) {
+    console.log(data);
+
+    return data.map((item) => {
+      const { product, variants } = item;
+      return {
+        key: product.productId,
+        productId: product.productId,
+        productName: product.productName,
+        description: product.description,
+        category: Array.isArray(product.category)
+          ? product.category.map((c) => c.categoryName).join(", ")
+          : "",
+        variants: (variants || []).map((v) => ({
+          ...v,
+          name:
+            v.attrValues && v.attrValues.length
+              ? `${product.productName} (${v.attrValues.map((a) => `${a.attrName}: ${a.attrValue}`).join(", ")})`
+              : product.productName,
+        })),
+        variantsCount: variants ? variants.length : 0,
+        quantity:
+          variants && variants.length > 0
+            ? variants.reduce((sum, v) => sum + (v.quantity || 0), 0)
+            : 0,
+        image:
+          variants &&
+          variants[0] &&
+          variants[0].imagePaths &&
+          variants[0].imagePaths.length > 0
+            ? variants[0].imagePaths[0]
+            : null,
+      };
+    });
+  }
+
   // Hàm fetch sản phẩm
   const fetchProducts = async ({
     search = "",
     page = 0,
-    size = 20,
+    size = 10,
     category,
     productId,
     sort = "createdDate,desc",
@@ -109,50 +148,17 @@ const ProductPage = () => {
     try {
       setLoading(true);
       const params = { search, page, size, category, productId, sort };
-      const response = await getProductsVariants(params);
-      const mappedProducts = [];
-      response.content.forEach((item) => {
-        const parent = item.product;
-        // Lưu trữ tên sản phẩm gốc
-        const originName = parent.productName;
-        // Nếu variant có attrValues, tạo tên variant theo định dạng: "Tên gốc (attr1, attr2)"
-        let productName = originName;
-        if (item.attrValues && item.attrValues.length > 0) {
-          const attrs = item.attrValues
-            .map((attr) => `${attr.attrName}: ${attr.attrValue}`)
-            .join(", ");
-          productName = `${originName} (${attrs})`;
-        }
-        mappedProducts.push({
-          id: item.id,
-          originName, // Sản phẩm gốc
-          name: productName, // Tên variant đã nối attrValues nếu có
-          description: parent.description,
-          category:
-            parent.category && Array.isArray(parent.category)
-              ? parent.category.map((c) => c.categoryName).join(", ")
-              : "",
-          price: item.price,
-          costPrice: item.costPrice,
-          quantity: item.quantity,
-          sku: item.sku,
-          barcode: item.barcode,
-          expiryDate: item.expiryDate,
-          image: parent.image || "../../../haohao.png",
-          attrValues: item.attrValues,
-          createdDate: item.createdDate,
-          lastModifiedDate: item.lastModifiedDate,
-          status: item.status,
-        });
-      });
+      const response = await getProductsWithVariants(params);
+
+      // Nếu response có dạng { content, totalElements }
+      const mappedProducts = mapProductsFromApi(response.content || []);
+      setProducts(mappedProducts);
       // Cập nhật pagination dựa trên giá trị trả về từ API
       setPagination({
         current: page + 1,
         pageSize: size,
         total: response.totalElements,
       });
-      // Luôn cập nhật dataSource bằng dữ liệu mới (không nối thêm dữ liệu cũ)
-      setProducts(mappedProducts);
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
     } finally {
@@ -328,6 +334,7 @@ const ProductPage = () => {
               setViewModalVisible={setViewModalVisible}
               setEditModalVisible={setEditModalVisible}
               setDeleteModalVisible={setDeleteModalVisible}
+              setEditVariantModalVisible={setEditVariantModalVisible}
             />
           )}
 
