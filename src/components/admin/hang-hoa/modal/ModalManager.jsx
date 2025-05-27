@@ -63,7 +63,7 @@ const ModalManager = ({
             visible={editModalVisible}
             onCancel={() => setEditModalVisible(false)}
             onEdit={handleEditProduct}
-            product={selectedProduct}
+            productId={selectedProduct.id}
             categories={categories}
             isMobile={isMobile}
           />

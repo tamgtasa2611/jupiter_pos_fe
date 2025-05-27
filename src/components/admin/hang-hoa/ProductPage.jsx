@@ -13,7 +13,11 @@ import MobileProductList from "./mobile/MobileProductList";
 import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./modal/ModalManager";
 
-import { getProductsVariants, createProduct } from "@/requests/product";
+import {
+  getProductsVariants,
+  createProduct,
+  updateProduct,
+} from "@/requests/product";
 import { getCategories } from "@/requests/category";
 import { getAttributes } from "@/requests/attribute";
 import { getUnits } from "@/requests/unit";
@@ -227,7 +231,33 @@ const ProductPage = () => {
       setLoading(false);
     }
   };
-  const handleEditProduct = () => {};
+  const handleEditProduct = async (id, data) => {
+    try {
+      setLoading(true);
+      // Tạo một promise timeout 10 giây
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 10000),
+      );
+      const response = await Promise.race([
+        updateProduct(id, data),
+        timeoutPromise,
+      ]);
+      if (!response || response.error) {
+        throw new Error(response?.error || "API error");
+      }
+      message.success("Cập nhật sản phẩm thành công");
+      setEditModalVisible(false);
+      // Refresh product list after editing
+      fetchProducts({ page: 0, size: pagination.pageSize });
+    } catch (error) {
+      console.error("Lỗi khi cập nhật sản phẩm:", error);
+      message.error(
+        "Cập nhật sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleDeleteProduct = () => {};
   const handleImportProducts = () => {};
 

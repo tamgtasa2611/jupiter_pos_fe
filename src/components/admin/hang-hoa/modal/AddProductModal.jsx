@@ -138,7 +138,7 @@ const AddProductModal = ({
       const productData = {
         productName: values.productName,
         description: values.productDescription,
-        categoryIds: values.categoryId ? [Number(values.categoryId)] : [],
+        categoryIds: values.categoryIds || [],
         status: values.productStatus ? "ACTIVE" : "INACTIVE",
       };
 
@@ -239,14 +239,15 @@ const AddProductModal = ({
             <TextArea rows={4} placeholder="Nhập mô tả sản phẩm" />
           </Form.Item>
           <Form.Item
-            name="categoryId"
+            name="categoryIds"
             label="Danh mục"
             style={mobileFormItemStyle}
           >
             <Select
+              mode="multiple"
               placeholder="Chọn danh mục"
               style={mobileSelectStyle}
-              dropdownStyle={isMobile ? { fontSize: "16px" } : {}}
+              allowClear
               popupRender={(menu) => (
                 <>
                   {menu}
@@ -258,7 +259,7 @@ const AddProductModal = ({
               )}
             >
               {categories.map((category) => (
-                <Option key={category.id} value={category.categoryName}>
+                <Option key={category.id} value={category.id}>
                   {category.categoryName}
                 </Option>
               ))}

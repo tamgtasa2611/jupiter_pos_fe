@@ -54,3 +54,13 @@ export const createProduct = async (data) => {
     return [];
   }
 };
+
+export const updateProduct = async (id, data) => {
+  try {
+    const res = await api.put(`/products/update/${id}`, data);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật sản phẩm:", error);
+    return [];
+  }
+};
