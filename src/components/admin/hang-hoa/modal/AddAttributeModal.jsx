@@ -1,15 +1,27 @@
-import { Modal, Form, Input } from "antd";
+import { Modal, Form, Input, message } from "antd";
+import { useEffect, useState } from "react";
 
 const AddAttributeModal = ({ visible, onCancel, onOk }) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      form.resetFields();
+      setLoading(false); // reset loading khi mở modal
+    }
+  }, [visible, form]);
 
   const handleOk = async () => {
     try {
+      setLoading(true);
       const values = await form.validateFields();
-      onOk(values); // gửi dữ liệu về component cha
-      form.resetFields();
+      await onOk(values); // gọi hàm API từ component cha
+      setLoading(false);
     } catch (error) {
       console.error("Validation error:", error);
+      message.error("Lỗi khi thêm thuộc tính!");
+      setLoading(false);
     }
   };
 
@@ -25,7 +37,8 @@ const AddAttributeModal = ({ visible, onCancel, onOk }) => {
       okText="Thêm"
       cancelText="Hủy"
       width={400}
-      zIndex={1151} // Đảm bảo modal hiển thị trên các modal khác
+      zIndex={1151}
+      confirmLoading={loading} // hiển thị loading trên nút Thêm
     >
       <Form form={form} layout="vertical">
         <Form.Item

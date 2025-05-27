@@ -371,14 +371,20 @@ const AddProductModal = ({
                         <Select
                           placeholder="Chọn đơn vị tính"
                           style={mobileSelectStyle}
-                          dropdownStyle={isMobile ? { fontSize: "16px" } : {}}
-                        >
-                          {units.map((unit) => (
-                            <Option key={unit.id} value={unit.id}>
-                              {unit.label}
-                            </Option>
-                          ))}
-                        </Select>
+                          options={units.map((unit) => ({
+                            value: unit.id,
+                            label: unit.name,
+                          }))}
+                          popupRender={(menu) => (
+                            <>
+                              {menu}
+                              <Divider dashed style={{ margin: "4px 0" }} />
+                              <Button type="link" block onClick={handleAddUnit}>
+                                Thêm đơn vị mới
+                              </Button>
+                            </>
+                          )}
+                        ></Select>
                       </Form.Item>
                       <Form.Item
                         {...restField}
@@ -467,6 +473,7 @@ const AddProductModal = ({
                                         />
                                         <Button
                                           type="link"
+                                          block
                                           onClick={handleAddAttribute}
                                         >
                                           Thêm thuộc tính mới
@@ -507,6 +514,7 @@ const AddProductModal = ({
                                         />
                                         <Button
                                           type="link"
+                                          block
                                           onClick={handleAddUnit}
                                         >
                                           Thêm đơn vị mới
