@@ -1,6 +1,11 @@
 import React from "react";
 import { Table, Button, Dropdown, Space, message } from "antd";
-import { EditOutlined, MoreOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  EyeOutlined,
+  MoreOutlined,
+  StopOutlined,
+} from "@ant-design/icons";
 import { updateProduct } from "@/requests/product"; // ensure correct import
 
 const ProductTable = ({
@@ -9,7 +14,8 @@ const ProductTable = ({
   pagination,
   handleTableChange,
   setSelectedProduct,
-  setEditModalVisible,
+  setSelectedVariant, // for editing a variant if needed
+  setEditProductModalVisible,
   setEditVariantModalVisible, // for editing a variant if needed
   fetchProducts, // callback to refresh products list
 }) => {
@@ -39,6 +45,7 @@ const ProductTable = ({
               {
                 key: "view",
                 label: "Xem chi tiết",
+                icon: <EyeOutlined />,
                 onClick: () => {},
               },
               {
@@ -48,22 +55,15 @@ const ProductTable = ({
                 onClick: () => {
                   console.log("Edit product clicked", record);
                   setSelectedProduct(record); // đảm bảo record có dữ liệu
-                  setEditModalVisible(true);
+                  setEditProductModalVisible(true);
                 },
               },
               {
                 key: "delete",
                 label: "Ngừng kinh doanh",
                 danger: true,
-                onClick: async () => {
-                  try {
-                    await updateProduct(record.productId, { isDeleted: true });
-                    message.success("Sản phẩm đã được xóa thành công");
-                    fetchProducts(); // Refresh the product list
-                  } catch (error) {
-                    message.error("Lỗi khi ngừng kinh doanh sản phẩm");
-                  }
-                },
+                icon: <StopOutlined />,
+                onClick: async () => {},
               },
             ],
           }}
@@ -136,8 +136,9 @@ const ProductTable = ({
                         {
                           key: "view",
                           label: "Xem chi tiết",
+                          icon: <EyeOutlined />,
                           onClick: () => {
-                            setSelectedProduct(variant);
+                            setSelectedVariant(variant); // Lưu variant đang chọn
                             // Logic to view variant details can be added here
                           },
                         },
@@ -146,27 +147,16 @@ const ProductTable = ({
                           label: "Chỉnh sửa",
                           icon: <EditOutlined />,
                           onClick: () => {
-                            setSelectedProduct(variant); // Lưu variant đang chọn
+                            setSelectedVariant(variant); // Lưu variant đang chọn
                             setEditVariantModalVisible(true); // Mở modal sửa variant
                           },
                         },
                         {
                           key: "delete",
-                          label: "Xóa biến thể",
+                          label: "Ngừng kinh doanh",
+                          icon: <StopOutlined />,
                           danger: true,
-                          onClick: async () => {
-                            try {
-                              await updateProduct(variant.id, {
-                                isDeleted: true,
-                              });
-                              message.success(
-                                "Biến thể đã được xóa thành công",
-                              );
-                              fetchProducts(); // Refresh the product list
-                            } catch (error) {
-                              message.error("Lỗi khi xóa biến thể");
-                            }
-                          },
+                          onClick: async () => {},
                         },
                       ],
                     }}

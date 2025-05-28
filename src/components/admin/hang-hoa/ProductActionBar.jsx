@@ -75,7 +75,9 @@ const ProductActionBar = ({
           </Button>
         </Dropdown>
 
-        <Button icon={<ReloadOutlined />} onClick={onRefresh} loading={loading}>Tải lại</Button>
+        <Button icon={<ReloadOutlined />} onClick={onRefresh} loading={loading}>
+          Tải lại
+        </Button>
       </Flex>
     </Flex>
   );

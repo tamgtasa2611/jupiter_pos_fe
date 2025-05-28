@@ -14,13 +14,13 @@ import {
   Space,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import AddCategoryModal from "./AddCategoryModal"; // Import modal thêm danh mục
+import AddCategoryModal from "../common/AddCategoryModal"; // Import modal thêm danh mục
 import { useMobileStyles } from "@atoms/common";
 import { createCategory } from "@requests/category"; // Import hàm tạo danh mục mới
 import { createUnit } from "@requests/unit"; // Import hàm tạo đơn vị mới
 import { createAttribute } from "@requests/attribute"; // Import hàm tạo thuộc tính mới
-import AddAttributeModal from "./AddAttributeModal";
-import AddUnitModal from "./AddUnitModal";
+import AddAttributeModal from "../common/AddAttributeModal";
+import AddUnitModal from "../common/AddUnitModal";
 
 const { Option } = Select;
 const { TextArea } = Input;

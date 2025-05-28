@@ -23,7 +23,7 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
       onClick={() => onProductClick(product)}
       style={{
         overflow: "hidden",
-        cursor: "pointer"
+        cursor: "pointer",
       }}
       bodyStyle={{ padding: 12 }}
       cover={

@@ -12,7 +12,7 @@ const ProductHeader = ({
   isMobile,
   setMenuDrawerOpen,
   setFilterDrawerOpen,
-  onRefresh
+  onRefresh,
 }) => {
   return (
     <Flex

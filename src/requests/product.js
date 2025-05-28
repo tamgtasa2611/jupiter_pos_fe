@@ -14,7 +14,9 @@ export const getProducts = async (data) => {
 
 export const getProductsWithVariants = async (params = {}) => {
   try {
-    const products = await api.get(`/products/search-with-variants`, { params });
+    const products = await api.get(`/products/search-with-variants`, {
+      params,
+    });
     return products;
   } catch (error) {
     console.error("Lỗi khi lấy productVariants:", error);

@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useLayoutEffect, useEffect } from "react";
-import { Card, Button, Drawer, message } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Card, Drawer, message } from "antd";
 import ProductHeader from "./ProductHeader";
 import ProductActionBar from "./ProductActionBar";
 import MobileSearchBar from "./mobile/MobileSearchBar";
@@ -12,6 +11,7 @@ import ProductTable from "./ProductTable";
 import MobileProductList from "./mobile/MobileProductList";
 import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./modal/ModalManager";
+import FloatingActionButton from "./mobile/FloatingActionButton";
 
 import {
   getProductsWithVariants,
@@ -35,12 +35,12 @@ const ProductPage = () => {
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 
   // Modal states
-  const [addModalVisible, setAddModalVisible] = useState(false);
-  const [editModalVisible, setEditModalVisible] = useState(false);
-  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [addProductModalVisible, setAddProductModalVisible] = useState(false);
+  const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedVariant, setSelectedVariant] = useState(null); // Dùng để lưu variant được chọn
 
   const [editProductModalVisible, setEditProductModalVisible] = useState(false); // Modal sửa product
   const [editVariantModalVisible, setEditVariantModalVisible] = useState(false); // Modal sửa product variant
@@ -56,15 +56,9 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
-    pageSize: 20,
+    pageSize: 10,
     total: 0,
   });
-
-  useEffect(() => {
-    console.log("selectedProduct:", selectedProduct);
-    console.log("editProductModalVisible:", editModalVisible);
-    console.log("editVariantModalVisible:", editVariantModalVisible);
-  }, [selectedProduct, editModalVisible, editVariantModalVisible]);
 
   useEffect(() => {
     async function loadCategories() {
@@ -108,8 +102,6 @@ const ProductPage = () => {
   };
 
   function mapProductsFromApi(data) {
-    console.log(data);
-
     return data.map((item) => {
       const { product, variants } = item;
       return {
@@ -234,7 +226,7 @@ const ProductPage = () => {
         throw new Error(response?.error || "API error");
       }
       message.success("Thêm sản phẩm thành công");
-      setAddModalVisible(false);
+      setAddProductModalVisible(false);
       // Refresh product list after adding
       fetchProducts({ page: 0, size: pagination.pageSize });
     } catch (error) {
@@ -259,7 +251,7 @@ const ProductPage = () => {
         throw new Error(response?.error || "API error");
       }
       message.success("Cập nhật sản phẩm thành công");
-      setEditModalVisible(false);
+      setEditProductModalVisible(false);
       // Refresh product list after editing
       fetchProducts({ page: 0, size: pagination.pageSize });
     } catch (error) {
@@ -319,7 +311,7 @@ const ProductPage = () => {
           {/* Action bar - Desktop */}
           {!isMobile && (
             <ProductActionBar
-              setAddModalVisible={setAddModalVisible}
+              setAddProductModalVisible={setAddProductModalVisible}
               setImportModalVisible={setImportModalVisible}
               ProductFilters={MemoizedProductFilters}
               filterProps={filterProps}
@@ -338,8 +330,9 @@ const ProductPage = () => {
               pagination={pagination}
               handleTableChange={handleTableChange}
               setSelectedProduct={setSelectedProduct}
-              setViewModalVisible={setViewModalVisible}
-              setEditModalVisible={setEditModalVisible}
+              setSelectedVariant={setSelectedVariant}
+              setViewProductModalVisible={setViewProductModalVisible}
+              setEditProductModalVisible={setEditProductModalVisible}
               setDeleteModalVisible={setDeleteModalVisible}
               setEditVariantModalVisible={setEditVariantModalVisible}
             />
@@ -361,8 +354,9 @@ const ProductPage = () => {
               loading={loading}
               pagination={pagination}
               setSelectedProduct={setSelectedProduct}
-              setViewModalVisible={setViewModalVisible}
-              setEditModalVisible={setEditModalVisible}
+              setSelectedVariant={setSelectedVariant}
+              setViewProductModalVisible={setViewProductModalVisible}
+              setEditProductModalVisible={setEditProductModalVisible}
               setDeleteModalVisible={setDeleteModalVisible}
             />
           )}
@@ -378,7 +372,7 @@ const ProductPage = () => {
         width={280}
       >
         <MobileMenu
-          setAddModalVisible={setAddModalVisible}
+          setAddProductModalVisible={setAddProductModalVisible}
           setImportModalVisible={setImportModalVisible}
         />
       </Drawer>
@@ -403,17 +397,18 @@ const ProductPage = () => {
 
       {/* Modal Manager */}
       <ModalManager
-        addModalVisible={addModalVisible}
-        editModalVisible={editModalVisible} // truyền modal product
-        viewModalVisible={viewModalVisible}
+        addProductModalVisible={addProductModalVisible}
+        editProductModalVisible={editProductModalVisible} // truyền modal product
+        viewProductModalVisible={viewProductModalVisible}
         deleteModalVisible={deleteModalVisible}
         importModalVisible={importModalVisible}
-        setAddModalVisible={setAddModalVisible}
-        setEditModalVisible={setEditModalVisible} // truyền setter cho product
-        setViewModalVisible={setViewModalVisible}
+        setAddProductModalVisible={setAddProductModalVisible}
+        setEditProductModalVisible={setEditProductModalVisible} // truyền setter cho product
+        setViewProductModalVisible={setViewProductModalVisible}
         setDeleteModalVisible={setDeleteModalVisible}
         setImportModalVisible={setImportModalVisible}
         selectedProduct={selectedProduct}
+        selectedVariant={selectedVariant} // truyền variant được chọn
         handleAddProduct={handleAddProduct}
         handleEditProduct={handleEditProduct}
         handleDeleteProduct={handleDeleteProduct}
@@ -430,20 +425,9 @@ const ProductPage = () => {
       />
 
       {/* Floating action button cho mobile */}
-      <Button
-        type="primary"
-        shape="circle"
-        onClick={() => setAddModalVisible(true)}
-        icon={<PlusOutlined />}
-        style={{
-          zIndex: 2,
-          position: "fixed",
-          bottom: "80px",
-          width: "48px",
-          height: "48px",
-          display: isMobile ? "block" : "none",
-        }}
-        className="right-4 shadow-sm"
+      <FloatingActionButton
+        setAddProductModalVisible={setAddProductModalVisible}
+        isMobile={isMobile}
       />
     </div>
   );

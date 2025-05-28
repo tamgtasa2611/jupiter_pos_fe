@@ -2,38 +2,45 @@ import React, { useEffect } from "react";
 import dynamic from "next/dynamic";
 
 // Lazy load modal components
-const AddProductModal = dynamic(() => import("./AddProductModal"), {
-  loading: () => <p>Loading...</p>,
+const AddProductModal = dynamic(() => import("./product/AddProductModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
 });
-const EditProductModal = dynamic(() => import("./EditProductModal"), {
-  loading: () => <p>Loading...</p>,
+const EditProductModal = dynamic(() => import("./product/EditProductModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
 });
 const EditProductVariantModal = dynamic(
-  () => import("./EditProductVariantModal"),
-  { loading: () => <p>Loading...</p> },
+  () => import("./variant/EditProductVariantModal"),
+  { loading: () => <p>Đang tải dữ liệu...</p> },
 );
-const ViewProductModal = dynamic(() => import("../ViewProductModal"), {
-  loading: () => <p>Loading...</p>,
+const ViewProductModal = dynamic(() => import("./product/ViewProductModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
 });
-const DeleteProductModal = dynamic(() => import("./DeleteProductModal"), {
-  loading: () => <p>Loading...</p>,
-});
-const ImportProductsModal = dynamic(() => import("./ImportProductsModal"), {
-  loading: () => <p>Loading...</p>,
-});
+const DeleteProductModal = dynamic(
+  () => import("./product/DeleteProductModal"),
+  {
+    loading: () => <p>Đang tải dữ liệu...</p>,
+  },
+);
+const ImportProductsModal = dynamic(
+  () => import("./product/ImportProductsModal"),
+  {
+    loading: () => <p>Đang tải dữ liệu...</p>,
+  },
+);
 
 const ModalManager = ({
-  addModalVisible,
-  editModalVisible, // state cho sửa product
-  viewModalVisible,
+  addProductModalVisible,
+  editProductModalVisible, // state cho sửa product
+  viewProductModalVisible,
   deleteModalVisible,
   importModalVisible,
-  setAddModalVisible,
-  setEditModalVisible, // setter cho modal sửa product
-  setViewModalVisible,
+  setAddProductModalVisible,
+  setEditProductModalVisible, // setter cho modal sửa product
+  setViewProductModalVisible,
   setDeleteModalVisible,
   setImportModalVisible,
   selectedProduct, // sử dụng để truyền thông tin cho cả 2 modal
+  selectedVariant, // sử dụng để truyền thông tin cho modal sửa variant
   handleAddProduct,
   handleEditProduct, // hàm cập nhật product
   handleEditProductVariant, // hàm cập nhật product variant
@@ -49,16 +56,11 @@ const ModalManager = ({
   editVariantModalVisible, // state cho modal sửa variant
   setEditVariantModalVisible, // setter cho modal sửa variant
 }) => {
-  useEffect(() => {
-    console.log("selectedProduct:", selectedProduct);
-    console.log("editProductModalVisible:", editModalVisible);
-    console.log("editVariantModalVisible:", editVariantModalVisible);
-  }, [selectedProduct, editModalVisible, editVariantModalVisible]);
   return (
     <>
       <AddProductModal
-        visible={addModalVisible}
-        onCancel={() => setAddModalVisible(false)}
+        visible={addProductModalVisible}
+        onCancel={() => setAddProductModalVisible(false)}
         onAdd={handleAddProduct}
         categories={categories}
         reloadCategories={reloadCategories}
@@ -72,31 +74,17 @@ const ModalManager = ({
       {selectedProduct && (
         <>
           <EditProductModal
-            visible={editModalVisible}
-            onCancel={() => setEditModalVisible(false)}
+            visible={editProductModalVisible}
+            onCancel={() => setEditProductModalVisible(false)}
             onEdit={handleEditProduct}
             productId={selectedProduct.id}
             categories={categories}
             isMobile={isMobile}
           />
 
-          <EditProductVariantModal
-            visible={editVariantModalVisible}
-            onCancel={() => setEditVariantModalVisible(false)}
-            onEdit={handleEditProductVariant}
-            productId={selectedProduct.id} // có thể thay bằng selectedVariant.id nếu bạn có state riêng cho variant
-            categories={categories}
-            units={units}
-            attributes={attributes}
-            reloadCategories={reloadCategories}
-            reloadUnits={reloadUnits}
-            reloadAttributes={reloadAttributes}
-            isMobile={isMobile}
-          />
-
           <ViewProductModal
-            visible={viewModalVisible}
-            onCancel={() => setViewModalVisible(false)}
+            visible={viewProductModalVisible}
+            onCancel={() => setViewProductModalVisible(false)}
             product={selectedProduct}
             isMobile={isMobile}
           />
@@ -117,6 +105,22 @@ const ModalManager = ({
         onImport={handleImportProducts}
         isMobile={isMobile}
       />
+
+      {selectedVariant && (
+        <EditProductVariantModal
+          visible={editVariantModalVisible}
+          onCancel={() => setEditVariantModalVisible(false)}
+          onEdit={handleEditProductVariant}
+          variantId={selectedVariant.id} // có thể thay bằng selectedVariant.id nếu bạn có state riêng cho variant
+          categories={categories}
+          units={units}
+          attributes={attributes}
+          reloadCategories={reloadCategories}
+          reloadUnits={reloadUnits}
+          reloadAttributes={reloadAttributes}
+          isMobile={isMobile}
+        />
+      )}
     </>
   );
 };

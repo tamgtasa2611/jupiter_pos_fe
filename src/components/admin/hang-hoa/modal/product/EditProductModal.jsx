@@ -16,12 +16,12 @@ import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
 import dayjs from "dayjs";
 import { getProductVariantById } from "@requests/product";
-import AddCategoryModal from "./AddCategoryModal"; // Import modal thêm danh mục
+import AddCategoryModal from "../common/AddCategoryModal"; // Import modal thêm danh mục
 import { createCategory } from "@requests/category"; // Import hàm tạo danh mục mới
 import { createUnit } from "@requests/unit"; // Import hàm tạo đơn vị mới
 import { createAttribute } from "@requests/attribute"; // Import hàm tạo thuộc tính mới
-import AddAttributeModal from "./AddAttributeModal";
-import AddUnitModal from "./AddUnitModal";
+import AddAttributeModal from "../common/AddAttributeModal";
+import AddUnitModal from "../common/AddUnitModal";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -38,7 +38,7 @@ const EditProductModal = ({
   attributes = [],
   reloadAttributes,
   isMobile,
-}) => {  
+}) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);

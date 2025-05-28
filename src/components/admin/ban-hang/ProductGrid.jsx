@@ -3,13 +3,7 @@ import { Row, Col, Button, Spin } from "antd";
 import ProductCard from "./ProductCard";
 
 const ProductGrid = memo(
-  ({
-    products,
-    onProductClick,
-    loadingMore,
-    handleLoadMore,
-    isInitial,
-  }) => {
+  ({ products, onProductClick, loadingMore, handleLoadMore, isInitial }) => {
     return (
       <>
         <Row gutter={[16, 16]}>
