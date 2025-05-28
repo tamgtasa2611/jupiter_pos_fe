@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button, Dropdown, Space, message } from "antd";
+import { Table, Button, Dropdown, Space, message, Tag } from "antd";
 import {
   EditOutlined,
   EyeOutlined,
@@ -7,7 +7,7 @@ import {
   StopOutlined,
 } from "@ant-design/icons";
 import { updateProduct } from "@/requests/product"; // ensure correct import
-
+import { PRODUCT_STATUS } from "@/constants/product"; // ensure correct import
 const ProductTable = ({
   products,
   loading,
@@ -33,8 +33,33 @@ const ProductTable = ({
       key: "category",
       ellipsis: true,
     },
+    {
+      title: "Trạng thái",
+      dataIndex: "status",
+      key: "status",
+      render: (status) => {
+        const statusInfo = PRODUCT_STATUS[status];
+        return statusInfo != null && statusInfo != undefined ? (
+          <Tag color={statusInfo?.color || "default"}>
+            {statusInfo?.label || "Không xác định"}
+          </Tag>
+        ) : (
+          "-"
+        );
+      },
+    },
     { title: "Số biến thể", dataIndex: "variantsCount", key: "variantsCount" },
-    { title: "Tồn kho", dataIndex: "quantity", key: "quantity" },
+    {
+      title: "Tồn kho",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (quantity) =>
+        quantity <= 10 ? (
+          <span style={{ color: "red" }}>{quantity}</span>
+        ) : (
+          <span style={{ color: "green" }}>{quantity}</span>
+        ),
+    },
     {
       title: "Thao tác",
       key: "actions",
@@ -117,8 +142,32 @@ const ProductTable = ({
                       })
                     : "-",
               },
-              { title: "Tồn kho", dataIndex: "quantity", key: "quantity" },
-              { title: "Trạng thái", dataIndex: "status", key: "status" },
+              {
+                title: "Tồn kho",
+                dataIndex: "quantity",
+                key: "quantity",
+                render: (quantity) =>
+                  quantity <= 10 ? (
+                    <span style={{ color: "red" }}>{quantity}</span>
+                  ) : (
+                    <span style={{ color: "green" }}>{quantity}</span>
+                  ),
+              },
+              {
+                title: "Trạng thái",
+                dataIndex: "status",
+                key: "status",
+                render: (status) => {
+                  const statusInfo = PRODUCT_STATUS[status];
+                  return statusInfo != null && statusInfo != undefined ? (
+                    <Tag color={statusInfo?.color || "default"}>
+                      {statusInfo?.label || "Không xác định"}
+                    </Tag>
+                  ) : (
+                    "-"
+                  );
+                },
+              },
               {
                 title: "Ngày tạo",
                 dataIndex: "createdDate",

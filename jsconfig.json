@@ -8,7 +8,8 @@
       "@utils/*": ["src/utils/*"],
       "@hooks/*": ["src/hooks/*"],
       "@config/*": ["src/config/*"],
-      "@requests/*": ["src/requests/*"]
+      "@requests/*": ["src/requests/*"],
+      "@constants/*": ["src/constants/*"]
       // "@styles/*": ["src/styles/*"]
     }
   }

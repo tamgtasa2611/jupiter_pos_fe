@@ -109,6 +109,7 @@ const ProductPage = () => {
         productId: product.productId,
         productName: product.productName,
         description: product.description,
+        status: product.status,
         category: Array.isArray(product.category)
           ? product.category.map((c) => c.categoryName).join(", ")
           : "",
