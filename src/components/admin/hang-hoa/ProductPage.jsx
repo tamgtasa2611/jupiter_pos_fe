@@ -42,6 +42,9 @@ const ProductPage = () => {
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  const [editProductModalVisible, setEditProductModalVisible] = useState(false); // Modal sửa product
+  const [editVariantModalVisible, setEditVariantModalVisible] = useState(false); // Modal sửa product variant
+
   // States cho product và bộ lọc
   const [products, setProducts] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -57,7 +60,11 @@ const ProductPage = () => {
     total: 0,
   });
 
-  const [editVariantModalVisible, setEditVariantModalVisible] = useState(false);
+  useEffect(() => {
+    console.log("selectedProduct:", selectedProduct);
+    console.log("editProductModalVisible:", editModalVisible);
+    console.log("editVariantModalVisible:", editVariantModalVisible);
+  }, [selectedProduct, editModalVisible, editVariantModalVisible]);
 
   useEffect(() => {
     async function loadCategories() {
@@ -397,12 +404,12 @@ const ProductPage = () => {
       {/* Modal Manager */}
       <ModalManager
         addModalVisible={addModalVisible}
-        editModalVisible={editModalVisible}
+        editModalVisible={editModalVisible} // truyền modal product
         viewModalVisible={viewModalVisible}
         deleteModalVisible={deleteModalVisible}
         importModalVisible={importModalVisible}
         setAddModalVisible={setAddModalVisible}
-        setEditModalVisible={setEditModalVisible}
+        setEditModalVisible={setEditModalVisible} // truyền setter cho product
         setViewModalVisible={setViewModalVisible}
         setDeleteModalVisible={setDeleteModalVisible}
         setImportModalVisible={setImportModalVisible}
@@ -418,6 +425,8 @@ const ProductPage = () => {
         units={units}
         reloadUnits={reloadUnits}
         isMobile={isMobile}
+        editVariantModalVisible={editVariantModalVisible} // truyền modal variant
+        setEditVariantModalVisible={setEditVariantModalVisible}
       />
 
       {/* Floating action button cho mobile */}

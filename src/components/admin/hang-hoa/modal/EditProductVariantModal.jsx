@@ -38,7 +38,7 @@ const EditProductModal = ({
   attributes = [],
   reloadAttributes,
   isMobile,
-}) => {  
+}) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -194,17 +194,22 @@ const EditProductModal = ({
     try {
       setLoading(true);
       const values = await form.validateFields();
-      const productData = {
-        productName: values.productName,
-        description: values.productDescription,
-        categoryIds: values.categoryIds || [],
-        status: values.productStatus ? "ACTIVE" : "INACTIVE",
+      const variantData = {
+        costPrice: values.costPrice,
+        price: values.price,
+        quantity: values.quantity || 0,
+        unitId: values.unitId,
+        sku: values.sku,
+        barcode: values.variantBarcode,
+        expiryDate: values.expiryDate ? values.expiryDate.toISOString() : null,
+        status: values.variantStatus ? "ACTIVE" : "INACTIVE",
+        attrAndValues: values.attrAndValues || [],
         image:
           fileList.length > 0
             ? fileList[0].url || fileList[0].response?.url
             : null,
       };
-      await onEdit(productDetail.product.productId || null, productData);
+      await onEdit(productDetail.id || null, variantData);
       form.resetFields();
       setFileList([]);
       setLoading(false);
@@ -216,7 +221,7 @@ const EditProductModal = ({
 
   return (
     <Modal
-      title="Chỉnh sửa sản phẩm"
+      title="Chỉnh sửa biến thể sản phẩm"
       open={visible}
       {...(!isMobile && { centered: true })}
       onCancel={() => {
@@ -243,65 +248,79 @@ const EditProductModal = ({
       <Form
         form={form}
         layout="vertical"
-        initialValues={{ productStatus: true }}
+        initialValues={{ variantStatus: true }}
       >
-        <Divider orientation="left">Thông tin sản phẩm</Divider>
+        <Divider orientation="left">Thông tin biến thể</Divider>
         <Form.Item
-          name="productName"
-          label="Tên sản phẩm"
-          rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm!" }]}
+          name="costPrice"
+          label="Giá nhập (VND)"
+          rules={[{ required: true, message: "Vui lòng nhập giá nhập!" }]}
         >
-          <Input placeholder="Nhập tên sản phẩm" style={mobileInputStyle} />
-        </Form.Item>
-        <Form.Item name="productDescription" label="Mô tả sản phẩm">
-          <TextArea
-            rows={4}
-            placeholder="Nhập mô tả sản phẩm"
-            style={mobileInputStyle}
+          <InputNumber
+            min={0}
+            step={1000}
+            style={{ width: "100%", ...mobileInputStyle }}
+            placeholder="0"
           />
         </Form.Item>
         <Form.Item
-          name="categoryIds"
-          label="Danh mục"
-          style={mobileFormItemStyle}
+          name="price"
+          label="Giá bán (VND)"
+          rules={[{ required: true, message: "Vui lòng nhập giá bán!" }]}
         >
-          <Select
-            mode="multiple"
-            placeholder="Chọn danh mục"
-            style={mobileSelectStyle}
-            allowClear
-            popupRender={(menu) => (
-              <>
-                {menu}
-                <Divider dashed style={{ margin: "8px 0" }} />
-                <Button type="link" block onClick={handleAddCategory}>
-                  Thêm danh mục
-                </Button>
-              </>
-            )}
-          >
-            {categories.map((category) => (
-              <Option key={category.id} value={category.id}>
-                {category.categoryName}
+          <InputNumber
+            min={0}
+            step={1000}
+            style={{ width: "100%", ...mobileInputStyle }}
+            placeholder="0"
+          />
+        </Form.Item>
+        <Form.Item
+          name="quantity"
+          label="Số lượng tồn kho"
+          rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
+        >
+          <InputNumber
+            min={0}
+            style={{ width: "100%", ...mobileInputStyle }}
+            placeholder="0"
+          />
+        </Form.Item>
+        <Form.Item name="unitId" label="Đơn vị tính">
+          <Select placeholder="Chọn đơn vị tính" style={mobileSelectStyle}>
+            {units.map((unit) => (
+              <Option key={unit.id} value={unit.id}>
+                {unit.name}
               </Option>
             ))}
           </Select>
         </Form.Item>
+        <Form.Item name="sku" label="SKU">
+          <Input placeholder="Nhập SKU" style={mobileInputStyle} />
+        </Form.Item>
+        <Form.Item name="variantBarcode" label="Mã vạch">
+          <Input placeholder="Nhập mã vạch" style={mobileInputStyle} />
+        </Form.Item>
+        <Form.Item name="expiryDate" label="Ngày hết hạn">
+          <Input placeholder="Nhập ngày hết hạn" style={{ width: "100%" }} />
+        </Form.Item>
         <Form.Item
-          name="productStatus"
-          label="Trạng thái sản phẩm"
+          name="variantStatus"
+          label="Trạng thái biến thể"
           valuePropName="checked"
         >
           <Switch
-            checkedChildren="ACTIVE"
-            unCheckedChildren="INACTIVE"
+            checkedChildren="Đang bán"
+            unCheckedChildren="Ngừng bán"
             style={mobileSwitchStyle}
+            defaultChecked
           />
         </Form.Item>
-        <Divider orientation="left">Hình ảnh sản phẩm</Divider>
+        {/* ...các trường thuộc tính nếu cần... */}
+        <Divider orientation="left">Hình ảnh biến thể</Divider>
         <Form.Item
           name="upload"
-          label="Hình ảnh sản phẩm"
+          label="Hình ảnh biến thể"
           style={mobileFormItemStyle}
         >
           <Upload {...uploadProps} listType="picture-card" accept="image/*">

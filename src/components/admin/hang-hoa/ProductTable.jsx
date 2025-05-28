@@ -46,7 +46,8 @@ const ProductTable = ({
                 label: "Chỉnh sửa",
                 icon: <EditOutlined />,
                 onClick: () => {
-                  setSelectedProduct(record);
+                  console.log("Edit product clicked", record);
+                  setSelectedProduct(record); // đảm bảo record có dữ liệu
                   setEditModalVisible(true);
                 },
               },
@@ -145,8 +146,8 @@ const ProductTable = ({
                           label: "Chỉnh sửa",
                           icon: <EditOutlined />,
                           onClick: () => {
-                            setSelectedProduct(record);
-                            setEditVariantModalVisible(true);
+                            setSelectedProduct(variant); // Lưu variant đang chọn
+                            setEditVariantModalVisible(true); // Mở modal sửa variant
                           },
                         },
                         {
