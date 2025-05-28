@@ -25,6 +25,7 @@ const MainSellingPage = () => {
   const [initLoading, setInitLoading] = useState(true);
 
   const fetchProducts = async ({
+    sort = "lastModifiedDate,desc",
     search = "",
     page = 0,
     size = 20,
@@ -34,6 +35,7 @@ const MainSellingPage = () => {
     try {
       setLoading(true);
       const params = {
+        sort,
         search,
         page,
         size,
