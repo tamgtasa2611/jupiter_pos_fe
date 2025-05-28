@@ -18,6 +18,7 @@ const ProductTable = ({
   setEditProductModalVisible,
   setEditVariantModalVisible, // for editing a variant if needed
   fetchProducts, // callback to refresh products list
+  handleUpdateProductStatus,
 }) => {
   const columns = [
     { title: "Tên sản phẩm", dataIndex: "productName", key: "productName" },
@@ -82,13 +83,21 @@ const ProductTable = ({
                   setEditProductModalVisible(true);
                 },
               },
-              {
-                key: "delete",
-                label: "Ngừng kinh doanh",
-                danger: true,
-                icon: <StopOutlined />,
-                onClick: async () => {},
-              },
+              ...(record.status === PRODUCT_STATUS.ACTIVE.value
+                ? [
+                    {
+                      key: "delete",
+                      label: "Ngừng kinh doanh",
+                      danger: true,
+                      icon: <StopOutlined />,
+                      onClick: () => {
+                        handleUpdateProductStatus(record.productId, {
+                          status: PRODUCT_STATUS.INACTIVE.value,
+                        });
+                      },
+                    },
+                  ]
+                : []),
             ],
           }}
         >

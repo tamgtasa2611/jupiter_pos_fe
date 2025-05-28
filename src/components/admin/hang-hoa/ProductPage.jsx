@@ -18,6 +18,7 @@ import {
   getProductsVariants,
   createProduct,
   updateProduct,
+  updateProductStatus,
 } from "@/requests/product";
 import { getCategories } from "@/requests/category";
 import { getAttributes } from "@/requests/attribute";
@@ -264,7 +265,33 @@ const ProductPage = () => {
       setLoading(false);
     }
   };
-  const handleDeleteProduct = () => {};
+  const handleUpdateProductStatus = async (id, data) => {
+    try {
+      setLoading(true);
+      // Tạo một promise timeout 10 giây
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 10000),
+      );
+      const response = await Promise.race([
+        updateProductStatus(id, data),
+        timeoutPromise,
+      ]);
+      if (!response || response.error) {
+        throw new Error(response?.error || "API error");
+      }
+      message.success("Cập nhật trạng thái sản phẩm thành công");
+      setEditProductModalVisible(false);
+      // Refresh product list after editing
+      fetchProducts({ page: 0, size: pagination.pageSize });
+    } catch (error) {
+      console.error("Lỗi khi cập nhật trạng thái sản phẩm:", error);
+      message.error(
+        "Cập nhật trạng thái sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleImportProducts = () => {};
 
   // Định nghĩa hàm reloadCategories để tải lại danh mục từ API
@@ -336,6 +363,7 @@ const ProductPage = () => {
               setEditProductModalVisible={setEditProductModalVisible}
               setDeleteModalVisible={setDeleteModalVisible}
               setEditVariantModalVisible={setEditVariantModalVisible}
+              handleUpdateProductStatus={handleUpdateProductStatus}
             />
           )}
 
@@ -412,7 +440,7 @@ const ProductPage = () => {
         selectedVariantId={selectedVariantId} // truyền variant được chọn
         handleAddProduct={handleAddProduct}
         handleEditProduct={handleEditProduct}
-        handleDeleteProduct={handleDeleteProduct}
+        handleUpdateProductStatus={handleUpdateProductStatus}
         handleImportProducts={handleImportProducts}
         categories={categories}
         reloadCategories={reloadCategories}

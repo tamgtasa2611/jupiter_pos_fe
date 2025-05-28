@@ -85,3 +85,13 @@ export const updateProduct = async (id, data) => {
     return [];
   }
 };
+
+export const updateProductStatus = async (id, data) => {
+  try {
+    const res = await api.put(`/products/update-status/${id}`, data);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật trạng thái sản phẩm:", error);
+    return [];
+  }
+};

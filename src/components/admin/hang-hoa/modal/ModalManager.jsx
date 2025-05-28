@@ -51,7 +51,7 @@ const ModalManager = ({
   handleAddProduct,
   handleEditProduct, // hàm cập nhật product
   handleEditProductVariant, // hàm cập nhật product variant
-  handleDeleteProduct,
+  handleUpdateProductStatus,
   handleImportProducts,
   categories,
   reloadCategories,
@@ -173,7 +173,7 @@ const ModalManager = ({
           <DeleteProductModal
             visible={deleteModalVisible}
             onCancel={() => setDeleteModalVisible(false)}
-            onDelete={() => handleDeleteProduct(selectedProductId)}
+            onDelete={() => handleUpdateProductStatus(selectedProductId)}
             productId={selectedProductId}
             isMobile={isMobile}
           />
