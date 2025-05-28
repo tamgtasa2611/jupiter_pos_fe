@@ -13,8 +13,8 @@ const ProductTable = ({
   loading,
   pagination,
   handleTableChange,
-  setSelectedProduct,
-  setSelectedVariant, // for editing a variant if needed
+  setSelectedProductId,
+  setSelectedVariantId, // for editing a variant if needed
   setEditProductModalVisible,
   setEditVariantModalVisible, // for editing a variant if needed
   fetchProducts, // callback to refresh products list
@@ -29,8 +29,8 @@ const ProductTable = ({
     },
     {
       title: "Danh mục",
-      dataIndex: "category",
-      key: "category",
+      dataIndex: "categoryList",
+      key: "categoryList",
       ellipsis: true,
     },
     {
@@ -78,8 +78,7 @@ const ProductTable = ({
                 label: "Chỉnh sửa",
                 icon: <EditOutlined />,
                 onClick: () => {
-                  console.log("Edit product clicked", record);
-                  setSelectedProduct(record); // đảm bảo record có dữ liệu
+                  setSelectedProductId(record.productId); // đảm bảo record có dữ liệu
                   setEditProductModalVisible(true);
                 },
               },
@@ -187,7 +186,7 @@ const ProductTable = ({
                           label: "Xem chi tiết",
                           icon: <EyeOutlined />,
                           onClick: () => {
-                            setSelectedVariant(variant); // Lưu variant đang chọn
+                            setSelectedVariantId(variant.id); // Lưu variant đang chọn
                             // Logic to view variant details can be added here
                           },
                         },
@@ -196,7 +195,7 @@ const ProductTable = ({
                           label: "Chỉnh sửa",
                           icon: <EditOutlined />,
                           onClick: () => {
-                            setSelectedVariant(variant); // Lưu variant đang chọn
+                            setSelectedVariantId(variant.id); // Lưu variant đang chọn
                             setEditVariantModalVisible(true); // Mở modal sửa variant
                           },
                         },

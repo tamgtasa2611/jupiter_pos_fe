@@ -39,8 +39,8 @@ const ProductPage = () => {
   const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [selectedVariant, setSelectedVariant] = useState(null); // Dùng để lưu variant được chọn
+  const [selectedProductId, setSelectedProductId] = useState(null);
+  const [selectedVariantId, setSelectedVariantId] = useState(null); // Dùng để lưu variant được chọn
 
   const [editProductModalVisible, setEditProductModalVisible] = useState(false); // Modal sửa product
   const [editVariantModalVisible, setEditVariantModalVisible] = useState(false); // Modal sửa product variant
@@ -110,8 +110,8 @@ const ProductPage = () => {
         productName: product.productName,
         description: product.description,
         status: product.status,
-        category: Array.isArray(product.category)
-          ? product.category.map((c) => c.categoryName).join(", ")
+        categoryList: Array.isArray(product.categoryList)
+          ? product.categoryList.map((c) => c.categoryName).join(", ")
           : "",
         variants: (variants || []).map((v) => ({
           ...v,
@@ -143,7 +143,7 @@ const ProductPage = () => {
     size = 10,
     category,
     productId,
-    sort = "createdDate,desc",
+    sort = "lastModifiedDate,desc",
   } = {}) => {
     try {
       setLoading(true);
@@ -330,8 +330,8 @@ const ProductPage = () => {
               loading={loading}
               pagination={pagination}
               handleTableChange={handleTableChange}
-              setSelectedProduct={setSelectedProduct}
-              setSelectedVariant={setSelectedVariant}
+              setSelectedProductId={setSelectedProductId}
+              setSelectedVariantId={setSelectedVariantId}
               setViewProductModalVisible={setViewProductModalVisible}
               setEditProductModalVisible={setEditProductModalVisible}
               setDeleteModalVisible={setDeleteModalVisible}
@@ -354,8 +354,8 @@ const ProductPage = () => {
               products={products}
               loading={loading}
               pagination={pagination}
-              setSelectedProduct={setSelectedProduct}
-              setSelectedVariant={setSelectedVariant}
+              setSelectedProductId={setSelectedProductId}
+              setSelectedVariantId={setSelectedVariantId}
               setViewProductModalVisible={setViewProductModalVisible}
               setEditProductModalVisible={setEditProductModalVisible}
               setDeleteModalVisible={setDeleteModalVisible}
@@ -408,8 +408,8 @@ const ProductPage = () => {
         setViewProductModalVisible={setViewProductModalVisible}
         setDeleteModalVisible={setDeleteModalVisible}
         setImportModalVisible={setImportModalVisible}
-        selectedProduct={selectedProduct}
-        selectedVariant={selectedVariant} // truyền variant được chọn
+        selectedProductId={selectedProductId}
+        selectedVariantId={selectedVariantId} // truyền variant được chọn
         handleAddProduct={handleAddProduct}
         handleEditProduct={handleEditProduct}
         handleDeleteProduct={handleDeleteProduct}

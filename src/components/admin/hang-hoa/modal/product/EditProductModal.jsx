@@ -15,13 +15,7 @@ import {
 import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
 import dayjs from "dayjs";
-import { getProductVariantById } from "@requests/product";
-import AddCategoryModal from "../common/AddCategoryModal"; // Import modal thêm danh mục
-import { createCategory } from "@requests/category"; // Import hàm tạo danh mục mới
-import { createUnit } from "@requests/unit"; // Import hàm tạo đơn vị mới
-import { createAttribute } from "@requests/attribute"; // Import hàm tạo thuộc tính mới
-import AddAttributeModal from "../common/AddAttributeModal";
-import AddUnitModal from "../common/AddUnitModal";
+import { getProductById } from "@requests/product";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -33,11 +27,13 @@ const EditProductModal = ({
   productId,
   categories = [],
   reloadCategories,
-  units = [],
-  reloadUnits,
-  attributes = [],
-  reloadAttributes,
   isMobile,
+  handleAddCategory,
+  handleAddAttribute,
+  handleAddUnit,
+  handleCategorySubmit,
+  handleAttributeSubmit,
+  handleUnitSubmit,
 }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
@@ -54,52 +50,30 @@ const EditProductModal = ({
   const mobileFormItemStyle = { ...mobileStyles.formItem };
   const mobileButtonStyle = { ...mobileStyles.button };
 
-  // Khi modal bật, gọi API lấy chi tiết sản phẩm và map theo cấu trúc data.json
   useEffect(() => {
     if (visible && productId) {
       setLoading(true);
-      getProductVariantById(productId)
-        .then((detail) => {
-          // Map dữ liệu từ API:
-          // - Thông tin sản phẩm nằm trong detail.product
-          // - Các thông tin biến thể được lấy từ các field như costPrice, price, quantity,...
-          // - Mảng attrValues được map sang attrAndValues (ở đây đặt attrId là attrName vì API không trả về id)
-          setProductDetail(detail);
+      getProductById(productId)
+        .then((product) => {
+          console.log(product);
+
+          // Set giá trị cho form
           form.setFieldsValue({
-            productName: detail.product.productName,
-            productDescription: detail.product.description,
-            categoryIds: detail.product.category
-              ? detail.product.category.map((c) => c.id)
+            productName: product.productName,
+            productDescription: product.description,
+            categoryIds: product.categoryList
+              ? product.categoryList.map((c) => c.id)
               : [],
-            productStatus: true, // giả sử luôn ACTIVE
-            variants: [
-              {
-                costPrice: detail.costPrice,
-                price: detail.price,
-                quantity: detail.quantity,
-                unitId: detail.unitId,
-                sku: detail.sku,
-                variantBarcode: detail.barcode,
-                expiryDate: detail.expiryDate ? dayjs(detail.expiryDate) : null,
-                variantStatus: true,
-                attrAndValues: detail.attrValues
-                  ? detail.attrValues.map((av) => ({
-                      attrId: av.attrName, // chuyển attrName thành attrId (do API không trả về id)
-                      attrValue: av.attrValue,
-                      unitId: undefined,
-                    }))
-                  : [],
-              },
-            ],
+            productStatus: product.status === "ACTIVE",
           });
-          // Nếu detail có trường image, cập nhật fileList
-          if (detail.image) {
+          // Nếu có ảnh, cập nhật fileList
+          if (product.image) {
             setFileList([
               {
                 uid: "-1",
-                name: "product-image.jpg",
+                name: "image.jpg",
                 status: "done",
-                url: detail.image,
+                url: product.image,
               },
             ]);
           } else {
@@ -113,64 +87,6 @@ const EditProductModal = ({
         });
     }
   }, [visible, productId, form]);
-
-  // Mở modal thêm danh mục
-  const handleAddCategory = () => {
-    setCategoryModalVisible(true);
-  };
-
-  // Xử lý submit modal danh mục
-  const handleCategorySubmit = async (values) => {
-    try {
-      const res = await createCategory({ name: values.categoryName });
-      if (res) {
-        // Gọi API thêm danh mục mới với values.categoryName ở đây
-        message.success("Danh mục mới được thêm thành công!");
-        // Sau khi thêm mới thành công, bạn có thể cập nhật lại danh sách categories
-        reloadCategories();
-        setCategoryModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add category", error);
-      message.error("Thêm danh mục thất bại!");
-    }
-  };
-
-  const handleAddAttribute = () => {
-    setAttributeModalVisible(true);
-  };
-
-  const handleAttributeSubmit = async (values) => {
-    try {
-      const res = await createAttribute({ name: values.attributeName });
-      if (res) {
-        message.success("Thuộc tính mới được thêm thành công!");
-        reloadAttributes();
-        setAttributeModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add attribute", error);
-      message.error("Thêm thuộc tính thất bại!");
-    }
-  };
-
-  const handleAddUnit = () => {
-    setUnitModalVisible(true);
-  };
-
-  const handleUnitSubmit = async (values) => {
-    try {
-      const res = await createUnit({ name: values.unitName });
-      if (res) {
-        message.success("Đơn vị mới được thêm thành công!");
-        reloadUnits(); // Cập nhật lại danh sách đơn vị
-        setUnitModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add unit", error);
-      message.error("Thêm đơn vị thất bại!");
-    }
-  };
 
   const handleUploadChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -192,7 +108,6 @@ const EditProductModal = ({
 
   const handleSubmit = async () => {
     try {
-      setLoading(true);
       const values = await form.validateFields();
       const productData = {
         productName: values.productName,
@@ -204,13 +119,12 @@ const EditProductModal = ({
             ? fileList[0].url || fileList[0].response?.url
             : null,
       };
-      await onEdit(productDetail.product.productId || null, productData);
-      form.resetFields();
-      setFileList([]);
-      setLoading(false);
+      await onEdit(productId, productData).then(() => {
+        form.resetFields();
+        setFileList([]);
+      });
     } catch (error) {
       console.error("Validation failed:", error);
-      setLoading(false);
     }
   };
 
@@ -218,13 +132,14 @@ const EditProductModal = ({
     <Modal
       title="Chỉnh sửa sản phẩm"
       open={visible}
-      {...(!isMobile && { centered: true })}
       onCancel={() => {
         form.resetFields();
         setFileList([]);
         onCancel();
       }}
+      confirmLoading={loading}
       width="90vw"
+      centered={!isMobile}
       footer={[
         <Button key="cancel" onClick={onCancel}>
           Hủy
@@ -232,8 +147,8 @@ const EditProductModal = ({
         <Button
           key="submit"
           type="primary"
-          loading={loading}
           onClick={handleSubmit}
+          loading={loading}
         >
           Lưu thay đổi
         </Button>,
@@ -260,25 +175,12 @@ const EditProductModal = ({
             style={mobileInputStyle}
           />
         </Form.Item>
-        <Form.Item
-          name="categoryIds"
-          label="Danh mục"
-          style={mobileFormItemStyle}
-        >
+        <Form.Item name="categoryIds" label="Danh mục">
           <Select
             mode="multiple"
             placeholder="Chọn danh mục"
             style={mobileSelectStyle}
             allowClear
-            popupRender={(menu) => (
-              <>
-                {menu}
-                <Divider dashed style={{ margin: "8px 0" }} />
-                <Button type="link" block onClick={handleAddCategory}>
-                  Thêm danh mục
-                </Button>
-              </>
-            )}
           >
             {categories.map((category) => (
               <Option key={category.id} value={category.id}>
@@ -299,11 +201,7 @@ const EditProductModal = ({
           />
         </Form.Item>
         <Divider orientation="left">Hình ảnh sản phẩm</Divider>
-        <Form.Item
-          name="upload"
-          label="Hình ảnh sản phẩm"
-          style={mobileFormItemStyle}
-        >
+        <Form.Item name="upload" label="Hình ảnh sản phẩm">
           <Upload {...uploadProps} listType="picture-card" accept="image/*">
             {fileList.length >= 1 ? null : (
               <div>

@@ -12,6 +12,16 @@ export const getProducts = async (data) => {
   }
 };
 
+export const getProductById = async (id) => {
+  try {
+    const res = await api.get(`/products/search-detail/${id}`);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi lấy product:", error);
+    return [];
+  }
+};
+
 export const getProductsWithVariants = async (params = {}) => {
   try {
     const products = await api.get(`/products/search-with-variants`, {

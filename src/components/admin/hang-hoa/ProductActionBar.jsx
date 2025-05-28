@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 
 const ProductActionBar = ({
-  setAddModalVisible,
+  setAddProductModalVisible,
   setImportModalVisible,
   ProductFilters,
   filterProps,
@@ -34,7 +34,7 @@ const ProductActionBar = ({
         <Button
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => setAddModalVisible(true)}
+          onClick={() => setAddProductModalVisible(true)}
         >
           Thêm sản phẩm
         </Button>

@@ -14,13 +14,7 @@ import {
   Space,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import AddCategoryModal from "../common/AddCategoryModal"; // Import modal thêm danh mục
 import { useMobileStyles } from "@atoms/common";
-import { createCategory } from "@requests/category"; // Import hàm tạo danh mục mới
-import { createUnit } from "@requests/unit"; // Import hàm tạo đơn vị mới
-import { createAttribute } from "@requests/attribute"; // Import hàm tạo thuộc tính mới
-import AddAttributeModal from "../common/AddAttributeModal";
-import AddUnitModal from "../common/AddUnitModal";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -30,19 +24,19 @@ const AddProductModal = ({
   onCancel,
   onAdd, // onAdd sẽ nhận payload gồm product + danh sách variants
   categories = [],
-  reloadCategories,
   units = [],
-  reloadUnits,
   attributes = [],
-  reloadAttributes,
   isMobile,
+  handleAddCategory,
+  handleAddAttribute,
+  handleAddUnit,
+  handleCategorySubmit,
+  handleAttributeSubmit,
+  handleUnitSubmit,
 }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
-  const [attributeModalVisible, setAttributeModalVisible] = useState(false);
-  const [unitModalVisible, setUnitModalVisible] = useState(false);
   const mobileStyles = useMobileStyles();
 
   const mobileInputStyle = { ...mobileStyles.input };
@@ -50,64 +44,6 @@ const AddProductModal = ({
   const mobileSwitchStyle = { ...mobileStyles.switch };
   const mobileFormItemStyle = { ...mobileStyles.formItem };
   const mobileButtonStyle = { ...mobileStyles.button };
-
-  // Mở modal thêm danh mục
-  const handleAddCategory = () => {
-    setCategoryModalVisible(true);
-  };
-
-  // Xử lý submit modal danh mục
-  const handleCategorySubmit = async (values) => {
-    try {
-      const res = await createCategory({ name: values.categoryName });
-      if (res) {
-        // Gọi API thêm danh mục mới với values.categoryName ở đây
-        message.success("Danh mục mới được thêm thành công!");
-        // Sau khi thêm mới thành công, bạn có thể cập nhật lại danh sách categories
-        reloadCategories();
-        setCategoryModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add category", error);
-      message.error("Thêm danh mục thất bại!");
-    }
-  };
-
-  const handleAddAttribute = () => {
-    setAttributeModalVisible(true);
-  };
-
-  const handleAttributeSubmit = async (values) => {
-    try {
-      const res = await createAttribute({ name: values.attributeName });
-      if (res) {
-        message.success("Thuộc tính mới được thêm thành công!");
-        reloadAttributes();
-        setAttributeModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add attribute", error);
-      message.error("Thêm thuộc tính thất bại!");
-    }
-  };
-
-  const handleAddUnit = () => {
-    setUnitModalVisible(true);
-  };
-
-  const handleUnitSubmit = async (values) => {
-    try {
-      const res = await createUnit({ name: values.unitName });
-      if (res) {
-        message.success("Đơn vị mới được thêm thành công!");
-        reloadUnits(); // Cập nhật lại danh sách đơn vị
-        setUnitModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add unit", error);
-      message.error("Thêm đơn vị thất bại!");
-    }
-  };
 
   const uploadProps = {
     onRemove: () => {
@@ -163,9 +99,10 @@ const AddProductModal = ({
         variants: variantData,
       };
 
-      await onAdd(payload); // Đảm bảo chờ onAdd hoàn thành trước khi reset loading
-      form.resetFields();
-      setFileList([]);
+      await onAdd(payload).then(() => {
+        form.resetFields();
+        setFileList([]);
+      }); // Đảm bảo chờ onAdd hoàn thành trước khi reset loading
     } catch (error) {
       console.error("Validation failed:", error);
     } finally {
@@ -573,25 +510,6 @@ const AddProductModal = ({
           </Form.Item>
         </Form>
       </Modal>
-
-      {/* Modal thêm danh mục mới */}
-      <AddCategoryModal
-        visible={categoryModalVisible}
-        onCancel={() => setCategoryModalVisible(false)}
-        onOk={handleCategorySubmit}
-      />
-
-      <AddAttributeModal
-        visible={attributeModalVisible}
-        onCancel={() => setAttributeModalVisible(false)}
-        onOk={handleAttributeSubmit}
-      />
-
-      <AddUnitModal
-        visible={unitModalVisible}
-        onCancel={() => setUnitModalVisible(false)}
-        onOk={handleUnitSubmit}
-      />
     </>
   );
 };

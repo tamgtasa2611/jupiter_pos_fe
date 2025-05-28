@@ -1,5 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { message } from "antd";
 import dynamic from "next/dynamic";
+import { createCategory } from "@requests/category"; // Import hàm tạo danh mục mới
+import { createUnit } from "@requests/unit"; // Import hàm tạo đơn vị mới
+import { createAttribute } from "@requests/attribute"; // Import hàm tạo thuộc tính mới
+import AddCategoryModal from "./common/AddCategoryModal"; // Import modal thêm danh mục
+import AddAttributeModal from "./common/AddAttributeModal";
+import AddUnitModal from "./common/AddUnitModal";
 
 // Lazy load modal components
 const AddProductModal = dynamic(() => import("./product/AddProductModal"), {
@@ -39,8 +46,8 @@ const ModalManager = ({
   setViewProductModalVisible,
   setDeleteModalVisible,
   setImportModalVisible,
-  selectedProduct, // sử dụng để truyền thông tin cho cả 2 modal
-  selectedVariant, // sử dụng để truyền thông tin cho modal sửa variant
+  selectedProductId, // sử dụng để truyền thông tin cho cả 2 modal
+  selectedVariantId, // sử dụng để truyền thông tin cho modal sửa variant
   handleAddProduct,
   handleEditProduct, // hàm cập nhật product
   handleEditProductVariant, // hàm cập nhật product variant
@@ -56,6 +63,77 @@ const ModalManager = ({
   editVariantModalVisible, // state cho modal sửa variant
   setEditVariantModalVisible, // setter cho modal sửa variant
 }) => {
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [attributeModalVisible, setAttributeModalVisible] = useState(false);
+  const [unitModalVisible, setUnitModalVisible] = useState(false);
+
+  // Mở modal thêm danh mục
+  const handleAddCategory = () => {
+    setCategoryModalVisible(true);
+  };
+
+  // Xử lý submit modal danh mục
+  const handleCategorySubmit = async (values) => {
+    try {
+      const res = await createCategory({ name: values.categoryName });
+      if (res) {
+        // Gọi API thêm danh mục mới với values.categoryName ở đây
+        message.success("Danh mục mới được thêm thành công!");
+        // Sau khi thêm mới thành công, bạn có thể cập nhật lại danh sách categories
+        reloadCategories();
+        setCategoryModalVisible(false);
+      }
+    } catch (error) {
+      console.error("Failed to add category", error);
+      message.error("Thêm danh mục thất bại!");
+    }
+  };
+
+  const handleAddAttribute = () => {
+    setAttributeModalVisible(true);
+  };
+
+  const handleAttributeSubmit = async (values) => {
+    try {
+      const res = await createAttribute({ name: values.attributeName });
+      if (res) {
+        message.success("Thuộc tính mới được thêm thành công!");
+        reloadAttributes();
+        setAttributeModalVisible(false);
+      }
+    } catch (error) {
+      console.error("Failed to add attribute", error);
+      message.error("Thêm thuộc tính thất bại!");
+    }
+  };
+
+  const handleAddUnit = () => {
+    setUnitModalVisible(true);
+  };
+
+  const handleUnitSubmit = async (values) => {
+    try {
+      const res = await createUnit({ name: values.unitName });
+      if (res) {
+        message.success("Đơn vị mới được thêm thành công!");
+        reloadUnits(); // Cập nhật lại danh sách đơn vị
+        setUnitModalVisible(false);
+      }
+    } catch (error) {
+      console.error("Failed to add unit", error);
+      message.error("Thêm đơn vị thất bại!");
+    }
+  };
+
+  const props = {
+    handleAddCategory: handleAddCategory,
+    handleAddAttribute: handleAddAttribute,
+    handleAddUnit: handleAddUnit,
+    handleCategorySubmit: handleCategorySubmit,
+    handleAttributeSubmit: handleAttributeSubmit,
+    handleUnitSubmit: handleUnitSubmit,
+  };
+
   return (
     <>
       <AddProductModal
@@ -69,31 +147,34 @@ const ModalManager = ({
         attributes={attributes}
         reloadAttributes={reloadAttributes}
         isMobile={isMobile}
+        {...props}
       />
 
-      {selectedProduct && (
+      {selectedProductId && (
         <>
           <EditProductModal
             visible={editProductModalVisible}
             onCancel={() => setEditProductModalVisible(false)}
             onEdit={handleEditProduct}
-            productId={selectedProduct.id}
+            productId={selectedProductId}
             categories={categories}
+            reloadCategories={reloadCategories}
             isMobile={isMobile}
+            {...props}
           />
 
           <ViewProductModal
             visible={viewProductModalVisible}
             onCancel={() => setViewProductModalVisible(false)}
-            product={selectedProduct}
+            productId={selectedProductId}
             isMobile={isMobile}
           />
 
           <DeleteProductModal
             visible={deleteModalVisible}
             onCancel={() => setDeleteModalVisible(false)}
-            onDelete={() => handleDeleteProduct(selectedProduct.id)}
-            product={selectedProduct}
+            onDelete={() => handleDeleteProduct(selectedProductId)}
+            productId={selectedProductId}
             isMobile={isMobile}
           />
         </>
@@ -106,12 +187,12 @@ const ModalManager = ({
         isMobile={isMobile}
       />
 
-      {selectedVariant && (
+      {selectedVariantId && (
         <EditProductVariantModal
           visible={editVariantModalVisible}
           onCancel={() => setEditVariantModalVisible(false)}
           onEdit={handleEditProductVariant}
-          variantId={selectedVariant.id} // có thể thay bằng selectedVariant.id nếu bạn có state riêng cho variant
+          variantId={selectedVariantId}
           categories={categories}
           units={units}
           attributes={attributes}
@@ -121,6 +202,25 @@ const ModalManager = ({
           isMobile={isMobile}
         />
       )}
+
+      {/* Modal thêm danh mục mới */}
+      <AddCategoryModal
+        visible={categoryModalVisible}
+        onCancel={() => setCategoryModalVisible(false)}
+        onOk={handleCategorySubmit}
+      />
+
+      <AddAttributeModal
+        visible={attributeModalVisible}
+        onCancel={() => setAttributeModalVisible(false)}
+        onOk={handleAttributeSubmit}
+      />
+
+      <AddUnitModal
+        visible={unitModalVisible}
+        onCancel={() => setUnitModalVisible(false)}
+        onOk={handleUnitSubmit}
+      />
     </>
   );
 };
