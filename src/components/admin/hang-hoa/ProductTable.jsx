@@ -92,13 +92,38 @@ const ProductTable = ({
               { title: "Tên biến thể", dataIndex: "name", key: "name" },
               { title: "SKU", dataIndex: "sku", key: "sku" },
               { title: "Mã vạch", dataIndex: "barcode", key: "barcode" },
-              { title: "Giá bán", dataIndex: "price", key: "price" },
+              {
+                title: "Giá nhập",
+                dataIndex: "costPrice",
+                key: "costPrice",
+                render: (value) =>
+                  value != null
+                    ? value.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })
+                    : "-",
+              },
+              {
+                title: "Giá bán",
+                dataIndex: "price",
+                key: "price",
+                render: (value) =>
+                  value != null
+                    ? value.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      })
+                    : "-",
+              },
               { title: "Tồn kho", dataIndex: "quantity", key: "quantity" },
               { title: "Trạng thái", dataIndex: "status", key: "status" },
               {
                 title: "Ngày tạo",
                 dataIndex: "createdDate",
                 key: "createdDate",
+                render: (date) =>
+                  date ? new Date(date).toLocaleDateString("vi-VN") : "-",
               },
               {
                 title: "Thao tác",
