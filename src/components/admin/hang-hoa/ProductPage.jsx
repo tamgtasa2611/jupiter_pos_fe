@@ -19,6 +19,7 @@ import {
   createProduct,
   updateProduct,
   updateProductStatus,
+  updateVariant,
 } from "@/requests/product";
 import { getCategories } from "@/requests/category";
 import { getAttributes } from "@/requests/attribute";
@@ -294,6 +295,34 @@ const ProductPage = () => {
   };
   const handleImportProducts = () => {};
 
+  const handleEditProductVariant = async (id, data) => {
+    try {
+      setLoading(true);
+      // Tạo một promise timeout 10 giây
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Request timed out")), 10000),
+      );
+      const response = await Promise.race([
+        updateVariant(id, data),
+        timeoutPromise,
+      ]);
+      if (!response || response.error) {
+        throw new Error(response?.error || "API error");
+      }
+      message.success("Cập nhật biến thể sản phẩm thành công");
+      setEditVariantModalVisible(false);
+      // Refresh product list after editing
+      fetchProducts({ page: 0, size: pagination.pageSize });
+    } catch (error) {
+      console.error("Lỗi khi cập nhật biến thể sản phẩm:", error);
+      message.error(
+        "Cập nhật biến thể sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Định nghĩa hàm reloadCategories để tải lại danh mục từ API
   const reloadCategories = async () => {
     try {
@@ -451,6 +480,7 @@ const ProductPage = () => {
         isMobile={isMobile}
         editVariantModalVisible={editVariantModalVisible} // truyền modal variant
         setEditVariantModalVisible={setEditVariantModalVisible}
+        handleEditProductVariant={handleEditProductVariant} // Giả sử bạn dùng hàm này để sửa variant
       />
 
       {/* Floating action button cho mobile */}

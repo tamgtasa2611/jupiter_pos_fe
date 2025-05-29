@@ -95,3 +95,13 @@ export const updateProductStatus = async (id, data) => {
     return [];
   }
 };
+
+export const updateVariant = async (id, data) => {
+  try {
+    const res = await api.put(`/product-variants/update/${id}`, data);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật biến thể sản phẩm:", error);
+    return [];
+  }
+};

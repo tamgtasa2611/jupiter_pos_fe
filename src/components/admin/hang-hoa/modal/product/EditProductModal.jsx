@@ -3,18 +3,13 @@ import {
   Modal,
   Form,
   Input,
-  InputNumber,
   Select,
-  Upload,
   Switch,
   Button,
   Divider,
-  Space,
   message,
 } from "antd";
-import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
-import dayjs from "dayjs";
 import { getProductById } from "@requests/product";
 
 const { Option } = Select;
@@ -26,22 +21,11 @@ const EditProductModal = ({
   onEdit,
   productId,
   categories = [],
-  reloadCategories,
   isMobile,
-  handleAddCategory,
-  handleAddAttribute,
-  handleAddUnit,
-  handleCategorySubmit,
-  handleAttributeSubmit,
-  handleUnitSubmit,
 }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
-  const [attributeModalVisible, setAttributeModalVisible] = useState(false);
-  const [unitModalVisible, setUnitModalVisible] = useState(false);
-  const [productDetail, setProductDetail] = useState({});
   const mobileStyles = useMobileStyles();
 
   const mobileInputStyle = { ...mobileStyles.input };
@@ -66,45 +50,14 @@ const EditProductModal = ({
               : [],
             productStatus: product.status === "ACTIVE",
           });
-          // Nếu có ảnh, cập nhật fileList
-          if (product.image) {
-            setFileList([
-              {
-                uid: "-1",
-                name: "image.jpg",
-                status: "done",
-                url: product.image,
-              },
-            ]);
-          } else {
-            setFileList([]);
-          }
           setLoading(false);
         })
         .catch((error) => {
-          message.error("Lỗi khi tải chi tiết sản phẩm");
+          message.error("Lỗi khi tải chi tiết sản phẩm", error);
           setLoading(false);
         });
     }
   }, [visible, productId, form]);
-
-  const handleUploadChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-  const uploadProps = {
-    beforeUpload: (file) => {
-      const isImage = file.type.startsWith("image/");
-      if (!isImage) {
-        message.error("Vui lòng tải lên hình ảnh!");
-        return false;
-      }
-      return true;
-    },
-    fileList,
-    onChange: handleUploadChange,
-    maxCount: 1,
-  };
 
   const handleSubmit = async () => {
     try {
@@ -199,17 +152,6 @@ const EditProductModal = ({
             unCheckedChildren="INACTIVE"
             style={mobileSwitchStyle}
           />
-        </Form.Item>
-        <Divider orientation="left">Hình ảnh sản phẩm</Divider>
-        <Form.Item name="upload" label="Hình ảnh sản phẩm">
-          <Upload {...uploadProps} listType="picture-card" accept="image/*">
-            {fileList.length >= 1 ? null : (
-              <div>
-                <UploadOutlined />
-                <div style={{ marginTop: 8 }}>Tải lên</div>
-              </div>
-            )}
-          </Upload>
         </Form.Item>
       </Form>
     </Modal>

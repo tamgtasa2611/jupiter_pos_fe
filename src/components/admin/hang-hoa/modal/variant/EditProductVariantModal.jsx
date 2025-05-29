@@ -11,26 +11,23 @@ import {
   Divider,
   Space,
   message,
+  DatePicker,
 } from "antd";
-import { UploadOutlined, PlusOutlined } from "@ant-design/icons";
-import { useMobileStyles } from "@atoms/common";
+import {
+  UploadOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
-import { getProductVariantById } from "@requests/product";
-import AddCategoryModal from "../common/AddCategoryModal"; // Import modal thêm danh mục
-import { createCategory } from "@requests/category"; // Import hàm tạo danh mục mới
-import { createUnit } from "@requests/unit"; // Import hàm tạo đơn vị mới
-import { createAttribute } from "@requests/attribute"; // Import hàm tạo thuộc tính mới
-import AddAttributeModal from "../common/AddAttributeModal";
-import AddUnitModal from "../common/AddUnitModal";
+import { getProductVariantById, updateVariant } from "@requests/product";
 
 const { Option } = Select;
-const { TextArea } = Input;
 
-const EditProductModal = ({
+const EditProductVariantModal = ({
   visible,
   onCancel,
   onEdit,
-  productId,
+  variantId,
   categories = [],
   reloadCategories,
   units = [],
@@ -40,66 +37,41 @@ const EditProductModal = ({
   isMobile,
 }) => {
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
-  const [attributeModalVisible, setAttributeModalVisible] = useState(false);
-  const [unitModalVisible, setUnitModalVisible] = useState(false);
+  const [fileList, setFileList] = useState([]);
   const [productDetail, setProductDetail] = useState({});
-  const mobileStyles = useMobileStyles();
 
-  const mobileInputStyle = { ...mobileStyles.input };
-  const mobileSelectStyle = { ...mobileStyles.select };
-  const mobileSwitchStyle = { ...mobileStyles.switch };
-  const mobileFormItemStyle = { ...mobileStyles.formItem };
-  const mobileButtonStyle = { ...mobileStyles.button };
-
-  // Khi modal bật, gọi API lấy chi tiết sản phẩm và map theo cấu trúc data.json
+  // Khi modal mở, gọi API và map dữ liệu vào form dưới dạng object variant
   useEffect(() => {
-    if (visible && productId) {
+    if (visible && variantId) {
       setLoading(true);
-      getProductVariantById(productId)
+      getProductVariantById(variantId)
         .then((detail) => {
-          // Map dữ liệu từ API:
-          // - Thông tin sản phẩm nằm trong detail.product
-          // - Các thông tin biến thể được lấy từ các field như costPrice, price, quantity,...
-          // - Mảng attrValues được map sang attrAndValues (ở đây đặt attrId là attrName vì API không trả về id)
           setProductDetail(detail);
           form.setFieldsValue({
-            productName: detail.product.productName,
-            productDescription: detail.product.description,
-            categoryIds: detail.product.category
-              ? detail.product.category.map((c) => c.id)
+            costPrice: detail.costPrice,
+            price: detail.price,
+            quantity: detail.quantity,
+            unitId: detail.unitId,
+            sku: detail.sku,
+            variantBarcode: detail.barcode,
+            expiryDate: detail.expiryDate ? dayjs(detail.expiryDate) : null,
+            variantStatus: detail.status === "ACTIVE",
+            attrAndValues: detail.attrValues
+              ? detail.attrValues.map((av) => ({
+                  attrId: av.attrId,
+                  attrValue: av.attrValue,
+                  unitId: av.unitId,
+                }))
               : [],
-            productStatus: true, // giả sử luôn ACTIVE
-            variants: [
-              {
-                costPrice: detail.costPrice,
-                price: detail.price,
-                quantity: detail.quantity,
-                unitId: detail.unitId,
-                sku: detail.sku,
-                variantBarcode: detail.barcode,
-                expiryDate: detail.expiryDate ? dayjs(detail.expiryDate) : null,
-                variantStatus: true,
-                attrAndValues: detail.attrValues
-                  ? detail.attrValues.map((av) => ({
-                      attrId: av.attrName, // chuyển attrName thành attrId (do API không trả về id)
-                      attrValue: av.attrValue,
-                      unitId: undefined,
-                    }))
-                  : [],
-              },
-            ],
           });
-          // Nếu detail có trường image, cập nhật fileList
-          if (detail.image) {
+          if (detail.imagePaths && detail.imagePaths.length > 0) {
             setFileList([
               {
                 uid: "-1",
                 name: "product-image.jpg",
                 status: "done",
-                url: detail.image,
+                url: detail.imagePaths[0],
               },
             ]);
           } else {
@@ -108,69 +80,11 @@ const EditProductModal = ({
           setLoading(false);
         })
         .catch((error) => {
-          message.error("Lỗi khi tải chi tiết sản phẩm");
+          message.error("Lỗi khi tải chi tiết biến thể");
           setLoading(false);
         });
     }
-  }, [visible, productId, form]);
-
-  // Mở modal thêm danh mục
-  const handleAddCategory = () => {
-    setCategoryModalVisible(true);
-  };
-
-  // Xử lý submit modal danh mục
-  const handleCategorySubmit = async (values) => {
-    try {
-      const res = await createCategory({ name: values.categoryName });
-      if (res) {
-        // Gọi API thêm danh mục mới với values.categoryName ở đây
-        message.success("Danh mục mới được thêm thành công!");
-        // Sau khi thêm mới thành công, bạn có thể cập nhật lại danh sách categories
-        reloadCategories();
-        setCategoryModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add category", error);
-      message.error("Thêm danh mục thất bại!");
-    }
-  };
-
-  const handleAddAttribute = () => {
-    setAttributeModalVisible(true);
-  };
-
-  const handleAttributeSubmit = async (values) => {
-    try {
-      const res = await createAttribute({ name: values.attributeName });
-      if (res) {
-        message.success("Thuộc tính mới được thêm thành công!");
-        reloadAttributes();
-        setAttributeModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add attribute", error);
-      message.error("Thêm thuộc tính thất bại!");
-    }
-  };
-
-  const handleAddUnit = () => {
-    setUnitModalVisible(true);
-  };
-
-  const handleUnitSubmit = async (values) => {
-    try {
-      const res = await createUnit({ name: values.unitName });
-      if (res) {
-        message.success("Đơn vị mới được thêm thành công!");
-        reloadUnits(); // Cập nhật lại danh sách đơn vị
-        setUnitModalVisible(false);
-      }
-    } catch (error) {
-      console.error("Failed to add unit", error);
-      message.error("Thêm đơn vị thất bại!");
-    }
-  };
+  }, [visible, variantId, form]);
 
   const handleUploadChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -178,8 +92,7 @@ const EditProductModal = ({
 
   const uploadProps = {
     beforeUpload: (file) => {
-      const isImage = file.type.startsWith("image/");
-      if (!isImage) {
+      if (!file.type.startsWith("image/")) {
         message.error("Vui lòng tải lên hình ảnh!");
         return false;
       }
@@ -194,7 +107,8 @@ const EditProductModal = ({
     try {
       setLoading(true);
       const values = await form.validateFields();
-      const variantData = {
+
+      const payload = {
         costPrice: values.costPrice,
         price: values.price,
         quantity: values.quantity || 0,
@@ -204,17 +118,21 @@ const EditProductModal = ({
         expiryDate: values.expiryDate ? values.expiryDate.toISOString() : null,
         status: values.variantStatus ? "ACTIVE" : "INACTIVE",
         attrAndValues: values.attrAndValues || [],
-        image:
+        imagePaths:
           fileList.length > 0
-            ? fileList[0].url || fileList[0].response?.url
-            : null,
+            ? [fileList[0].url || fileList[0].response?.url]
+            : [],
       };
-      await onEdit(productDetail.id || null, variantData);
+
+      await onEdit(variantId, payload);
+      message.success("Cập nhật biến thể sản phẩm thành công");
       form.resetFields();
       setFileList([]);
       setLoading(false);
+      onCancel();
     } catch (error) {
-      console.error("Validation failed:", error);
+      console.error("Validation failed or API error:", error);
+      message.error("Cập nhật biến thể sản phẩm thất bại");
       setLoading(false);
     }
   };
@@ -223,13 +141,13 @@ const EditProductModal = ({
     <Modal
       title="Chỉnh sửa biến thể sản phẩm"
       open={visible}
-      {...(!isMobile && { centered: true })}
       onCancel={() => {
         form.resetFields();
         setFileList([]);
         onCancel();
       }}
       width="90vw"
+      {...(!isMobile && { centered: true })}
       footer={[
         <Button key="cancel" onClick={onCancel}>
           Hủy
@@ -259,8 +177,8 @@ const EditProductModal = ({
           <InputNumber
             min={0}
             step={1000}
-            style={{ width: "100%", ...mobileInputStyle }}
             placeholder="0"
+            style={{ width: "100%" }}
           />
         </Form.Item>
         <Form.Item
@@ -271,8 +189,8 @@ const EditProductModal = ({
           <InputNumber
             min={0}
             step={1000}
-            style={{ width: "100%", ...mobileInputStyle }}
             placeholder="0"
+            style={{ width: "100%" }}
           />
         </Form.Item>
         <Form.Item
@@ -280,14 +198,10 @@ const EditProductModal = ({
           label="Số lượng tồn kho"
           rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
         >
-          <InputNumber
-            min={0}
-            style={{ width: "100%", ...mobileInputStyle }}
-            placeholder="0"
-          />
+          <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
         </Form.Item>
         <Form.Item name="unitId" label="Đơn vị tính">
-          <Select placeholder="Chọn đơn vị tính" style={mobileSelectStyle}>
+          <Select placeholder="Chọn đơn vị tính">
             {units.map((unit) => (
               <Option key={unit.id} value={unit.id}>
                 {unit.name}
@@ -296,13 +210,16 @@ const EditProductModal = ({
           </Select>
         </Form.Item>
         <Form.Item name="sku" label="SKU">
-          <Input placeholder="Nhập SKU" style={mobileInputStyle} />
+          <Input placeholder="Nhập SKU" />
         </Form.Item>
         <Form.Item name="variantBarcode" label="Mã vạch">
-          <Input placeholder="Nhập mã vạch" style={mobileInputStyle} />
+          <Input placeholder="Nhập mã vạch" />
         </Form.Item>
         <Form.Item name="expiryDate" label="Ngày hết hạn">
-          <Input placeholder="Nhập ngày hết hạn" style={{ width: "100%" }} />
+          <DatePicker
+            style={{ width: "100%" }}
+            placeholder="Chọn ngày hết hạn"
+          />
         </Form.Item>
         <Form.Item
           name="variantStatus"
@@ -312,17 +229,67 @@ const EditProductModal = ({
           <Switch
             checkedChildren="Đang bán"
             unCheckedChildren="Ngừng bán"
-            style={mobileSwitchStyle}
             defaultChecked
           />
         </Form.Item>
-        {/* ...các trường thuộc tính nếu cần... */}
+        <Divider orientation="left">Thuộc tính biến thể</Divider>
+        <Form.List name="attrAndValues">
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map(({ key, name, ...restField }) => (
+                <Space key={key} align="baseline" style={{ marginBottom: 8 }}>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "attrId"]}
+                    rules={[{ required: true, message: "Chọn thuộc tính" }]}
+                  >
+                    <Select
+                      placeholder="Chọn thuộc tính"
+                      style={{ width: 240 }}
+                      options={attributes.map((attr) => ({
+                        value: attr.id,
+                        label: attr.attributeName,
+                      }))}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    {...restField}
+                    name={[name, "attrValue"]}
+                    rules={[{ required: true, message: "Nhập giá trị" }]}
+                  >
+                    <Input placeholder="Giá trị" style={{ width: 240 }} />
+                  </Form.Item>
+                  <Form.Item {...restField} name={[name, "unitId"]}>
+                    <Select
+                      placeholder="Đơn vị"
+                      style={{ width: 200 }}
+                      options={units.map((unit) => ({
+                        value: unit.id,
+                        label: unit.name,
+                      }))}
+                    />
+                  </Form.Item>
+                  <DeleteOutlined
+                    style={{ color: "red" }}
+                    onClick={() => remove(name)}
+                  />
+                </Space>
+              ))}
+              <Form.Item>
+                <Button
+                  type="dashed"
+                  onClick={() => add()}
+                  block
+                  icon={<PlusOutlined />}
+                >
+                  Thêm thuộc tính
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
         <Divider orientation="left">Hình ảnh biến thể</Divider>
-        <Form.Item
-          name="upload"
-          label="Hình ảnh biến thể"
-          style={mobileFormItemStyle}
-        >
+        <Form.Item name="upload" label="Hình ảnh biến thể">
           <Upload {...uploadProps} listType="picture-card" accept="image/*">
             {fileList.length >= 1 ? null : (
               <div>
@@ -337,4 +304,4 @@ const EditProductModal = ({
   );
 };
 
-export default EditProductModal;
+export default EditProductVariantModal;
