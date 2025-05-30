@@ -9,6 +9,7 @@ import {
   Dropdown,
   Badge,
   Tooltip,
+  Modal, Spin
 } from "antd";
 import {
   UserOutlined,
@@ -27,12 +28,22 @@ import {
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Notification from "../thong-bao/Notification";
 
 const { Title } = Typography;
 
 export default function NavBar({ onLogout }) {
+  const [openNotification, setOpenNotification] = useState(false);
+
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  const handleOpenNotification = () => {
+    setOpenNotification(true);
+  };
+  const handleCloseNotification = () => {
+    setOpenNotification(false);
+  };
 
   // Track scroll position to add shadow when scrolled
   useEffect(() => {
@@ -193,6 +204,7 @@ export default function NavBar({ onLogout }) {
                 key: "3",
                 label: "Xem tất cả thông báo",
                 icon: <BellOutlined />,
+                onClick: () => handleOpenNotification(),
               },
             ],
           }}
@@ -329,6 +341,15 @@ export default function NavBar({ onLogout }) {
           </div>
         </Dropdown>
       </Space>
+      <Modal
+  open={openNotification}
+  onCancel={handleCloseNotification}
+  footer={null}
+  title="Tất cả thông báo"
+  width={400}
+>
+  <Notification />
+</Modal>
     </div>
   );
 }
