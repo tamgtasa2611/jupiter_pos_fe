@@ -85,6 +85,7 @@ const EditProductModal = ({
     <Modal
       title="Chỉnh sửa sản phẩm"
       open={visible}
+      maskClosable={false}
       onCancel={() => {
         form.resetFields();
         setFileList([]);

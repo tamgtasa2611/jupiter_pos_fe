@@ -42,8 +42,8 @@ const ProductPage = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
+  
   const [selectedVariantId, setSelectedVariantId] = useState(null); // Dùng để lưu variant được chọn
-
   const [editProductModalVisible, setEditProductModalVisible] = useState(false); // Modal sửa product
   const [editVariantModalVisible, setEditVariantModalVisible] = useState(false); // Modal sửa product variant
 

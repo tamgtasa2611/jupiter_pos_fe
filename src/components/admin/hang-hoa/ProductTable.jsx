@@ -15,6 +15,7 @@ const ProductTable = ({
   handleTableChange,
   setSelectedProductId,
   setSelectedVariantId, // for editing a variant if needed
+  setViewProductModalVisible,
   setEditProductModalVisible,
   setEditVariantModalVisible, // for editing a variant if needed
   fetchProducts, // callback to refresh products list
@@ -72,7 +73,11 @@ const ProductTable = ({
                 key: "view",
                 label: "Xem chi tiết",
                 icon: <EyeOutlined />,
-                onClick: () => {},
+                onClick: () => {
+                  setSelectedProductId(record.productId); // đảm bảo record có dữ liệu
+                  // Logic to view product details
+                  setViewProductModalVisible(true);
+                },
               },
               {
                 key: "edit",
@@ -196,7 +201,7 @@ const ProductTable = ({
                           icon: <EyeOutlined />,
                           onClick: () => {
                             setSelectedVariantId(variant.id); // Lưu variant đang chọn
-                            // Logic to view variant details can be added here
+                            // Logic to view variant details
                           },
                         },
                         {

@@ -141,6 +141,7 @@ const EditProductVariantModal = ({
     <Modal
       title="Chỉnh sửa biến thể sản phẩm"
       open={visible}
+      maskClosable={false}
       onCancel={() => {
         form.resetFields();
         setFileList([]);

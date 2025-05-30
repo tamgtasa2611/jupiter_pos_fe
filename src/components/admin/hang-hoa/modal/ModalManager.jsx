@@ -167,6 +167,7 @@ const ModalManager = ({
             visible={viewProductModalVisible}
             onCancel={() => setViewProductModalVisible(false)}
             productId={selectedProductId}
+            categories={categories}
             isMobile={isMobile}
           />
 
