@@ -21,6 +21,7 @@ const EditProductModal = ({
   onEdit,
   productId,
   categories = [],
+  handleAddCategory,
   isMobile,
 }) => {
   const [form] = Form.useForm();
@@ -135,6 +136,22 @@ const EditProductModal = ({
             placeholder="Chọn danh mục"
             style={mobileSelectStyle}
             allowClear
+            dropdownRender={(menu) => (
+              <>
+                {menu}
+                <Divider style={{ margin: "8px 0" }} />
+                <Button
+                  type="link"
+                  block
+                  onClick={() => {
+                    // Gọi hàm mở modal thêm danh mục ở đây
+                    handleAddCategory();
+                  }}
+                >
+                  + Thêm danh mục
+                </Button>
+              </>
+            )}
           >
             {categories.map((category) => (
               <Option key={category.id} value={category.id}>
