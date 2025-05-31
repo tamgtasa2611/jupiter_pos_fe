@@ -19,6 +19,7 @@ import {
   createProduct,
   updateProduct,
   updateProductStatus,
+  createVariant,
   updateVariant,
 } from "@/requests/product";
 import { getCategories } from "@/requests/category";
@@ -39,10 +40,10 @@ const ProductPage = () => {
   // Modal states
   const [addProductModalVisible, setAddProductModalVisible] = useState(false);
   const [viewProductModalVisible, setViewProductModalVisible] = useState(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [addVariantModalVisible, setAddVariantModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  
+
   const [selectedVariantId, setSelectedVariantId] = useState(null); // Dùng để lưu variant được chọn
   const [editProductModalVisible, setEditProductModalVisible] = useState(false); // Modal sửa product
   const [editVariantModalVisible, setEditVariantModalVisible] = useState(false); // Modal sửa product variant
@@ -266,6 +267,23 @@ const ProductPage = () => {
       setLoading(false);
     }
   };
+  const handleAddVariant = async (productId, variantData) => {
+    try {
+      setLoading(true);
+      const response = await createVariant(productId, variantData);
+      if (!response || response.error) {
+        throw new Error(response?.error || "API error");
+      }
+      message.success("Thêm biến thể thành công");
+      setAddVariantModalVisible(false);
+      fetchProducts({ page: 0, size: pagination.pageSize });
+    } catch (error) {
+      console.error("Lỗi khi thêm biến thể:", error);
+      message.error("Thêm biến thể thất bại. Vui lòng kiểm tra lại thông tin!");
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleUpdateProductStatus = async (id, data) => {
     try {
       setLoading(true);
@@ -390,7 +408,7 @@ const ProductPage = () => {
               setSelectedVariantId={setSelectedVariantId}
               setViewProductModalVisible={setViewProductModalVisible}
               setEditProductModalVisible={setEditProductModalVisible}
-              setDeleteModalVisible={setDeleteModalVisible}
+              setAddVariantModalVisible={setAddVariantModalVisible}
               setEditVariantModalVisible={setEditVariantModalVisible}
               handleUpdateProductStatus={handleUpdateProductStatus}
             />
@@ -415,7 +433,7 @@ const ProductPage = () => {
               setSelectedVariantId={setSelectedVariantId}
               setViewProductModalVisible={setViewProductModalVisible}
               setEditProductModalVisible={setEditProductModalVisible}
-              setDeleteModalVisible={setDeleteModalVisible}
+              setAddVariantModalVisible={setAddVariantModalVisible}
             />
           )}
         </div>
@@ -458,17 +476,18 @@ const ProductPage = () => {
         addProductModalVisible={addProductModalVisible}
         editProductModalVisible={editProductModalVisible} // truyền modal product
         viewProductModalVisible={viewProductModalVisible}
-        deleteModalVisible={deleteModalVisible}
+        addVariantModalVisible={addVariantModalVisible}
         importModalVisible={importModalVisible}
         setAddProductModalVisible={setAddProductModalVisible}
         setEditProductModalVisible={setEditProductModalVisible} // truyền setter cho product
         setViewProductModalVisible={setViewProductModalVisible}
-        setDeleteModalVisible={setDeleteModalVisible}
+        setAddVariantModalVisible={setAddVariantModalVisible}
         setImportModalVisible={setImportModalVisible}
         selectedProductId={selectedProductId}
         selectedVariantId={selectedVariantId} // truyền variant được chọn
         handleAddProduct={handleAddProduct}
         handleEditProduct={handleEditProduct}
+        handleAddVariant={handleAddVariant} // Giả sử bạn dùng hàm này để thêm variant
         handleUpdateProductStatus={handleUpdateProductStatus}
         handleImportProducts={handleImportProducts}
         categories={categories}

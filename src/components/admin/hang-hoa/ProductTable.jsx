@@ -4,6 +4,7 @@ import {
   EditOutlined,
   EyeOutlined,
   MoreOutlined,
+  PlusOutlined,
   StopOutlined,
 } from "@ant-design/icons";
 import { updateProduct } from "@/requests/product"; // ensure correct import
@@ -17,6 +18,7 @@ const ProductTable = ({
   setSelectedVariantId, // for editing a variant if needed
   setViewProductModalVisible,
   setEditProductModalVisible,
+  setAddVariantModalVisible, // for adding a new variant
   setEditVariantModalVisible, // for editing a variant if needed
   fetchProducts, // callback to refresh products list
   handleUpdateProductStatus,
@@ -88,21 +90,15 @@ const ProductTable = ({
                   setEditProductModalVisible(true);
                 },
               },
-              ...(record.status === PRODUCT_STATUS.ACTIVE.value
-                ? [
-                    {
-                      key: "delete",
-                      label: "Ngừng kinh doanh",
-                      danger: true,
-                      icon: <StopOutlined />,
-                      onClick: () => {
-                        handleUpdateProductStatus(record.productId, {
-                          status: PRODUCT_STATUS.INACTIVE.value,
-                        });
-                      },
-                    },
-                  ]
-                : []),
+              {
+                key: "add-variant",
+                label: "Thêm biến thể",
+                icon: <PlusOutlined />,
+                onClick: () => {
+                  setSelectedProductId(record.productId); // đảm bảo record có dữ liệu
+                  setAddVariantModalVisible(true);
+                },
+              },
             ],
           }}
         >
@@ -212,13 +208,6 @@ const ProductTable = ({
                             setSelectedVariantId(variant.id); // Lưu variant đang chọn
                             setEditVariantModalVisible(true); // Mở modal sửa variant
                           },
-                        },
-                        {
-                          key: "delete",
-                          label: "Ngừng kinh doanh",
-                          icon: <StopOutlined />,
-                          danger: true,
-                          onClick: async () => {},
                         },
                       ],
                     }}

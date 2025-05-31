@@ -23,7 +23,7 @@ import { getProductVariantById, updateVariant } from "@requests/product";
 
 const { Option } = Select;
 
-const EditProductVariantModal = ({
+const EditVariantModal = ({
   visible,
   onCancel,
   onEdit,
@@ -305,4 +305,4 @@ const EditProductVariantModal = ({
   );
 };
 
-export default EditProductVariantModal;
+export default EditVariantModal;

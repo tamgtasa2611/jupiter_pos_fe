@@ -7,6 +7,7 @@ import { createAttribute } from "@requests/attribute"; // Import hàm tạo thu�
 import AddCategoryModal from "./common/AddCategoryModal"; // Import modal thêm danh mục
 import AddAttributeModal from "./common/AddAttributeModal";
 import AddUnitModal from "./common/AddUnitModal";
+import AddVariantModal from "./variant/AddVariantModal";
 
 // Lazy load modal components
 const AddProductModal = dynamic(() => import("./product/AddProductModal"), {
@@ -15,10 +16,9 @@ const AddProductModal = dynamic(() => import("./product/AddProductModal"), {
 const EditProductModal = dynamic(() => import("./product/EditProductModal"), {
   loading: () => <p>Đang tải dữ liệu...</p>,
 });
-const EditProductVariantModal = dynamic(
-  () => import("./variant/EditProductVariantModal"),
-  { loading: () => <p>Đang tải dữ liệu...</p> },
-);
+const EditVariantModal = dynamic(() => import("./variant/EditVariantModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
+});
 const ViewProductModal = dynamic(() => import("./product/ViewProductModal"), {
   loading: () => <p>Đang tải dữ liệu...</p>,
 });
@@ -39,17 +39,18 @@ const ModalManager = ({
   addProductModalVisible,
   editProductModalVisible, // state cho sửa product
   viewProductModalVisible,
-  deleteModalVisible,
+  addVariantModalVisible,
   importModalVisible,
   setAddProductModalVisible,
   setEditProductModalVisible, // setter cho modal sửa product
   setViewProductModalVisible,
-  setDeleteModalVisible,
+  setAddVariantModalVisible,
   setImportModalVisible,
   selectedProductId, // sử dụng để truyền thông tin cho cả 2 modal
   selectedVariantId, // sử dụng để truyền thông tin cho modal sửa variant
   handleAddProduct,
   handleEditProduct, // hàm cập nhật product
+  handleAddVariant, // hàm thêm variant
   handleEditProductVariant, // hàm cập nhật product variant
   handleUpdateProductStatus,
   handleImportProducts,
@@ -171,11 +172,16 @@ const ModalManager = ({
             isMobile={isMobile}
           />
 
-          <DeleteProductModal
-            visible={deleteModalVisible}
-            onCancel={() => setDeleteModalVisible(false)}
-            onDelete={() => handleUpdateProductStatus(selectedProductId)}
+          <AddVariantModal
+            visible={addVariantModalVisible}
+            onCancel={() => setAddVariantModalVisible(false)}
+            onAdd={handleAddVariant}
             productId={selectedProductId}
+            categories={categories}
+            units={units}
+            handleAddUnit={handleAddUnit}
+            attributes={attributes}
+            handleAddAttribute={handleAddAttribute}
             isMobile={isMobile}
           />
         </>
@@ -189,7 +195,7 @@ const ModalManager = ({
       />
 
       {selectedVariantId && (
-        <EditProductVariantModal
+        <EditVariantModal
           visible={editVariantModalVisible}
           onCancel={() => setEditVariantModalVisible(false)}
           onEdit={handleEditProductVariant}

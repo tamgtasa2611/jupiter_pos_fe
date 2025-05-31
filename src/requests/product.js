@@ -96,6 +96,16 @@ export const updateProductStatus = async (id, data) => {
   }
 };
 
+export const createVariant = async (productId, data) => {
+  try {
+    const res = await api.post(`/product-variants/add/${productId}`, data);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi thêm biến thể sản phẩm:", error);
+    return [];
+  }
+};
+
 export const updateVariant = async (id, data) => {
   try {
     const res = await api.put(`/product-variants/update/${id}`, data);
