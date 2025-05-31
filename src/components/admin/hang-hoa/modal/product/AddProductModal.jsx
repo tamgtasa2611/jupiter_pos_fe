@@ -15,9 +15,12 @@ import {
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
+import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
 
 const { Option } = Select;
 const { TextArea } = Input;
+
+const MAX_IMAGES = 3; // Giới hạn số lượng ảnh mỗi biến thể
 
 const AddProductModal = ({
   visible,
@@ -35,7 +38,6 @@ const AddProductModal = ({
   handleUnitSubmit,
 }) => {
   const [form] = Form.useForm();
-  const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
   const mobileStyles = useMobileStyles();
 
@@ -44,26 +46,21 @@ const AddProductModal = ({
   const mobileSwitchStyle = { ...mobileStyles.switch };
   const mobileFormItemStyle = { ...mobileStyles.formItem };
   const mobileButtonStyle = { ...mobileStyles.button };
+  const [variantImages, setVariantImages] = useState([]); // mỗi phần tử là mảng url ảnh của 1 variant
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
 
-  const uploadProps = {
-    onRemove: () => {
-      setFileList([]);
-    },
-    beforeUpload: (file) => {
-      const isImage = file.type.startsWith("image/");
-      if (!isImage) {
-        message.error("Vui lòng chỉ tải lên các file hình ảnh!");
-        return Upload.LIST_IGNORE;
-      }
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        message.error("Kích thước hình ảnh không được vượt quá 2MB!");
-        return Upload.LIST_IGNORE;
-      }
-      setFileList([file]);
-      return false;
-    },
-    fileList,
+  const handlePreview = async (file) => {
+    let src = file.url || file.thumbUrl;
+    if (!src && file.originFileObj) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+    setPreviewImage(src);
+    setPreviewVisible(true);
   };
 
   const handleSubmit = async () => {
@@ -79,7 +76,7 @@ const AddProductModal = ({
       };
 
       // Thu thập dữ liệu biến thể (nhiều biến thể)
-      const variantData = (values.variants || []).map((variant) => ({
+      const variantData = (values.variants || []).map((variant, idx) => ({
         costPrice: variant.costPrice,
         price: variant.price,
         quantity: variant.quantity || 0,
@@ -91,7 +88,8 @@ const AddProductModal = ({
           : null,
         status: variant.variantStatus ? "ACTIVE" : "INACTIVE",
         attrAndValues: variant.attrAndValues || [],
-        imagePaths: fileList.length > 0 ? [fileList[0].name] : [],
+        // Dữ liệu ảnh chỉ là mảng URL đã được FE nhận ngay lúc upload
+        imagePaths: variantImages[idx] || [],
       }));
 
       const payload = {
@@ -101,7 +99,7 @@ const AddProductModal = ({
 
       await onAdd(payload).then(() => {
         form.resetFields();
-        setFileList([]);
+        setVariantImages([]);
       }); // Đảm bảo chờ onAdd hoàn thành trước khi reset loading
     } catch (error) {
       console.error("Validation failed:", error);
@@ -119,7 +117,8 @@ const AddProductModal = ({
         centered={!isMobile}
         onCancel={() => {
           form.resetFields();
-          setFileList([]);
+
+          setVariantImages([]);
           setLoading(false); // Reset loading khi modal tắt
           onCancel();
         }}
@@ -130,7 +129,7 @@ const AddProductModal = ({
             <Button
               onClick={() => {
                 form.resetFields();
-                setFileList([]);
+                setVariantImages([]);
                 setLoading(false); // Reset loading khi bấm Hủy
                 onCancel();
               }}
@@ -219,7 +218,7 @@ const AddProductModal = ({
           <Form.List name="variants">
             {(fields, { add, remove }) => (
               <>
-                {fields.map(({ key, name, ...restField }) => (
+                {fields.map(({ key, name, ...restField }, idx) => (
                   <div
                     key={key}
                     style={{
@@ -481,6 +480,64 @@ const AddProductModal = ({
                         </>
                       )}
                     </Form.List>
+                    <Form.Item label="Hình ảnh" style={mobileFormItemStyle}>
+                      <CloudinaryImageUpload
+                        onUploaded={(url) => {
+                          setVariantImages((prev) => {
+                            const arr = [...prev];
+                            // Lưu URL ảnh mới vào mảng cho biến thể tại vị trí idx
+                            arr[idx] = arr[idx] ? [...arr[idx], url] : [url];
+                            return arr;
+                          });
+                        }}
+                        buttonText="Tải ảnh lên"
+                        disabled={
+                          variantImages[idx] &&
+                          variantImages[idx].length >= MAX_IMAGES
+                        }
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          flexWrap: "wrap",
+                          marginTop: 8,
+                        }}
+                      >
+                        {(variantImages[idx] || []).map((url, i) => (
+                          <div key={i} style={{ position: "relative" }}>
+                            <img
+                              src={url}
+                              alt="Ảnh biến thể"
+                              style={{ width: 80, borderRadius: 8 }}
+                              onClick={() => handlePreview({ url })}
+                              className="cursor-pointer"
+                            />
+                            <Button
+                              size="small"
+                              danger
+                              style={{
+                                position: "absolute",
+                                top: 0,
+                                right: 0,
+                                padding: 0,
+                                width: 20,
+                                height: 20,
+                              }}
+                              onClick={() => {
+                                setVariantImages((prev) => {
+                                  const arr = [...prev];
+                                  arr[idx] = arr[idx].filter((_, j) => j !== i);
+                                  return arr;
+                                });
+                              }}
+                            >
+                              <DeleteOutlined style={{ fontSize: 12 }} />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </Form.Item>
                   </div>
                 ))}
                 <Form.Item>
@@ -496,19 +553,16 @@ const AddProductModal = ({
               </>
             )}
           </Form.List>
-
-          <Divider orientation="left">Hình ảnh sản phẩm</Divider>
-          <Form.Item name="image" label="Hình ảnh" style={mobileFormItemStyle}>
-            <Upload {...uploadProps} listType="picture-card" maxCount={1}>
-              {fileList.length === 0 && (
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Tải lên</div>
-                </div>
-              )}
-            </Upload>
-          </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        open={previewVisible}
+        footer={null}
+        centered
+        onCancel={() => setPreviewVisible(false)}
+      >
+        <img alt="preview" style={{ width: "100%" }} src={previewImage} />
       </Modal>
     </>
   );
