@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useLayoutEffect, useEffect } from "react";
-import { Card, Drawer, message } from "antd";
+import { Card, Drawer, message, Spin } from "antd";
 import ProductHeader from "./ProductHeader";
 import ProductActionBar from "./ProductActionBar";
 import MobileSearchBar from "./mobile/MobileSearchBar";
@@ -99,6 +99,11 @@ const ProductPage = () => {
     loadUnits();
   }, []);
 
+  const handleRefresh = () => {
+    // Hàm này sẽ được gọi khi người dùng nhấn nút "Tải lại" trong ProductActionBar
+    fetchProducts({ page: 0, size: pagination.pageSize });
+  };
+
   // Dummy handleScanCode (bạn có thể điều chỉnh lại theo logic thực tế)
   const handleScanCode = (code) => {
     setSearchText(code);
@@ -148,15 +153,14 @@ const ProductPage = () => {
     productId,
     sort = "lastModifiedDate,desc",
   } = {}) => {
+    setLoading(true);
+    const minDelay = 500;
+    const startTime = Date.now();
     try {
-      setLoading(true);
       const params = { search, page, size, category, productId, sort };
       const response = await getProductsWithVariants(params);
-
-      // Nếu response có dạng { content, totalElements }
       const mappedProducts = mapProductsFromApi(response.content || []);
       setProducts(mappedProducts);
-      // Cập nhật pagination dựa trên giá trị trả về từ API
       setPagination({
         current: page + 1,
         pageSize: size,
@@ -165,13 +169,17 @@ const ProductPage = () => {
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
     } finally {
+      const elapsed = Date.now() - startTime;
+      if (elapsed < minDelay) {
+        await new Promise((resolve) => setTimeout(resolve, minDelay - elapsed));
+      }
       setLoading(false);
     }
   };
 
   // Khi component mount, fetch dữ liệu trang đầu tiên
   useEffect(() => {
-    fetchProducts({ page: 0, size: pagination.pageSize });
+    handleRefresh();
   }, []);
 
   // Kiểm tra kích thước màn hình
@@ -216,7 +224,6 @@ const ProductPage = () => {
   // Các hàm dummy cho hành động modal (thêm, sửa, xóa, import)
   const handleAddProduct = async (payload) => {
     try {
-      setLoading(true);
       // Tạo một promise timeout 10 giây
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Request timed out")), 10000),
@@ -229,20 +236,18 @@ const ProductPage = () => {
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
+      // Refresh product list after adding
+      handleRefresh();
       message.success("Thêm sản phẩm thành công");
       setAddProductModalVisible(false);
-      // Refresh product list after adding
-      fetchProducts({ page: 0, size: pagination.pageSize });
     } catch (error) {
       console.error("Lỗi khi thêm sản phẩm:", error);
       message.error("Thêm sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!");
     } finally {
-      setLoading(false);
     }
   };
   const handleEditProduct = async (id, data) => {
     try {
-      setLoading(true);
       // Tạo một promise timeout 10 giây
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Request timed out")), 10000),
@@ -254,39 +259,33 @@ const ProductPage = () => {
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
+      // Refresh product list after editing
+      handleRefresh();
       message.success("Cập nhật sản phẩm thành công");
       setEditProductModalVisible(false);
-      // Refresh product list after editing
-      fetchProducts({ page: 0, size: pagination.pageSize });
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
       message.error(
         "Cập nhật sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!",
       );
-    } finally {
-      setLoading(false);
     }
   };
   const handleAddVariant = async (productId, variantData) => {
     try {
-      setLoading(true);
       const response = await createVariant(productId, variantData);
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
+      handleRefresh();
       message.success("Thêm biến thể thành công");
       setAddVariantModalVisible(false);
-      fetchProducts({ page: 0, size: pagination.pageSize });
     } catch (error) {
       console.error("Lỗi khi thêm biến thể:", error);
       message.error("Thêm biến thể thất bại. Vui lòng kiểm tra lại thông tin!");
-    } finally {
-      setLoading(false);
     }
   };
   const handleUpdateProductStatus = async (id, data) => {
     try {
-      setLoading(true);
       // Tạo một promise timeout 10 giây
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Request timed out")), 10000),
@@ -298,24 +297,21 @@ const ProductPage = () => {
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
+      // Refresh product list after editing
+      handleRefresh();
       message.success("Cập nhật trạng thái sản phẩm thành công");
       setEditProductModalVisible(false);
-      // Refresh product list after editing
-      fetchProducts({ page: 0, size: pagination.pageSize });
     } catch (error) {
       console.error("Lỗi khi cập nhật trạng thái sản phẩm:", error);
       message.error(
         "Cập nhật trạng thái sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!",
       );
-    } finally {
-      setLoading(false);
     }
   };
   const handleImportProducts = () => {};
 
   const handleEditProductVariant = async (id, data) => {
     try {
-      setLoading(true);
       // Tạo một promise timeout 10 giây
       const timeoutPromise = new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Request timed out")), 10000),
@@ -327,17 +323,15 @@ const ProductPage = () => {
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
+      // Refresh product list after editing
+      handleRefresh();
       message.success("Cập nhật biến thể sản phẩm thành công");
       setEditVariantModalVisible(false);
-      // Refresh product list after editing
-      fetchProducts({ page: 0, size: pagination.pageSize });
     } catch (error) {
       console.error("Lỗi khi cập nhật biến thể sản phẩm:", error);
       message.error(
         "Cập nhật biến thể sản phẩm thất bại. Vui lòng kiểm tra lại thông tin!",
       );
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -378,9 +372,7 @@ const ProductPage = () => {
             isMobile={isMobile}
             setMenuDrawerOpen={setMenuDrawerOpen}
             setFilterDrawerOpen={setFilterDrawerOpen}
-            onRefresh={() =>
-              fetchProducts({ page: 0, size: pagination.pageSize })
-            }
+            onRefresh={handleRefresh}
           />
 
           {/* Action bar - Desktop */}
@@ -391,27 +383,27 @@ const ProductPage = () => {
               ProductFilters={MemoizedProductFilters}
               filterProps={filterProps}
               loading={loading}
-              onRefresh={() =>
-                fetchProducts({ page: 0, size: pagination.pageSize })
-              }
+              onRefresh={handleRefresh}
             />
           )}
 
           {/* Product Table for Desktop */}
           {!isMobile && (
-            <MemoizedProductTable
-              products={products}
-              loading={loading}
-              pagination={pagination}
-              handleTableChange={handleTableChange}
-              setSelectedProductId={setSelectedProductId}
-              setSelectedVariantId={setSelectedVariantId}
-              setViewProductModalVisible={setViewProductModalVisible}
-              setEditProductModalVisible={setEditProductModalVisible}
-              setAddVariantModalVisible={setAddVariantModalVisible}
-              setEditVariantModalVisible={setEditVariantModalVisible}
-              handleUpdateProductStatus={handleUpdateProductStatus}
-            />
+            <Spin spinning={loading}>
+              <MemoizedProductTable
+                products={products}
+                loading={loading}
+                pagination={pagination}
+                handleTableChange={handleTableChange}
+                setSelectedProductId={setSelectedProductId}
+                setSelectedVariantId={setSelectedVariantId}
+                setViewProductModalVisible={setViewProductModalVisible}
+                setEditProductModalVisible={setEditProductModalVisible}
+                setAddVariantModalVisible={setAddVariantModalVisible}
+                setEditVariantModalVisible={setEditVariantModalVisible}
+                handleUpdateProductStatus={handleUpdateProductStatus}
+              />
+            </Spin>
           )}
 
           {/* Mobile search bar */}
@@ -425,16 +417,18 @@ const ProductPage = () => {
 
           {/* Product List for Mobile */}
           {isMobile && (
-            <MemoizedMobileProductList
-              products={products}
-              loading={loading}
-              pagination={pagination}
-              setSelectedProductId={setSelectedProductId}
-              setSelectedVariantId={setSelectedVariantId}
-              setViewProductModalVisible={setViewProductModalVisible}
-              setEditProductModalVisible={setEditProductModalVisible}
-              setAddVariantModalVisible={setAddVariantModalVisible}
-            />
+            <Spin spinning={loading}>
+              <MemoizedMobileProductList
+                products={products}
+                loading={loading}
+                pagination={pagination}
+                setSelectedProductId={setSelectedProductId}
+                setSelectedVariantId={setSelectedVariantId}
+                setViewProductModalVisible={setViewProductModalVisible}
+                setEditProductModalVisible={setEditProductModalVisible}
+                setAddVariantModalVisible={setAddVariantModalVisible}
+              />
+            </Spin>
           )}
         </div>
       </Card>
