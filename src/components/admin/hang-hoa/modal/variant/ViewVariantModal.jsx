@@ -5,39 +5,25 @@ import {
   Input,
   InputNumber,
   Select,
-  Upload,
   Switch,
   Button,
   Divider,
-  Space,
   message,
   DatePicker,
   Flex,
   Spin,
 } from "antd";
-import {
-  UploadOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
-import dayjs from "dayjs";
-import { getProductVariantById, updateVariant } from "@requests/product";
-import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
-import { MAX_VARIANT_IMAGES } from "@/constants/product";
 
+import dayjs from "dayjs";
+import { getProductVariantById } from "@requests/product";
 const { Option } = Select;
 
-const EditVariantModal = ({
+const ViewVariantModal = ({
   visible,
   onCancel,
-  onEdit,
   variantId,
-  categories = [],
-  reloadCategories,
   units = [],
-  reloadUnits,
   attributes = [],
-  reloadAttributes,
   isMobile,
 }) => {
   const [form] = Form.useForm();
@@ -88,54 +74,9 @@ const EditVariantModal = ({
     }
   }, [visible, variantId, form]);
 
-  const handleUpload = (url) => {
-    setVariantImages((prev) => {
-      const newImages = [...prev];
-      if (newImages.length < MAX_VARIANT_IMAGES) {
-        newImages.push(url);
-      }
-      return newImages;
-    });
-  };
-
-  const handleRemoveImage = (idxToRemove) => {
-    setVariantImages((prev) => prev.filter((_, idx) => idx !== idxToRemove));
-  };
-
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      const values = await form.validateFields();
-
-      const payload = {
-        costPrice: values.costPrice,
-        price: values.price,
-        quantity: values.quantity || 0,
-        unitId: values.unitId,
-        sku: values.sku,
-        barcode: values.variantBarcode,
-        expiryDate: values.expiryDate ? values.expiryDate.toISOString() : null,
-        status: values.variantStatus ? "ACTIVE" : "INACTIVE",
-        attrAndValues: values.attrAndValues || [],
-        imagePaths: variantImages,
-      };
-
-      await onEdit(variantId, payload);
-      message.success("Cập nhật biến thể sản phẩm thành công");
-      form.resetFields();
-      setVariantImages([]);
-      setLoading(false);
-      onCancel();
-    } catch (error) {
-      console.error("Validation failed or API error:", error);
-      message.error("Cập nhật biến thể sản phẩm thất bại");
-      setLoading(false);
-    }
-  };
-
   return (
     <Modal
-      title="Chỉnh sửa biến thể sản phẩm"
+      title="Chi tiết biến thể sản phẩm"
       open={visible}
       maskClosable={false}
       onCancel={() => {
@@ -147,15 +88,7 @@ const EditVariantModal = ({
       {...(!isMobile && { centered: true })}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          Hủy
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          loading={loading}
-          onClick={handleSubmit}
-        >
-          Lưu thay đổi
+          Đóng
         </Button>,
       ]}
       style={isMobile ? { top: "0" } : {}}
@@ -181,6 +114,7 @@ const EditVariantModal = ({
               step={1000}
               placeholder="0"
               style={{ width: "100%" }}
+              readOnly
             />
           </Form.Item>
           <Form.Item
@@ -193,6 +127,7 @@ const EditVariantModal = ({
               step={1000}
               placeholder="0"
               style={{ width: "100%" }}
+              readOnly
             />
           </Form.Item>
           <Form.Item
@@ -200,10 +135,15 @@ const EditVariantModal = ({
             label="Số lượng tồn kho"
             rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
           >
-            <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
+            <InputNumber
+              min={0}
+              placeholder="0"
+              style={{ width: "100%" }}
+              readOnly
+            />
           </Form.Item>
           <Form.Item name="unitId" label="Đơn vị tính">
-            <Select placeholder="Chọn đơn vị tính">
+            <Select placeholder="Chọn đơn vị tính" disabled>
               {units.map((unit) => (
                 <Option key={unit.id} value={unit.id}>
                   {unit.name}
@@ -212,15 +152,16 @@ const EditVariantModal = ({
             </Select>
           </Form.Item>
           <Form.Item name="sku" label="SKU">
-            <Input placeholder="Nhập SKU" />
+            <Input placeholder="Nhập SKU" readOnly />
           </Form.Item>
           <Form.Item name="variantBarcode" label="Mã vạch">
-            <Input placeholder="Nhập mã vạch" />
+            <Input placeholder="Nhập mã vạch" readOnly />
           </Form.Item>
           <Form.Item name="expiryDate" label="Ngày hết hạn">
             <DatePicker
               style={{ width: "100%" }}
               placeholder="Chọn ngày hết hạn"
+              disabled
             />
           </Form.Item>
           <Form.Item
@@ -232,6 +173,7 @@ const EditVariantModal = ({
               checkedChildren="Đang bán"
               unCheckedChildren="Ngừng bán"
               defaultChecked
+              disabled
             />
           </Form.Item>
           <Divider orientation="left">Thuộc tính biến thể</Divider>
@@ -262,6 +204,7 @@ const EditVariantModal = ({
                           value: attr.id,
                           label: attr.attributeName,
                         }))}
+                        disabled
                       />
                     </Form.Item>
                     <Form.Item
@@ -273,7 +216,11 @@ const EditVariantModal = ({
                         { required: true, message: "Vui lòng nhập giá trị" },
                       ]}
                     >
-                      <Input placeholder="Giá trị" style={{ flex: 1 }} />
+                      <Input
+                        placeholder="Giá trị"
+                        style={{ flex: 1 }}
+                        readOnly
+                      />
                     </Form.Item>
                     <Form.Item
                       {...restField}
@@ -288,34 +235,16 @@ const EditVariantModal = ({
                           value: unit.id,
                           label: unit.name,
                         }))}
+                        disabled
                       />
                     </Form.Item>
-                    <DeleteOutlined
-                      style={{ color: "red" }}
-                      onClick={() => remove(name)}
-                    />
                   </Flex>
                 ))}
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Thêm thuộc tính
-                  </Button>
-                </Form.Item>
               </>
             )}
           </Form.List>
           <Divider orientation="left">Hình ảnh biến thể</Divider>
           <Form.Item name="upload" label="Hình ảnh biến thể">
-            <CloudinaryImageUpload
-              onUploaded={(url) => handleUpload(url)}
-              buttonText="Tải ảnh lên"
-              disabled={variantImages.length >= MAX_VARIANT_IMAGES}
-            />
             <div
               style={{
                 display: "flex",
@@ -331,21 +260,6 @@ const EditVariantModal = ({
                     alt="Ảnh biến thể"
                     style={{ width: 80, borderRadius: 8 }}
                   />
-                  <Button
-                    size="small"
-                    danger
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                      padding: 0,
-                      width: 20,
-                      height: 20,
-                    }}
-                    onClick={() => handleRemoveImage(idx)}
-                  >
-                    <DeleteOutlined style={{ fontSize: 12 }} />
-                  </Button>
                 </div>
               ))}
             </div>
@@ -356,4 +270,4 @@ const EditVariantModal = ({
   );
 };
 
-export default EditVariantModal;
+export default ViewVariantModal;

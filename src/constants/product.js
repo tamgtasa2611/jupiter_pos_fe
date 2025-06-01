@@ -18,3 +18,5 @@ export const PRODUCT_STATUS = {
     color: "purple", // red
   },
 };
+
+export const MAX_VARIANT_IMAGES = 3;

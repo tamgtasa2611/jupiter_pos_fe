@@ -8,6 +8,8 @@ import {
   Button,
   Divider,
   message,
+  Flex,
+  Spin,
 } from "antd";
 import { useMobileStyles } from "@atoms/common";
 import { getProductById } from "@requests/product";
@@ -27,6 +29,7 @@ const ViewProductModal = ({
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
   const mobileStyles = useMobileStyles();
+  const [formLoading, setFormLoading] = useState(true);
 
   const mobileInputStyle = { ...mobileStyles.input };
   const mobileSelectStyle = { ...mobileStyles.select };
@@ -51,35 +54,15 @@ const ViewProductModal = ({
             productStatus: product.status === "ACTIVE",
           });
           setLoading(false);
+          setFormLoading(false);
         })
         .catch((error) => {
           message.error("Lỗi khi tải chi tiết sản phẩm", error);
           setLoading(false);
+          setFormLoading(false);
         });
     }
   }, [visible, productId, form]);
-
-  const handleSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      const productData = {
-        productName: values.productName,
-        description: values.productDescription,
-        categoryIds: values.categoryIds || [],
-        status: values.productStatus ? "ACTIVE" : "INACTIVE",
-        image:
-          fileList.length > 0
-            ? fileList[0].url || fileList[0].response?.url
-            : null,
-      };
-      await onEdit(productId, productData).then(() => {
-        form.resetFields();
-        setFileList([]);
-      });
-    } catch (error) {
-      console.error("Validation failed:", error);
-    }
-  };
 
   return (
     <Modal
@@ -100,57 +83,63 @@ const ViewProductModal = ({
       ]}
       style={isMobile ? { top: "0" } : {}}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        initialValues={{ productStatus: true }}
-      >
-        <Form.Item
-          name="productName"
-          label="Tên sản phẩm"
-          rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm!" }]}
+      {formLoading ? (
+        <Flex justify="center" align="center" style={{ height: "100px" }}>
+          <Spin size="large" />
+        </Flex>
+      ) : (
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{ productStatus: true }}
         >
-          <Input
-            readOnly
-            placeholder="Nhập tên sản phẩm"
-            style={mobileInputStyle}
-          />
-        </Form.Item>
-        <Form.Item name="productDescription" label="Mô tả sản phẩm">
-          <TextArea
-            readOnly
-            rows={4}
-            placeholder="Nhập mô tả sản phẩm"
-            style={mobileInputStyle}
-          />
-        </Form.Item>
-        <Form.Item name="categoryIds" label="Danh mục">
-          <Select
-            mode="multiple"
-            placeholder="Chọn danh mục"
-            style={mobileSelectStyle}
-            disabled
+          <Form.Item
+            name="productName"
+            label="Tên sản phẩm"
+            rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm!" }]}
           >
-            {categories.map((category) => (
-              <Option key={category.id} value={category.id}>
-                {category.categoryName}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="productStatus"
-          label="Trạng thái sản phẩm"
-          valuePropName="checked"
-        >
-          <Switch
-            disabled
-            checkedChildren="Đang bán"
-            unCheckedChildren="Ngừng bán"
-            style={mobileSwitchStyle}
-          />
-        </Form.Item>
-      </Form>
+            <Input
+              readOnly
+              placeholder="Nhập tên sản phẩm"
+              style={mobileInputStyle}
+            />
+          </Form.Item>
+          <Form.Item name="productDescription" label="Mô tả sản phẩm">
+            <TextArea
+              readOnly
+              rows={4}
+              placeholder="Nhập mô tả sản phẩm"
+              style={mobileInputStyle}
+            />
+          </Form.Item>
+          <Form.Item name="categoryIds" label="Danh mục">
+            <Select
+              mode="multiple"
+              placeholder="Chọn danh mục"
+              style={mobileSelectStyle}
+              disabled
+            >
+              {categories.map((category) => (
+                <Option key={category.id} value={category.id}>
+                  {category.categoryName}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="productStatus"
+            label="Trạng thái sản phẩm"
+            valuePropName="checked"
+          >
+            <Switch
+              disabled
+              checkedChildren="Đang bán"
+              unCheckedChildren="Ngừng bán"
+              style={mobileSwitchStyle}
+            />
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 };

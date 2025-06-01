@@ -17,9 +17,9 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
 import { useMobileStyles } from "@atoms/common";
+import { MAX_VARIANT_IMAGES } from "@/constants/product"; 
 
 const { Option } = Select;
-const MAX_IMAGES = 3; // Giới hạn số lượng ảnh cho mỗi variant
 
 const AddVariantModal = ({
   visible,
@@ -47,7 +47,7 @@ const AddVariantModal = ({
   const handleUpload = (url) => {
     setVariantImages((prev) => {
       const newImages = [...prev];
-      if (newImages.length < MAX_IMAGES) {
+      if (newImages.length < MAX_VARIANT_IMAGES) {
         newImages.push(url);
       }
       return newImages;
@@ -243,7 +243,7 @@ const AddVariantModal = ({
                       flex: "1",
                       ...mobileSelectStyle,
                     }}
-                    rules={[{ required: true, message: "Chọn thuộc tính" }]}
+                    rules={[{ required: true, message: "Vui lòng chọn thuộc tính" }]}
                   >
                     <Select
                       placeholder="Chọn thuộc tính"
@@ -342,7 +342,7 @@ const AddVariantModal = ({
           <CloudinaryImageUpload
             onUploaded={(url) => handleUpload(url)}
             buttonText="Tải ảnh lên"
-            disabled={variantImages.length >= MAX_IMAGES}
+            disabled={variantImages.length >= MAX_VARIANT_IMAGES}
           />
           <div
             style={{

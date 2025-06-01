@@ -39,7 +39,7 @@ const ProductActionBar = ({
           Thêm sản phẩm
         </Button>
 
-        <Button
+        {/* <Button
           icon={<ImportOutlined />}
           onClick={() => setImportModalVisible(true)}
         >
@@ -73,7 +73,7 @@ const ProductActionBar = ({
               <polygon points="0,0 6,0 3,3" fill="currentColor" />
             </svg>
           </Button>
-        </Dropdown>
+        </Dropdown> */}
 
         <Button icon={<ReloadOutlined />} onClick={onRefresh} loading={loading}>
           Tải lại

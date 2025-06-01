@@ -45,6 +45,7 @@ const ProductPage = () => {
   const [selectedProductId, setSelectedProductId] = useState(null);
 
   const [selectedVariantId, setSelectedVariantId] = useState(null); // Dùng để lưu variant được chọn
+  const [viewVariantModalVisible, setViewVariantModalVisible] = useState(false); // Modal xem variant
   const [editProductModalVisible, setEditProductModalVisible] = useState(false); // Modal sửa product
   const [editVariantModalVisible, setEditVariantModalVisible] = useState(false); // Modal sửa product variant
 
@@ -400,6 +401,7 @@ const ProductPage = () => {
                 setViewProductModalVisible={setViewProductModalVisible}
                 setEditProductModalVisible={setEditProductModalVisible}
                 setAddVariantModalVisible={setAddVariantModalVisible}
+                setViewVariantModalVisible={setViewVariantModalVisible}
                 setEditVariantModalVisible={setEditVariantModalVisible}
                 handleUpdateProductStatus={handleUpdateProductStatus}
               />
@@ -491,6 +493,8 @@ const ProductPage = () => {
         units={units}
         reloadUnits={reloadUnits}
         isMobile={isMobile}
+        viewVariantModalVisible={viewVariantModalVisible} // truyền modal variant
+        setViewVariantModalVisible={setViewVariantModalVisible}
         editVariantModalVisible={editVariantModalVisible} // truyền modal variant
         setEditVariantModalVisible={setEditVariantModalVisible}
         handleEditProductVariant={handleEditProductVariant} // Giả sử bạn dùng hàm này để sửa variant

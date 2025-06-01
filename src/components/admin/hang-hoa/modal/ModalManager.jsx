@@ -13,21 +13,20 @@ import AddVariantModal from "./variant/AddVariantModal";
 const AddProductModal = dynamic(() => import("./product/AddProductModal"), {
   loading: () => <p>Đang tải dữ liệu...</p>,
 });
-const EditProductModal = dynamic(() => import("./product/EditProductModal"), {
-  loading: () => <p>Đang tải dữ liệu...</p>,
-});
-const EditVariantModal = dynamic(() => import("./variant/EditVariantModal"), {
-  loading: () => <p>Đang tải dữ liệu...</p>,
-});
 const ViewProductModal = dynamic(() => import("./product/ViewProductModal"), {
   loading: () => <p>Đang tải dữ liệu...</p>,
 });
-const DeleteProductModal = dynamic(
-  () => import("./product/DeleteProductModal"),
-  {
-    loading: () => <p>Đang tải dữ liệu...</p>,
-  },
-);
+
+const EditProductModal = dynamic(() => import("./product/EditProductModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
+});
+const ViewVariantModal = dynamic(() => import("./variant/ViewVariantModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
+});
+
+const EditVariantModal = dynamic(() => import("./variant/EditVariantModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
+});
 
 const ModalManager = ({
   addProductModalVisible,
@@ -55,6 +54,8 @@ const ModalManager = ({
   attributes,
   reloadAttributes,
   isMobile,
+  viewVariantModalVisible, // state cho modal xem variant
+  setViewVariantModalVisible,
   editVariantModalVisible, // state cho modal sửa variant
   setEditVariantModalVisible, // setter cho modal sửa variant
 }) => {
@@ -182,19 +183,29 @@ const ModalManager = ({
       )}
 
       {selectedVariantId && (
-        <EditVariantModal
-          visible={editVariantModalVisible}
-          onCancel={() => setEditVariantModalVisible(false)}
-          onEdit={handleEditProductVariant}
-          variantId={selectedVariantId}
-          categories={categories}
-          units={units}
-          attributes={attributes}
-          reloadCategories={reloadCategories}
-          reloadUnits={reloadUnits}
-          reloadAttributes={reloadAttributes}
-          isMobile={isMobile}
-        />
+        <>
+          <ViewVariantModal
+            visible={viewVariantModalVisible}
+            onCancel={() => setViewVariantModalVisible(false)}
+            variantId={selectedVariantId}
+            units={units}
+            attributes={attributes}
+            isMobile={isMobile}
+          />
+
+          <EditVariantModal
+            visible={editVariantModalVisible}
+            onCancel={() => setEditVariantModalVisible(false)}
+            variantId={selectedVariantId}
+            categories={categories}
+            units={units}
+            attributes={attributes}
+            reloadCategories={reloadCategories}
+            reloadUnits={reloadUnits}
+            reloadAttributes={reloadAttributes}
+            isMobile={isMobile}
+          />
+        </>
       )}
 
       {/* Modal thêm danh mục mới */}

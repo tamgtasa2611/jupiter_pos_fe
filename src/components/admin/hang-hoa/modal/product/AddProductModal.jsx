@@ -17,11 +17,10 @@ import {
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
 import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
+import { MAX_VARIANT_IMAGES } from "@/constants/product";
 
 const { Option } = Select;
 const { TextArea } = Input;
-
-const MAX_IMAGES = 3; // Giới hạn số lượng ảnh mỗi biến thể
 
 const AddProductModal = ({
   visible,
@@ -518,7 +517,7 @@ const AddProductModal = ({
                         buttonText="Tải ảnh lên"
                         disabled={
                           variantImages[idx] &&
-                          variantImages[idx].length >= MAX_IMAGES
+                          variantImages[idx].length >= MAX_VARIANT_IMAGES
                         }
                       />
                       <div

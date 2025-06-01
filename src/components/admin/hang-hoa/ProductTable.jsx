@@ -19,12 +19,18 @@ const ProductTable = ({
   setViewProductModalVisible,
   setEditProductModalVisible,
   setAddVariantModalVisible, // for adding a new variant
+  setViewVariantModalVisible,
   setEditVariantModalVisible, // for editing a variant if needed
   fetchProducts, // callback to refresh products list
   handleUpdateProductStatus,
 }) => {
   const columns = [
-    { title: "Tên sản phẩm", dataIndex: "productName", key: "productName" },
+    {
+      title: "Tên sản phẩm",
+      dataIndex: "productName",
+      key: "productName",
+      ellipsis: true,
+    },
     {
       title: "Mô tả",
       dataIndex: "description",
@@ -52,11 +58,18 @@ const ProductTable = ({
         );
       },
     },
-    { title: "Số biến thể", dataIndex: "variantsCount", key: "variantsCount" },
+    {
+      title: "Số biến thể",
+      dataIndex: "variantsCount",
+      key: "variantsCount",
+      ellipsis: true,
+      render: (count) => count || 0,
+    },
     {
       title: "Tồn kho",
       dataIndex: "quantity",
       key: "quantity",
+      ellipsis: true,
       render: (quantity) =>
         quantity <= 10 ? (
           <span style={{ color: "red" }}>{quantity}</span>
@@ -124,13 +137,24 @@ const ProductTable = ({
         expandedRowRender: (record) => (
           <Table
             columns={[
-              { title: "Tên biến thể", dataIndex: "name", key: "name" },
-              { title: "SKU", dataIndex: "sku", key: "sku" },
-              { title: "Mã vạch", dataIndex: "barcode", key: "barcode" },
+              {
+                title: "Tên biến thể",
+                dataIndex: "name",
+                key: "name",
+                ellipsis: true,
+              },
+              { title: "SKU", dataIndex: "sku", key: "sku", ellipsis: true },
+              {
+                title: "Mã vạch",
+                dataIndex: "barcode",
+                key: "barcode",
+                ellipsis: true,
+              },
               {
                 title: "Giá nhập",
                 dataIndex: "costPrice",
                 key: "costPrice",
+                ellipsis: true,
                 render: (value) =>
                   value != null
                     ? value.toLocaleString("vi-VN", {
@@ -143,6 +167,7 @@ const ProductTable = ({
                 title: "Giá bán",
                 dataIndex: "price",
                 key: "price",
+                ellipsis: true,
                 render: (value) =>
                   value != null
                     ? value.toLocaleString("vi-VN", {
@@ -155,6 +180,7 @@ const ProductTable = ({
                 title: "Tồn kho",
                 dataIndex: "quantity",
                 key: "quantity",
+                ellipsis: true,
                 render: (quantity) =>
                   quantity <= 10 ? (
                     <span style={{ color: "red" }}>{quantity}</span>
@@ -197,7 +223,7 @@ const ProductTable = ({
                           icon: <EyeOutlined />,
                           onClick: () => {
                             setSelectedVariantId(variant.id); // Lưu variant đang chọn
-                            // Logic to view variant details
+                            setViewVariantModalVisible(true); // Mở modal xem chi tiết
                           },
                         },
                         {
