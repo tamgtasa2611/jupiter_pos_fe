@@ -158,7 +158,15 @@ const ProductPage = () => {
     const minDelay = 500;
     const startTime = Date.now();
     try {
-      const params = { search, page, size, category, productId, sort };
+      const filter = category !== "0" ? category : "";
+      const searchParam = search.trim();
+      const params = {
+        search: searchParam,
+        sort,
+        filter, // truyền filter theo danh mục (hoặc các tiêu chí khác nếu cần)
+        pageNumber: page, // BE đòi dạng 0-index hoặc chỉnh lại nếu cần
+        pageSize: size,
+      };
       const response = await getProductsWithVariants(params);
       const mappedProducts = mapProductsFromApi(response.content || []);
       setProducts(mappedProducts);
@@ -193,18 +201,6 @@ const ProductPage = () => {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  // Props cho bộ lọc
-  const filterProps = {
-    searchText,
-    setSearchText,
-    selectedCategory,
-    setSelectedCategory,
-    selectedStatus,
-    setSelectedStatus,
-    categories,
-    isMobile,
-  };
-
   // Xử lý thay đổi bảng: pagination, lọc, sắp xếp, ...
   const handleTableChange = (newPagination, filters, sorter) => {
     const { current, pageSize } = newPagination;
@@ -220,6 +216,31 @@ const ProductPage = () => {
       category: selectedCategory,
       sort: sortParam,
     });
+  };
+
+  // Hàm tìm kiếm riêng
+  const handleSearch = (searchTerm) => {
+    setSearchText(searchTerm);
+    fetchProducts({
+      search: searchTerm,
+      page: 0,
+      size: pagination.pageSize,
+      category: selectedCategory,
+      sort: "lastModifiedDate,desc",
+    });
+  };
+
+  // Props cho bộ lọc
+  const filterProps = {
+    searchText,
+    setSearchText,
+    selectedCategory,
+    setSelectedCategory,
+    selectedStatus,
+    setSelectedStatus,
+    categories,
+    isMobile,
+    onSearch: handleSearch,
   };
 
   // Các hàm dummy cho hành động modal (thêm, sửa, xóa, import)

@@ -22,11 +22,9 @@ export const getProductById = async (id) => {
   }
 };
 
-export const getProductsWithVariants = async (params = {}) => {
+export const getProductsWithVariants = async (data) => {
   try {
-    const products = await api.get(`/products/search-with-variants`, {
-      params,
-    });
+    const products = await api.post(`/products/search-with-variants`, data);
     return products;
   } catch (error) {
     console.error("Lỗi khi lấy productVariants:", error);

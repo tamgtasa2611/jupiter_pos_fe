@@ -13,6 +13,7 @@ const ProductFilters = ({
   setSelectedStatus,
   categories,
   isMobile,
+  onSearch,
 }) => {
   return (
     <Flex gap={12} wrap="wrap">
@@ -21,6 +22,7 @@ const ProductFilters = ({
         prefix={<SearchOutlined />}
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
+        onPressEnter={(e) => onSearch(e.target.value)}
         style={{ width: isMobile ? "100%" : 300 }}
         allowClear
       />
