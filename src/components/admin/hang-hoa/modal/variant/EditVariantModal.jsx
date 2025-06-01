@@ -256,7 +256,7 @@ const EditVariantModal = ({
                   <Form.Item
                     {...restField}
                     name={[name, "attrValue"]}
-                    rules={[{ required: true, message: "Nhập giá trị" }]}
+                    rules={[{ required: true, message: "Vui lòng nhập giá trị" }]}
                   >
                     <Input placeholder="Giá trị" style={{ width: 240 }} />
                   </Form.Item>

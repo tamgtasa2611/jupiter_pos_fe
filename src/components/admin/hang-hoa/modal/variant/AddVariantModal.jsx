@@ -11,6 +11,7 @@ import {
   Divider,
   Space,
   message,
+  Flex,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -204,7 +205,10 @@ const AddVariantModal = ({
             label="Ngày hết hạn"
             style={mobileFormItemStyle}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker
+              style={{ width: "100%" }}
+              placeholder="Chọn ngày hết hạn"
+            />
           </Form.Item>
           <Form.Item
             name="variantStatus"
@@ -223,16 +227,30 @@ const AddVariantModal = ({
         <Form.List name="attrAndValues">
           {(fields, { add, remove }) => (
             <>
-              {fields.map(({ key, name, ...restField }) => (
-                <Space key={key} align="baseline" style={{ marginBottom: 8 }}>
+              {fields.map(({ key, name, ...restField }, idx) => (
+                <Flex
+                  key={key}
+                  justify="space-between"
+                  align="center"
+                  gap={16}
+                  style={{ marginBottom: 8 }}
+                >
                   <Form.Item
                     {...restField}
+                    label={`Thuộc tính ${idx + 1}`}
                     name={[name, "attrId"]}
+                    style={{
+                      flex: "1",
+                      ...mobileSelectStyle,
+                    }}
                     rules={[{ required: true, message: "Chọn thuộc tính" }]}
                   >
                     <Select
                       placeholder="Chọn thuộc tính"
-                      style={{ width: 240 }}
+                      style={{
+                        flex: "1",
+                        ...mobileSelectStyle,
+                      }}
                       popupRender={(menu) => (
                         <>
                           {menu}
@@ -254,15 +272,33 @@ const AddVariantModal = ({
                   </Form.Item>
                   <Form.Item
                     {...restField}
+                    label={`Giá trị ${idx + 1}`}
                     name={[name, "attrValue"]}
-                    rules={[{ required: true, message: "Nhập giá trị" }]}
+                    style={{
+                      flex: "1",
+                      ...mobileSelectStyle,
+                    }}
+                    rules={[{ required: true, message: "Vui lòng nhập giá trị" }]}
                   >
-                    <Input placeholder="Giá trị" style={{ width: 240 }} />
+                    <Input
+                      placeholder="Nhập giá trị"
+                      style={{
+                        flex: "1",
+                        ...mobileSelectStyle,
+                      }}
+                    />
                   </Form.Item>
-                  <Form.Item {...restField} name={[name, "unitId"]}>
+                  <Form.Item
+                    {...restField}
+                    label={`Đơn vị ${idx + 1}`}
+                    style={{
+                      flex: "1",
+                      ...mobileSelectStyle,
+                    }}
+                    name={[name, "unitId"]}
+                  >
                     <Select
-                      placeholder="Đơn vị"
-                      style={{ width: 200 }}
+                      placeholder="Chọn đơn vị"
                       popupRender={(menu) => (
                         <>
                           {menu}
@@ -276,13 +312,17 @@ const AddVariantModal = ({
                         value: unit.id,
                         label: unit.name,
                       }))}
+                      style={{
+                        flex: "1",
+                        ...mobileSelectStyle,
+                      }}
                     />
                   </Form.Item>
                   <DeleteOutlined
                     style={{ color: "red" }}
                     onClick={() => remove(name)}
                   />
-                </Space>
+                </Flex>
               ))}
               <Form.Item>
                 <Button

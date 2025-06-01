@@ -5,6 +5,7 @@ import "./globals.css";
 import { ConfigProvider } from "antd";
 import themeConfig from "@config/themeConfig";
 import Script from "next/script";
+import viVN from 'antd/locale/vi_VN';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -169,7 +170,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AntdRegistry>
-          <ConfigProvider theme={themeConfig}>{children}</ConfigProvider>
+          <ConfigProvider theme={themeConfig} locale={viVN}>{children}</ConfigProvider>
         </AntdRegistry>
       </body>
     </html>

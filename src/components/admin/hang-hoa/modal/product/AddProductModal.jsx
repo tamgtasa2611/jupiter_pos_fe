@@ -12,6 +12,7 @@ import {
   DatePicker,
   message,
   Space,
+  Flex,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
@@ -360,6 +361,7 @@ const AddProductModal = ({
                         name={[name, "variantStatus"]}
                         label="Trạng thái biến thể"
                         valuePropName="checked"
+                        initialValue={true}
                         style={mobileFormItemStyle}
                       >
                         <Switch
@@ -374,33 +376,44 @@ const AddProductModal = ({
                       {(attrFields, { add: addAttr, remove: removeAttr }) => (
                         <>
                           {attrFields.map(
-                            ({
-                              key: attrKey,
-                              name: attrName,
-                              ...restAttrField
-                            }) => (
-                              <Space
+                            (
+                              {
+                                key: attrKey,
+                                name: attrName,
+                                ...restAttrField
+                              },
+                              idx,
+                            ) => (
+                              <Flex
                                 key={attrKey}
-                                style={{ display: "flex", marginBottom: 8 }}
-                                align="baseline"
+                                justify="space-between"
+                                align="center"
+                                gap={16}
+                                style={{ marginBottom: 8 }}
                               >
                                 <Form.Item
                                   {...restAttrField}
+                                  label={`Thuộc tính ${idx + 1}`}
                                   name={[attrName, "attrId"]}
                                   rules={[
                                     {
                                       required: true,
-                                      message: "Chọn thuộc tính",
+                                      message: "Vui lòng chọn thuộc tính",
                                     },
                                   ]}
+                                  style={{
+                                    flex: "1",
+                                  }}
                                 >
                                   <Select
                                     placeholder="Chọn thuộc tính"
-                                    style={{ width: 240 }}
                                     options={attributes.map((attr) => ({
                                       value: attr.id,
                                       label: attr.attributeName,
                                     }))}
+                                    style={{
+                                      flex: "1",
+                                    }}
                                     popupRender={(menu) => (
                                       <>
                                         {menu}
@@ -422,22 +435,34 @@ const AddProductModal = ({
                                 <Form.Item
                                   {...restAttrField}
                                   name={[attrName, "attrValue"]}
+                                  label={`Giá trị ${idx + 1}`}
                                   rules={[
-                                    { required: true, message: "Nhập giá trị" },
+                                    { required: true, message: "Vui lòng nhập giá trị" },
                                   ]}
+                                  style={{
+                                    flex: "1",
+                                  }}
                                 >
                                   <Input
-                                    placeholder="Giá trị"
-                                    style={{ width: 240 }}
+                                    placeholder="Nhập giá trị"
+                                    style={{
+                                      flex: "1",
+                                    }}
                                   />
                                 </Form.Item>
                                 <Form.Item
                                   {...restAttrField}
                                   name={[attrName, "unitId"]}
+                                  style={{
+                                    flex: "1",
+                                  }}
+                                  label={`Đơn vị ${idx + 1}`}
                                 >
                                   <Select
-                                    placeholder="Đơn vị"
-                                    style={{ width: 200 }}
+                                    placeholder="Chọn đơn vị"
+                                    style={{
+                                      flex: "1",
+                                    }}
                                     options={units.map((unit) => ({
                                       value: unit.id,
                                       label: unit.name,
@@ -464,7 +489,7 @@ const AddProductModal = ({
                                   style={{ color: "red" }}
                                   onClick={() => removeAttr(attrName)}
                                 />
-                              </Space>
+                              </Flex>
                             ),
                           )}
                           <Form.Item>
