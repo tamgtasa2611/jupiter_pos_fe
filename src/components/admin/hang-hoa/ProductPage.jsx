@@ -261,8 +261,8 @@ const ProductPage = () => {
       }
       // Refresh product list after editing
       handleRefresh();
-      message.success("Cập nhật sản phẩm thành công");
       setEditProductModalVisible(false);
+      message.success("Cập nhật sản phẩm thành công");
     } catch (error) {
       console.error("Lỗi khi cập nhật sản phẩm:", error);
       message.error(

@@ -83,7 +83,7 @@ const ViewProductModal = ({
 
   return (
     <Modal
-      title="Chỉnh sửa sản phẩm"
+      title="Chi tiết sản phẩm"
       open={visible}
       onCancel={() => {
         form.resetFields();
@@ -95,7 +95,7 @@ const ViewProductModal = ({
       centered={!isMobile}
       footer={[
         <Button key="cancel" onClick={onCancel}>
-          Hủy
+          Đóng
         </Button>,
       ]}
       style={isMobile ? { top: "0" } : {}}
@@ -105,7 +105,6 @@ const ViewProductModal = ({
         layout="vertical"
         initialValues={{ productStatus: true }}
       >
-        <Divider orientation="left">Thông tin sản phẩm</Divider>
         <Form.Item
           name="productName"
           label="Tên sản phẩm"
@@ -146,8 +145,8 @@ const ViewProductModal = ({
         >
           <Switch
             disabled
-            checkedChildren="ACTIVE"
-            unCheckedChildren="INACTIVE"
+            checkedChildren="Đang bán"
+            unCheckedChildren="Ngừng bán"
             style={mobileSwitchStyle}
           />
         </Form.Item>

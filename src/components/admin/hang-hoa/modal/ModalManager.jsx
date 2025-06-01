@@ -28,12 +28,6 @@ const DeleteProductModal = dynamic(
     loading: () => <p>Đang tải dữ liệu...</p>,
   },
 );
-const ImportProductsModal = dynamic(
-  () => import("./product/ImportProductsModal"),
-  {
-    loading: () => <p>Đang tải dữ liệu...</p>,
-  },
-);
 
 const ModalManager = ({
   addProductModalVisible,
@@ -186,13 +180,6 @@ const ModalManager = ({
           />
         </>
       )}
-
-      <ImportProductsModal
-        visible={importModalVisible}
-        onCancel={() => setImportModalVisible(false)}
-        onImport={handleImportProducts}
-        isMobile={isMobile}
-      />
 
       {selectedVariantId && (
         <EditVariantModal

@@ -115,7 +115,6 @@ const EditProductModal = ({
         layout="vertical"
         initialValues={{ productStatus: true }}
       >
-        <Divider orientation="left">Thông tin sản phẩm</Divider>
         <Form.Item
           name="productName"
           label="Tên sản phẩm"
@@ -166,8 +165,8 @@ const EditProductModal = ({
           valuePropName="checked"
         >
           <Switch
-            checkedChildren="ACTIVE"
-            unCheckedChildren="INACTIVE"
+            checkedChildren="Đang bán"
+            unCheckedChildren="Ngừng bán"
             style={mobileSwitchStyle}
           />
         </Form.Item>

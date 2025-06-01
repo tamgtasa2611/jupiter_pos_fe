@@ -3,12 +3,12 @@ const INACTIVE = "INACTIVE";
 const DELETED = "DELETED";
 export const PRODUCT_STATUS = {
   ACTIVE: {
-    label: "Đang kinh doanh",
+    label: "Đang bán",
     value: ACTIVE,
     color: "green", // green
   },
   INACTIVE: {
-    label: "Ngừng kinh doanh",
+    label: "Ngừng bán",
     value: INACTIVE,
     color: "red", // magenta
   },
