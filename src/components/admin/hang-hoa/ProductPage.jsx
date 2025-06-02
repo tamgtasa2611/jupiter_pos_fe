@@ -151,19 +151,25 @@ const ProductPage = () => {
     page = 0,
     size = 10,
     category,
-    productId,
+    status,
     sort = "lastModifiedDate,desc",
   } = {}) => {
     setLoading(true);
     const minDelay = 500;
     const startTime = Date.now();
     try {
-      const filter = category !== "0" ? category : "";
+      const filterCriteria = {};
+      if (category && category !== "0") {
+        filterCriteria.categoryId = category;
+      }
+      if (status && status !== "0") {
+        filterCriteria.status = status.toUpperCase();
+      }
       const searchParam = search.trim();
       const params = {
         search: searchParam,
         sort,
-        filter, // truyền filter theo danh mục (hoặc các tiêu chí khác nếu cần)
+        filter: filterCriteria, // truyền filter theo danh mục (hoặc các tiêu chí khác nếu cần)
         pageNumber: page, // BE đòi dạng 0-index hoặc chỉnh lại nếu cần
         pageSize: size,
       };
@@ -225,10 +231,15 @@ const ProductPage = () => {
       search: searchTerm,
       page: 0,
       size: pagination.pageSize,
-      category: selectedCategory,
+      category: selectedCategory, // Lấy giá trị categoryID
+      status: selectedStatus, // Lấy giá trị status
       sort: "lastModifiedDate,desc",
     });
   };
+
+  useEffect(() => {
+    handleSearch(searchText);
+  }, [selectedCategory, selectedStatus]);
 
   // Props cho bộ lọc
   const filterProps = {

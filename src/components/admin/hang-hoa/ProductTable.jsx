@@ -130,12 +130,14 @@ const ProductTable = ({
       loading={loading}
       pagination={pagination}
       onChange={handleTableChange}
+      bordered
       scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
       style={{ height: "100%" }}
       sticky
       expandable={{
         expandedRowRender: (record) => (
           <Table
+            bordered
             columns={[
               {
                 title: "Tên biến thể",

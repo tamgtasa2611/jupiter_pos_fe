@@ -25,6 +25,7 @@ const ProductFilters = ({
         onPressEnter={(e) => onSearch(e.target.value)}
         style={{ width: isMobile ? "100%" : 300 }}
         allowClear
+        onClear={() => onSearch("")}
       />
 
       <Select
@@ -36,7 +37,7 @@ const ProductFilters = ({
       >
         <Option value="0">Tất cả danh mục</Option>
         {categories.map((category) => (
-          <Option key={category.id} value={category.categoryName}>
+          <Option key={category.id} value={category.id}>
             {category.categoryName}
           </Option>
         ))}
