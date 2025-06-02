@@ -106,10 +106,10 @@ export default function MobileNavBar({ onLogout }) {
 
   const navItems = [
     {
-      key: "/admin/trang-chu",
+      key: "/admin/ban-hang",
       icon: <HomeOutlined style={{ fontSize: "20px" }} />,
       label: "Trang chủ",
-      href: "/admin/trang-chu",
+      href: "/admin/ban-hang",
     },
     {
       key: "/admin/hang-hoa",

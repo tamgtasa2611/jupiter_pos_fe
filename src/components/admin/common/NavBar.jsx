@@ -47,11 +47,11 @@ export default function NavBar({ onLogout }) {
   // Format menu items to use with items prop
   const menuItems = [
     {
-      key: "/admin/trang-chu",
-      icon: <DashboardOutlined className="text-lg" />,
+      key: "/admin/ban-hang",
+      icon: <ShoppingCartOutlined className="text-lg" />,
       label: (
-        <Link href="/admin/trang-chu" className="gap-1.5 py-1">
-          Trang chủ
+        <Link href="/admin/ban-hang" className="gap-1.5 py-1">
+          Bán hàng
         </Link>
       ),
     },
@@ -110,7 +110,7 @@ export default function NavBar({ onLogout }) {
       }}
     >
       {/* Left side - Logo */}
-      <Link href="/admin/trang-chu" className="flex items-center group">
+      <Link href="/admin/ban-hang" className="flex items-center group">
         <div className="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white p-2 rounded-xl mr-3 shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">
           <div className="text-lg font-bold">POS</div>
         </div>
@@ -157,13 +157,6 @@ export default function NavBar({ onLogout }) {
             className="flex items-center justify-center text-lg hover:bg-gray-100 transition-colors"
           />
         </Tooltip>
-
-        {/* Quick sale button */}
-        <Link href="/admin/ban-hang">
-          <Button type="primary" icon={<ShoppingCartOutlined />}>
-            Bán hàng
-          </Button>
-        </Link>
 
         {/* Notifications */}
         <Dropdown

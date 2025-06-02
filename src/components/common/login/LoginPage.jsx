@@ -19,7 +19,7 @@ const LoginPage = () => {
     const token = getToken();
     if (token) {
       console.log("Token found, redirecting to dashboard");
-      router.push("/admin/trang-chu");
+      router.push("/admin/ban-hang");
     }
   }, [router]);
 
@@ -35,7 +35,7 @@ const LoginPage = () => {
 
         setTokenWithExpiry(res.token, user);
         message.success(res.message || "Đăng nhập thành công!");
-        router.push("/admin/trang-chu");
+        router.push("/admin/ban-hang");
       } else {
         message.error(
           res.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!",

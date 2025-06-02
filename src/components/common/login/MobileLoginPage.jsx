@@ -13,7 +13,7 @@ const MobileLoginPage = () => {
     const token = localStorage.getItem("token");
     if (token) {
       console.log("Token found, redirecting to dashboard");
-      router.push("/admin/trang-chu");
+      router.push("/admin/ban-hang");
     }
   }, [router]);
 

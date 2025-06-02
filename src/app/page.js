@@ -33,7 +33,7 @@ export default function CustomerLandingPage() {
       const token = localStorage.getItem("token");
       if (token) {
         console.log("Token found, redirecting to dashboard");
-        router.push("/admin/trang-chu");
+        router.push("/admin/ban-hang");
       } else {
         console.log("No token found, redirecting to login");
         router.replace("/dang-nhap");
