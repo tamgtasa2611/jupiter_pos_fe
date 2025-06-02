@@ -163,7 +163,7 @@ const ProductDetailPage = () => {
               >
                 <Image
                   alt={product.name}
-                  src={product.image}
+                  src={product.image || null}
                   className="rounded"
                   style={{
                     maxHeight: 220,

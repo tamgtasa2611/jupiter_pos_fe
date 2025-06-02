@@ -45,7 +45,7 @@ const ProductCard = memo(
           >
             <Image
               alt={product.name}
-              src={product.image ? product.image : FALLBACK_IMAGE}
+              src={product.image ? product.image : null}
               style={{
                 minHeight: 100,
                 maxHeight: 100,

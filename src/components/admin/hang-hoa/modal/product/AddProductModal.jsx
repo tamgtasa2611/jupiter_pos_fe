@@ -535,7 +535,7 @@ const AddProductModal = ({
                         {(variantImages[idx] || []).map((url, i) => (
                           <div key={i} style={{ position: "relative" }}>
                             <Image
-                              src={url}
+                              src={url || null}
                               alt="Ảnh biến thể"
                               style={{ width: 80, borderRadius: 8 }}
                               onClick={() => handlePreview({ url })}

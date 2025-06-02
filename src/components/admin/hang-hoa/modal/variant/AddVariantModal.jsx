@@ -360,7 +360,7 @@ const AddVariantModal = ({
             {variantImages.map((url, idx) => (
               <div key={idx} style={{ position: "relative" }}>
                 <Image
-                  src={url}
+                  src={url || null}
                   alt="Ảnh biến thể"
                   style={{ width: 80, borderRadius: 8 }}
                 />
