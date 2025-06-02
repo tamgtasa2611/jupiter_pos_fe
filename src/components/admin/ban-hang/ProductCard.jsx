@@ -18,7 +18,6 @@ const ProductCard = memo(
   ({ product, onProductClick, onAddToCart, loading }) => {
     return (
       <Card
-        loading={loading}
         hoverable
         onClick={() => onProductClick(product)}
         style={{
@@ -26,7 +25,7 @@ const ProductCard = memo(
           cursor: "pointer",
           height: 300, // Chiều cao cố định cho Card
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "column"
         }}
         variant="outlined"
         bodyStyle={{

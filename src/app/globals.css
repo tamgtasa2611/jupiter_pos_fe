@@ -95,10 +95,14 @@ body {
 .ant-card {
   box-shadow: var(--card-shadow) !important;
   border-radius: 16px !important;
-  border: 1px solid rgba(0, 0, 0, 0.04) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
   transition:
     transform 0.3s,
     box-shadow 0.3s !important;
+}
+
+.ant-card-bordered {
+  border: 1px solid rgba(255, 0, 0, 0.08) !important;
 }
 
 .ant-card:hover {
