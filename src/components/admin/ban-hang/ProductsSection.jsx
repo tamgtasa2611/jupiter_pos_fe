@@ -96,6 +96,7 @@ const ProductsSection = memo(
               <ProductGrid
                 products={filteredProducts}
                 onProductClick={onProductClick}
+                loading={loading}
                 loadingMore={loadingMore}
                 handleLoadMore={handleLoadMore}
                 isInitial={initLoading} // Ẩn nút khi là lần load đầu
