@@ -5,10 +5,12 @@ export const setTokenWithExpiry = (token, user) => {
     expiry: now.getTime() + 4 * 60 * 60 * 1000, // 4 tiếng tính bằng ms
     user: user || null, // Lưu thông tin người dùng nếu có
   };
+  if (typeof window === "undefined") return; // Tránh lỗi khi chạy trên server
   localStorage.setItem("token", JSON.stringify(item));
 };
 
 export const getToken = () => {
+  if (typeof window === "undefined") return null; // Tránh lỗi khi chạy trên server
   const itemStr = localStorage.getItem("token");
   if (!itemStr) return null;
   try {
@@ -30,6 +32,7 @@ export const getToken = () => {
 };
 
 export const getUserFromToken = () => {
+  if (typeof window === "undefined") return null; // Tránh lỗi khi chạy trên server
   const itemStr = localStorage.getItem("token");
   if (!itemStr) return null;
   try {

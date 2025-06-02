@@ -22,6 +22,7 @@ export default function CustomerLandingPage() {
 
     // Log if localStorage is accessible
     try {
+      if (typeof window === "undefined") return;
       const testKey = "test_storage_access";
       localStorage.setItem(testKey, "works");
       const result = localStorage.getItem(testKey);

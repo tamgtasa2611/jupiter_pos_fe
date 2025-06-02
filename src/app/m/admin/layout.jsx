@@ -19,6 +19,7 @@ export default function AdminLayout({ children }) {
 
   // Check authentication on component mount
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const token = localStorage.getItem("token");
     if (!token) {
       console.log("No token found, redirecting to login");
