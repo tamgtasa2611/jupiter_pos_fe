@@ -23,7 +23,7 @@ const ProductCard = memo(
         style={{
           overflow: "hidden",
           cursor: "pointer",
-          height: 300, // Chiều cao cố định cho Card
+          height: 400, // Chiều cao cố định cho Card
           display: "flex",
           flexDirection: "column"
         }}
@@ -46,8 +46,8 @@ const ProductCard = memo(
               alt={product.name}
               src={product.image ? product.image : null}
               style={{
-                minHeight: 100,
-                maxHeight: 100,
+                minHeight: 200,
+                maxHeight: 200,
                 objectFit: "contain",
                 width: "100%",
               }}
