@@ -58,7 +58,7 @@ export default function CustomerLandingPage() {
         }}
       >
         <Spin size="large" />
-        <p style={{ marginTop: 16 }}>Vui lòng chờ ứng dụng khởi động...</p>
+        <p style={{ marginTop: 16 }}>Đang tải dữ liệu...</p>
       </div>
     );
   }
