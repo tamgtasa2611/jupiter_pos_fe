@@ -1,5 +1,5 @@
 "use client";
-import "@ant-design/v5-patch-for-react-19";
+
 import { useEffect, useState } from "react";
 import { Layout, Spin, Button } from "antd";
 import { useRouter } from "next/navigation";

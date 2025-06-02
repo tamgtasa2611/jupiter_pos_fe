@@ -7,6 +7,7 @@ import MobileNavBar from "@components/admin/common/MobileNavBar";
 import { useRouter } from "next/navigation";
 import { useIsMobile } from "@atoms/common";
 import { RecoilRoot } from "recoil";
+import { CurrentUserProvider } from "@/contexts/CurrentUserContext";
 import { getToken } from "@/utils/utils";
 
 const { Content } = Layout;
@@ -58,14 +59,16 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <RecoilRoot>
-      <Layout className="h-dvh">
-        {!isMobile && <NavBar onLogout={handleLogout} />}
-        <Content className="bg-gray-50/50 overflow-y-auto px-0 pb-16 md:p-6 h-full">
-          {children}
-        </Content>
-        {isMobile && <MobileNavBar onLogout={handleLogout} />}
-      </Layout>
-    </RecoilRoot>
+    <CurrentUserProvider>
+      <RecoilRoot>
+        <Layout className="h-dvh">
+          {!isMobile && <NavBar onLogout={handleLogout} />}
+          <Content className="bg-gray-50/50 overflow-y-auto px-0 pb-16 md:p-6 h-full">
+            {children}
+          </Content>
+          {isMobile && <MobileNavBar onLogout={handleLogout} />}
+        </Layout>
+      </RecoilRoot>
+    </CurrentUserProvider>
   );
 }

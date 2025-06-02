@@ -1,4 +1,3 @@
-import "@ant-design/v5-patch-for-react-19";
 import ProductDetailPage from "@components/admin/hang-hoa/chi-tiet/ProductDetailPage";
 
 import { getAllIds } from "@/requests/product";

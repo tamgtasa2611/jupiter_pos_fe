@@ -7,9 +7,12 @@ import LoginForm from "./LoginForm";
 import { login } from "@/requests/auth";
 import { setTokenWithExpiry, getToken } from "@/utils/utils";
 
+import { useCurrentUser } from "@/contexts/CurrentUserContext";
+
 const LoginPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { currentUser, setCurrentUser } = useCurrentUser();
 
   useEffect(() => {
     // Check if token exists
@@ -28,7 +31,9 @@ const LoginPage = () => {
         password: values.password,
       });
       if (res.token) {
-        setTokenWithExpiry(res.token);
+        let user = res.user || null;
+
+        setTokenWithExpiry(res.token, user);
         message.success(res.message || "Đăng nhập thành công!");
         router.push("/admin/trang-chu");
       } else {

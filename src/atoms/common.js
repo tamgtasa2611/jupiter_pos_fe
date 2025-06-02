@@ -27,3 +27,8 @@ export const useMobileStyles = () => {
 
   return isMobile ? defaultStyles : {};
 };
+
+export const currentUserAtom = atom({
+  key: "currentUserAtom", // unique ID (with respect to other atoms/selectors)
+  default: null, // default value
+});

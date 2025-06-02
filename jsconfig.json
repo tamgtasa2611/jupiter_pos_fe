@@ -9,7 +9,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@config/*": ["src/config/*"],
       "@requests/*": ["src/requests/*"],
-      "@constants/*": ["src/constants/*"]
+      "@constants/*": ["src/constants/*"],
+      "@contexts/*": ["src/contexts/*"]
       // "@styles/*": ["src/styles/*"]
     }
   }

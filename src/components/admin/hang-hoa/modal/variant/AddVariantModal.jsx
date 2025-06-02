@@ -17,7 +17,7 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
 import { useMobileStyles } from "@atoms/common";
-import { MAX_VARIANT_IMAGES } from "@/constants/product"; 
+import { MAX_VARIANT_IMAGES } from "@/constants/product";
 
 const { Option } = Select;
 
@@ -243,7 +243,9 @@ const AddVariantModal = ({
                       flex: "1",
                       ...mobileSelectStyle,
                     }}
-                    rules={[{ required: true, message: "Vui lòng chọn thuộc tính" }]}
+                    rules={[
+                      { required: true, message: "Vui lòng chọn thuộc tính" },
+                    ]}
                   >
                     <Select
                       placeholder="Chọn thuộc tính"
@@ -278,7 +280,9 @@ const AddVariantModal = ({
                       flex: "1",
                       ...mobileSelectStyle,
                     }}
-                    rules={[{ required: true, message: "Vui lòng nhập giá trị" }]}
+                    rules={[
+                      { required: true, message: "Vui lòng nhập giá trị" },
+                    ]}
                   >
                     <Input
                       placeholder="Nhập giá trị"

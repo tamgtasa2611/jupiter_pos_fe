@@ -436,7 +436,10 @@ const AddProductModal = ({
                                   name={[attrName, "attrValue"]}
                                   label={`Giá trị ${idx + 1}`}
                                   rules={[
-                                    { required: true, message: "Vui lòng nhập giá trị" },
+                                    {
+                                      required: true,
+                                      message: "Vui lòng nhập giá trị",
+                                    },
                                   ]}
                                   style={{
                                     flex: "1",
