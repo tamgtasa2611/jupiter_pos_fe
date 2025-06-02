@@ -9,6 +9,7 @@ import { useIsMobile } from "@atoms/common";
 import { RecoilRoot } from "recoil";
 import { CurrentUserProvider } from "@/contexts/CurrentUserContext";
 import { getToken } from "@/utils/utils";
+import "@ant-design/v5-patch-for-react-19";
 
 const { Content } = Layout;
 

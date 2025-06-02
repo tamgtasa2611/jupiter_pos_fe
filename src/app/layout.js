@@ -6,6 +6,7 @@ import { ConfigProvider } from "antd";
 import themeConfig from "@config/themeConfig";
 import Script from "next/script";
 import viVN from "antd/locale/vi_VN";
+import '@ant-design/v5-patch-for-react-19';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
