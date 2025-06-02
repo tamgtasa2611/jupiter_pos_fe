@@ -38,7 +38,7 @@ const RegisterForm = () => {
       // Giả lập đăng ký thành công
       setTimeout(() => {
         message.success("Đăng ký tài khoản thành công!");
-        router.push("/dang-nhap"); // Chuyển đến trang đăng nhập sau khi đăng ký
+        router.replace("/dang-nhap"); // Chuyển đến trang đăng nhập sau khi đăng ký
         setLoading(false);
       }, 1000);
     } catch (error) {

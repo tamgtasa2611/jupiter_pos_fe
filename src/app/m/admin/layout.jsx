@@ -22,7 +22,7 @@ export default function AdminLayout({ children }) {
     const token = localStorage.getItem("token");
     if (!token) {
       console.log("No token found, redirecting to login");
-      router.push("/dang-nhap");
+      router.replace("/dang-nhap");
     } else {
       console.log("Token found, user is authenticated");
       setIsAuthenticated(true);
@@ -44,7 +44,7 @@ export default function AdminLayout({ children }) {
     message.success("Đăng xuất thành công");
 
     // Redirect to login page
-    router.push("/dang-nhap");
+    router.replace("/dang-nhap");
   }, [router, message]);
 
   return (

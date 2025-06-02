@@ -14,7 +14,6 @@ export default function CustomerLandingPage() {
   useEffect(() => {
     // Simple check to verify component is mounting correctly
     console.log("Landing page mounted");
-    setAppReady(true);
 
     // Check if running in a Capacitor/Cordova context
     const isNative =
@@ -36,13 +35,14 @@ export default function CustomerLandingPage() {
         router.push("/admin/trang-chu");
       } else {
         console.log("No token found, redirecting to login");
-        router.push("/dang-nhap");
+        router.replace("/dang-nhap");
       }
     } catch (e) {
       console.error("LocalStorage error:", e);
     } finally {
       // Set loading to false regardless of outcome
       setLoading(false);
+      setAppReady(true);
     }
   }, [router]);
 

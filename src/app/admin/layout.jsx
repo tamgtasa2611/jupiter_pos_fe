@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { Layout, message } from "antd";
+import { Layout, message, Spin } from "antd";
 import NavBar from "@components/admin/common/NavBar";
 import MobileNavBar from "@components/admin/common/MobileNavBar";
 import { useRouter } from "next/navigation";
@@ -15,14 +15,13 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Use the custom hook to detect mobile directly
   const isMobile = useIsMobile();
-
+  // Lấy token ngay cách đồng bộ (localStorage là sync)
+  const token = typeof window !== "undefined" ? getToken() : null;
   // Check authentication on component mount
   useEffect(() => {
-    const token = getToken();
     if (!token) {
-      router.push("/dang-nhap");
+      router.replace("/dang-nhap");
     } else {
       setIsAuthenticated(true);
     }
@@ -36,15 +35,27 @@ export default function AdminLayout({ children }) {
 
   // Logout function
   const handleLogout = useCallback(() => {
-    // Remove token from localStorage
     localStorage.removeItem("token");
-
-    // Show success message using App.useApp()'s message API
     message.success("Đăng xuất thành công");
-
-    // Redirect to login page
-    router.push("/dang-nhap");
+    router.replace("/dang-nhap");
   }, [router, message]);
+
+  if (!token) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          flexDirection: "column",
+        }}
+      >
+        <Spin size="large" />
+        <p style={{ marginTop: 16 }}>Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
 
   return (
     <RecoilRoot>

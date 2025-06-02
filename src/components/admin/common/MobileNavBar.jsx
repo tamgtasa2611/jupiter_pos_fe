@@ -35,7 +35,7 @@ export default function MobileNavBar({ onLogout }) {
         window.location.href = "/dang-nhap";
       }, 300);
     } else {
-      router.push("/dang-nhap");
+      router.replace("/dang-nhap");
     }
   };
 
