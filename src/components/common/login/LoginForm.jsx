@@ -150,58 +150,6 @@ const LoginForm = ({ onFinish, loading, setLoading }) => {
             Đăng nhập
           </Button>
         </Form.Item>
-
-        <div className="flex items-center justify-center my-6">
-          <div className="flex-grow h-px bg-gray-200"></div>
-          <span className="px-4 text-gray-500 text-sm">hoặc tiếp tục với</span>
-          <div className="flex-grow h-px bg-gray-200"></div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-3">
-          <Button
-            icon={<GoogleOutlined style={{ fontSize: "1.2rem" }} />}
-            size="large"
-            className="flex items-center justify-center hover:bg-gray-50 transition-all"
-            style={{
-              borderRadius: "14px",
-              height: "48px",
-              borderColor: "#eaeaea",
-              color: "#555",
-            }}
-          />
-          <Button
-            icon={<FacebookOutlined style={{ fontSize: "1.2rem" }} />}
-            size="large"
-            className="flex items-center justify-center hover:bg-gray-50 transition-all"
-            style={{
-              borderRadius: "14px",
-              height: "48px",
-              borderColor: "#eaeaea",
-              color: "#3b5998",
-            }}
-          />
-          <Button
-            icon={<AppleOutlined style={{ fontSize: "1.2rem" }} />}
-            size="large"
-            className="flex items-center justify-center hover:bg-gray-50 transition-all"
-            style={{
-              borderRadius: "14px",
-              height: "48px",
-              borderColor: "#eaeaea",
-              color: "#000",
-            }}
-          />
-        </div>
-
-        <div className="text-center mt-6 text-gray-600">
-          Chưa có tài khoản?{" "}
-          <Link
-            href="/dang-ky"
-            className="text-blue-600 hover:text-blue-800 font-medium hover:underline"
-          >
-            Đăng ký ngay
-          </Link>
-        </div>
       </Form>
     </>
   );
