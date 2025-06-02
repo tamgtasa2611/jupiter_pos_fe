@@ -1,22 +1,20 @@
 import { memo } from "react";
-import { Card, Typography, Tag, Divider, Button, Tooltip, Flex } from "antd";
+import {
+  Card,
+  Typography,
+  Tag,
+  Divider,
+  Button,
+  Tooltip,
+  Flex,
+  Image,
+} from "antd";
 import { InfoCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { FALLBACK_IMAGE } from "@/constants/product";
 
 const { Title, Text } = Typography;
 
 const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
-  // Render các thẻ thuộc tính nếu có
-  const renderAttributes = () => {
-    if (product.attrValues && product.attrValues.length > 0) {
-      return product.attrValues.map((attr, index) => (
-        <Tag key={index} color="blue" style={{ marginRight: 4 }}>
-          {attr.attrName}: {attr.attrValue}
-        </Tag>
-      ));
-    }
-    return null;
-  };
-
   return (
     <Card
       hoverable
@@ -24,8 +22,17 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
       style={{
         overflow: "hidden",
         cursor: "pointer",
+        height: 280, // Chiều cao cố định cho Card
+        display: "flex",
+        flexDirection: "column",
       }}
-      bodyStyle={{ padding: 12 }}
+      variant="outlined"
+      bodyStyle={{
+        padding: 12,
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+      }}
       cover={
         <div
           style={{
@@ -34,10 +41,17 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
             background: "#f9f9f9",
           }}
         >
-          <img
+          <Image
             alt={product.name}
             src={product.image}
-            style={{ maxHeight: 100, objectFit: "contain", width: "100%" }}
+            style={{
+              minHeight: 100,
+              maxHeight: 100,
+              objectFit: "contain",
+              width: "100%",
+            }}
+            preview={false}
+            fallback={FALLBACK_IMAGE}
           />
           {product.expiryDate && (
             <Tag
@@ -51,26 +65,22 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
       }
     >
       {/* Header: tên sản phẩm & category  */}
-      <div style={{ marginBottom: 8 }}>
+      <div style={{ marginBottom: 4 }}>
         <Title level={5} style={{ margin: 0 }} ellipsis>
           {product.name}
         </Title>
-        {product.category && (
-          <Text style={{ fontSize: 12, color: "#888" }}>
-            {product.category}
-          </Text>
-        )}
+        <Text style={{ fontSize: 12, color: "#888" }} ellipsis>
+          Danh mục: {product.category ? product.category : ""}
+        </Text>
       </div>
 
-      {renderAttributes() && (
-        <div style={{ marginBottom: 8 }}>{renderAttributes()}</div>
-      )}
       {/* Mô tả sản phẩm */}
-      {product.description && (
-        <Text style={{ fontSize: 12, color: "#666" }} ellipsis>
-          {product.description}
+      <div style={{ flex: 1 }}>
+        <Text style={{ fontSize: 12, color: "#888" }} ellipsis>
+          Mô tả: {product.description ? product.description : " "}
         </Text>
-      )}
+      </div>
+
       <Divider style={{ margin: "8px 0" }} />
       {/* Footer: Giá & nút Thêm vào giỏ hàng */}
       <div
@@ -80,7 +90,7 @@ const ProductCard = memo(({ product, onProductClick, onAddToCart }) => {
           alignItems: "center",
         }}
       >
-        <Title level={4} style={{ margin: 0, color: "#1890ff" }}>
+        <Title level={4} style={{ margin: 0, color: "#1890ff" }} ellipsis>
           {product.price != null
             ? product.price.toLocaleString() + " đ"
             : "N/A"}

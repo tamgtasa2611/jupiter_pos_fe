@@ -14,6 +14,7 @@ import {
   DatePicker,
   Flex,
   Spin,
+  Image,
 } from "antd";
 import {
   UploadOutlined,
@@ -326,7 +327,7 @@ const EditVariantModal = ({
             >
               {variantImages.map((url, idx) => (
                 <div key={idx} style={{ position: "relative" }}>
-                  <img
+                  <Image
                     src={url}
                     alt="Ảnh biến thể"
                     style={{ width: 80, borderRadius: 8 }}

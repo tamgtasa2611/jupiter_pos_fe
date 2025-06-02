@@ -12,6 +12,7 @@ import {
   DatePicker,
   Flex,
   Spin,
+  Image,
 } from "antd";
 
 import dayjs from "dayjs";
@@ -255,7 +256,7 @@ const ViewVariantModal = ({
             >
               {variantImages.map((url, idx) => (
                 <div key={idx} style={{ position: "relative" }}>
-                  <img
+                  <Image
                     src={url}
                     alt="Ảnh biến thể"
                     style={{ width: 80, borderRadius: 8 }}

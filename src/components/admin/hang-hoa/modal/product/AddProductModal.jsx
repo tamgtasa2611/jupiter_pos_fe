@@ -13,6 +13,7 @@ import {
   message,
   Space,
   Flex,
+  Image,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
@@ -533,7 +534,7 @@ const AddProductModal = ({
                       >
                         {(variantImages[idx] || []).map((url, i) => (
                           <div key={i} style={{ position: "relative" }}>
-                            <img
+                            <Image
                               src={url}
                               alt="Ảnh biến thể"
                               style={{ width: 80, borderRadius: 8 }}
@@ -581,15 +582,6 @@ const AddProductModal = ({
             )}
           </Form.List>
         </Form>
-      </Modal>
-
-      <Modal
-        open={previewVisible}
-        footer={null}
-        centered
-        onCancel={() => setPreviewVisible(false)}
-      >
-        <img alt="preview" style={{ width: "100%" }} src={previewImage} />
       </Modal>
     </>
   );

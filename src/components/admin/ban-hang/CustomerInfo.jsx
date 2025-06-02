@@ -6,11 +6,7 @@ const { Text, Title } = Typography;
 const { Search } = Input;
 
 // Mock customer data - đưa ra khỏi component để tránh khởi tạo lại
-const mockCustomers = [
-  { id: 1, name: "Nguyễn Văn A", phone: "0901234567", points: 150 },
-  { id: 2, name: "Trần Thị B", phone: "0912345678", points: 80 },
-  { id: 3, name: "Lê Văn C", phone: "0923456789", points: 210 },
-];
+const mockCustomers = [{ id: 1, name: "Khách lẻ", phone: "" }];
 
 // Memoize để tránh re-render không cần thiết
 const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
@@ -33,10 +29,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
             <Text strong style={{ fontSize: "16px" }}>
               {customer.name}
             </Text>
-            <Space align="center">
-              <PhoneOutlined />
-              <Text>{customer.phone}</Text>
-            </Space>
+
             <div
               style={{
                 display: "flex",
@@ -45,7 +38,10 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
                 marginTop: 8,
               }}
             >
-              <Text type="secondary">Điểm tích lũy: {customer.points}</Text>
+              <Space align="center">
+                <PhoneOutlined />
+                <Text>{customer.phone}</Text>
+              </Space>
               <Button
                 type="text"
                 danger
@@ -61,9 +57,6 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
             direction="vertical"
             style={{ width: "100%", textAlign: "center" }}
           >
-            <Title level={5} style={{ margin: "8px 0" }}>
-              Khách hàng mới
-            </Title>
             <Button
               type="primary"
               icon={<PlusOutlined />}
@@ -108,7 +101,6 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
                   }}
                 >
                   <List.Item.Meta title={item.name} description={item.phone} />
-                  <Text>{item.points} điểm</Text>
                 </List.Item>
               )}
             />

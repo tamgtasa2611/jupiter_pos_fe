@@ -35,7 +35,7 @@ const ProductsSection = memo(
       const nextPage = currentPage + 1;
       setLoadingMore(true);
       try {
-        await onSearch({ page: nextPage, size: 10, search: searchQuery });
+        await onSearch({ page: nextPage, size: 15, search: searchQuery });
         setCurrentPage(nextPage);
       } catch (error) {
         console.error("Lỗi load thêm sản phẩm:", error);

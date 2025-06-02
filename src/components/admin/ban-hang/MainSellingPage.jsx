@@ -18,7 +18,12 @@ const MainSellingPage = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
-  const [customerInfo, setCustomerInfo] = useState(null);
+  const [customerInfo, setCustomerInfo] = useState({
+    id: 0,
+    name: "Khách lẻ",
+    phone: "",
+    points: 0,
+  });
   const [showNumericKeypad, setShowNumericKeypad] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -28,7 +33,7 @@ const MainSellingPage = () => {
     sort = "lastModifiedDate,desc",
     search = "",
     page = 0,
-    size = 20,
+    size = 30,
     category,
     productId,
   } = {}) => {
@@ -57,19 +62,19 @@ const MainSellingPage = () => {
         }
         mappedProducts.push({
           id: item.id,
-          name: productName,
-          description: parent.description,
+          name: productName || parent.productName || "",
+          description: parent.description || "",
           category:
-            parent.category && Array.isArray(parent.category)
-              ? parent.category.map((c) => c.categoryName).join(", ")
+            parent.categoryList && Array.isArray(parent.categoryList)
+              ? parent.categoryList.map((c) => c.categoryName).join(", ")
               : "",
-          price: item.price,
-          costPrice: item.costPrice,
-          quantity: item.quantity,
+          price: item.price || parent.price || 0,
+          costPrice: item.costPrice || parent.costPrice || 0,
+          quantity: item.quantity || 0,
           sku: item.sku,
           barcode: item.barcode,
           expiryDate: item.expiryDate,
-          image: parent.image || "../../../haohao.png",
+          image: item.imagePaths?.[0] || "",
           attrValues: item.attrValues,
         });
       });

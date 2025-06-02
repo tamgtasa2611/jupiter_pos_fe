@@ -12,6 +12,7 @@ import {
   Space,
   message,
   Flex,
+  Image,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -358,7 +359,7 @@ const AddVariantModal = ({
           >
             {variantImages.map((url, idx) => (
               <div key={idx} style={{ position: "relative" }}>
-                <img
+                <Image
                   src={url}
                   alt="Ảnh biến thể"
                   style={{ width: 80, borderRadius: 8 }}
