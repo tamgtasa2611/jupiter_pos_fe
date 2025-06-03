@@ -54,12 +54,12 @@ const MainSellingPage = () => {
         // Bắt đầu với tên sản phẩm cha
         let productName = parent.productName;
         // Nếu variant có attrValues và mảng không rỗng, thêm vào sau tên theo định dạng: "Tên sản phẩm (attr1, attr2)"
-        if (item.attrValues && item.attrValues.length > 0) {
-          const attrs = item.attrValues.map(
-            (attr) => `${attr.attrName}: ${attr.attrValue}`,
-          );
-          productName = `${productName} (${attrs.join(", ")})`;
-        }
+        // if (item.attrValues && item.attrValues.length > 0) {
+        //   const attrs = item.attrValues.map(
+        //     (attr) => `${attr.attrName}: ${attr.attrValue}`,
+        //   );
+        //   productName = `${productName} (${attrs.join(", ")})`;
+        // }
         mappedProducts.push({
           id: item.id,
           name: productName || parent.productName || "",

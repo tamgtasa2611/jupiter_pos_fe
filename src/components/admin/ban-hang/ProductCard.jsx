@@ -16,6 +16,20 @@ const { Title, Text, Paragraph } = Typography;
 
 const ProductCard = memo(
   ({ product, onProductClick, onAddToCart, loading }) => {
+    const attrValues =
+      product.attrValues && product.attrValues.length > 0
+        ? product.attrValues.map(
+            (attr, idx) =>
+              attr.attrValue && (
+                <span key={idx}>
+                  {attr.attrName}: {attr.attrValue}
+                  {attr.unitName && ` (${attr.unitName})`}
+                  {idx !== product.attrValues.length - 1 ? ", " : ""}
+                </span>
+              ),
+          )
+        : "-";
+
     return (
       <Card
         hoverable
@@ -23,9 +37,9 @@ const ProductCard = memo(
         style={{
           overflow: "hidden",
           cursor: "pointer",
-          height: 400, // Chiều cao cố định cho Card
+          height: 420, // Chiều cao cố định cho Card
           display: "flex",
-          flexDirection: "column"
+          flexDirection: "column",
         }}
         variant="outlined"
         bodyStyle={{
@@ -67,22 +81,26 @@ const ProductCard = memo(
       >
         {/* Header: tên sản phẩm   */}
         <div style={{ marginBottom: 4, minHeight: 40, maxHeight: 40 }}>
-          <Paragraph level={5} style={{ margin: 0, fontWeight: "bold" }} ellipsis={{ rows: 2 }}>
+          <Paragraph
+            level={5}
+            style={{ margin: 0, fontWeight: "bold" }}
+            ellipsis={{ rows: 2 }}
+          >
             {product.name}
+          </Paragraph>
+        </div>
+
+        {/* Thuoc tinh sản phẩm */}
+        <div style={{ flex: 1, minHeight: 40, maxHeight: 40 }}>
+          <Paragraph style={{ margin: 0 }} ellipsis={{ rows: 2 }}>
+            {attrValues}
           </Paragraph>
         </div>
 
         {/* category sản phẩm */}
         <div style={{ flex: 1 }}>
           <Text style={{ fontSize: 12, color: "#888" }} ellipsis>
-            Danh mục: {product.category ? product.category : ""}
-          </Text>
-        </div>
-
-        {/* Mô tả sản phẩm */}
-        <div style={{ flex: 1 }}>
-          <Text style={{ fontSize: 12, color: "#888" }} ellipsis>
-            Mô tả: {product.description ? product.description : " "}
+            Danh mục: {product.category ? product.category : "-"}
           </Text>
         </div>
 
@@ -98,7 +116,7 @@ const ProductCard = memo(
           <Title level={4} style={{ margin: 0, color: "#1890ff" }} ellipsis>
             {product.price != null
               ? product.price.toLocaleString() + " đ"
-              : "N/A"}
+              : "-"}
           </Title>
         </div>
         {/* Thông tin tồn kho và tooltip SKU / Mã vạch */}
@@ -115,14 +133,15 @@ const ProductCard = memo(
                   : ""
               }`}
             >
-              Tồn: {product.quantity != null ? product.quantity : "N/A"}
+              Tồn: {product.quantity != null ? product.quantity : "-"}
             </span>
           </div>
           <Tooltip
             title={
               <>
-                <div>SKU: {product.sku || "N/A"}</div>
-                <div>Mã vạch: {product.barcode || "N/A"}</div>
+                <div>SKU: {product.sku || "-"}</div>
+                <div>Mã vạch: {product.barcode || "-"}</div>
+                <div>Mô tả: {product.description || "-"}</div>
               </>
             }
             placement="top"
