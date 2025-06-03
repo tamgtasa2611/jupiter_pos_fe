@@ -146,7 +146,7 @@ const ProductTable = ({
             bordered
             columns={[
               {
-                title: "Tên biến thể",
+                title: "Thuộc tính biến thể",
                 dataIndex: "name",
                 key: "name",
                 ellipsis: true,

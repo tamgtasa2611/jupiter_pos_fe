@@ -126,8 +126,8 @@ const ProductPage = () => {
           ...v,
           name:
             v.attrValues && v.attrValues.length
-              ? `${product.productName} (${v.attrValues.map((a) => `${a.attrName}: ${a.attrValue}`).join(", ")})`
-              : product.productName,
+              ? `${v.attrValues.map((a) => `${a.attrName}: ${a.attrValue}`).join(", ")}`
+              : "",
         })),
         variantsCount: variants ? variants.length : 0,
         quantity:
