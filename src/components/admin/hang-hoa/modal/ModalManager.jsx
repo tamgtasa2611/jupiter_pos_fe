@@ -196,6 +196,7 @@ const ModalManager = ({
           <EditVariantModal
             visible={editVariantModalVisible}
             onCancel={() => setEditVariantModalVisible(false)}
+            onEdit={handleEditProductVariant}
             variantId={selectedVariantId}
             categories={categories}
             units={units}

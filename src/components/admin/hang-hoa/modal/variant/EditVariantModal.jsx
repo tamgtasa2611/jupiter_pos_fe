@@ -31,7 +31,7 @@ const { Option } = Select;
 const EditVariantModal = ({
   visible,
   onCancel,
-  onEdit,
+  onEdit = () => {},
   variantId,
   categories = [],
   reloadCategories,

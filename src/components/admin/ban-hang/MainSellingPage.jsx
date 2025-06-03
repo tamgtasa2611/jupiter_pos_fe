@@ -84,7 +84,6 @@ const MainSellingPage = () => {
       } else {
         setProducts((prev) => [...prev, ...mappedProducts]);
       }
-      console.log("Products fetched:", mappedProducts);
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
     } finally {

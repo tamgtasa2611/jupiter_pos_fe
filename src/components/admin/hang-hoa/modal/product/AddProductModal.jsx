@@ -14,8 +14,10 @@ import {
   Space,
   Flex,
   Image,
+  Row,
+  Col,
 } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { PlusOutlined, DeleteOutlined, CopyOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
 import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
 import { MAX_VARIANT_IMAGES } from "@/constants/product";
@@ -116,9 +118,9 @@ const AddProductModal = ({
         open={visible}
         width="90vw" // Giao diện ngang gần full màn hình
         centered={!isMobile}
+        maskClosable={false}
         onCancel={() => {
           form.resetFields();
-
           setVariantImages([]);
           setLoading(false); // Reset loading khi modal tắt
           onCancel();
@@ -217,369 +219,405 @@ const AddProductModal = ({
 
           <Divider orientation="left">Thông tin biến thể sản phẩm</Divider>
           <Form.List name="variants">
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map(({ key, name, ...restField }, idx) => (
-                  <div
-                    key={key}
-                    style={{
-                      border: "1px solid #f0f0f0",
-                      padding: 16,
-                      marginBottom: 16,
-                      backgroundColor: "#fafafa",
-                    }}
-                  >
-                    <Space
-                      align="baseline"
+            {(fields, { add, remove }) => {
+              // Hàm sao chép biến thể cuối cùng
+              const handleCopyVariant = () => {
+                const variantValues = form.getFieldValue("variants") || [];
+                if (variantValues.length > 0) {
+                  const lastVariant = variantValues[variantValues.length - 1];
+                  add(lastVariant);
+                } else {
+                  // Nếu chưa có biến thể nào, chỉ gọi add() để tạo biến thể trống.
+                  add({});
+                }
+              };
+              return (
+                <>
+                  {fields.map(({ key, name, ...restField }, idx) => (
+                    <div
+                      key={key}
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
+                        border: "1px solid #f0f0f0",
+                        padding: 16,
+                        marginBottom: 16,
+                        backgroundColor: "#fafafa",
                       }}
                     >
-                      <h4>Biến thể {name + 1}</h4>
-                      {fields.length > 1 && (
-                        <DeleteOutlined
-                          onClick={() => remove(name)}
-                          style={{ color: "red" }}
-                        />
-                      )}
-                    </Space>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Form.Item
-                        {...restField}
-                        name={[name, "costPrice"]}
-                        label="Giá nhập (VND)"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Vui lòng nhập giá nhập!",
-                          },
-                        ]}
-                        style={mobileFormItemStyle}
-                      >
-                        <InputNumber
-                          min={0}
-                          step={1000}
-                          style={{ width: "100%", ...mobileInputStyle }}
-                          placeholder="0"
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "price"]}
-                        label="Giá bán (VND)"
-                        rules={[
-                          { required: true, message: "Vui lòng nhập giá bán!" },
-                        ]}
-                        style={mobileFormItemStyle}
-                      >
-                        <InputNumber
-                          min={0}
-                          step={1000}
-                          style={{ width: "100%", ...mobileInputStyle }}
-                          placeholder="0"
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "quantity"]}
-                        label="Số lượng tồn kho"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Vui lòng nhập số lượng!",
-                          },
-                        ]}
-                        style={mobileFormItemStyle}
-                      >
-                        <InputNumber
-                          min={0}
-                          style={{ width: "100%", ...mobileInputStyle }}
-                          placeholder="0"
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <Form.Item
-                        {...restField}
-                        name={[name, "unitId"]}
-                        label="Đơn vị tính"
-                        style={mobileFormItemStyle}
-                      >
-                        <Select
-                          placeholder="Chọn đơn vị tính"
-                          style={mobileSelectStyle}
-                          options={units.map((unit) => ({
-                            value: unit.id,
-                            label: unit.name,
-                          }))}
-                          popupRender={(menu) => (
-                            <>
-                              {menu}
-                              <Divider dashed style={{ margin: "4px 0" }} />
-                              <Button type="link" block onClick={handleAddUnit}>
-                                Thêm đơn vị mới
-                              </Button>
-                            </>
-                          )}
-                        ></Select>
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "sku"]}
-                        label="SKU"
-                        style={mobileFormItemStyle}
-                      >
-                        <Input
-                          placeholder="Nhập SKU"
-                          style={mobileInputStyle}
-                        />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "variantBarcode"]}
-                        label="Mã vạch"
-                        style={mobileFormItemStyle}
-                      >
-                        <Input
-                          placeholder="Nhập mã vạch"
-                          style={mobileInputStyle}
-                        />
-                      </Form.Item>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Form.Item
-                        {...restField}
-                        name={[name, "expiryDate"]}
-                        label="Ngày hết hạn"
-                        style={mobileFormItemStyle}
-                      >
-                        <DatePicker style={{ width: "100%" }} />
-                      </Form.Item>
-                      <Form.Item
-                        {...restField}
-                        name={[name, "variantStatus"]}
-                        label="Trạng thái biến thể"
-                        valuePropName="checked"
-                        initialValue={true}
-                        style={mobileFormItemStyle}
-                      >
-                        <Switch
-                          checkedChildren="Đang bán"
-                          unCheckedChildren="Ngừng bán"
-                          style={mobileSwitchStyle}
-                          defaultChecked
-                        />
-                      </Form.Item>
-                    </div>
-                    <Form.List name={[name, "attrAndValues"]}>
-                      {(attrFields, { add: addAttr, remove: removeAttr }) => (
-                        <>
-                          {attrFields.map(
-                            (
-                              {
-                                key: attrKey,
-                                name: attrName,
-                                ...restAttrField
-                              },
-                              idx,
-                            ) => (
-                              <Flex
-                                key={attrKey}
-                                justify="space-between"
-                                align="center"
-                                gap={16}
-                                style={{ marginBottom: 8 }}
-                              >
-                                <Form.Item
-                                  {...restAttrField}
-                                  label={`Thuộc tính ${idx + 1}`}
-                                  name={[attrName, "attrId"]}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Vui lòng chọn thuộc tính",
-                                    },
-                                  ]}
-                                  style={{
-                                    flex: "1",
-                                  }}
-                                >
-                                  <Select
-                                    placeholder="Chọn thuộc tính"
-                                    options={attributes.map((attr) => ({
-                                      value: attr.id,
-                                      label: attr.attributeName,
-                                    }))}
-                                    style={{
-                                      flex: "1",
-                                    }}
-                                    popupRender={(menu) => (
-                                      <>
-                                        {menu}
-                                        <Divider
-                                          dashed
-                                          style={{ margin: "4px 0" }}
-                                        />
-                                        <Button
-                                          type="link"
-                                          block
-                                          onClick={handleAddAttribute}
-                                        >
-                                          Thêm thuộc tính mới
-                                        </Button>
-                                      </>
-                                    )}
-                                  />
-                                </Form.Item>
-                                <Form.Item
-                                  {...restAttrField}
-                                  name={[attrName, "attrValue"]}
-                                  label={`Giá trị ${idx + 1}`}
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Vui lòng nhập giá trị",
-                                    },
-                                  ]}
-                                  style={{
-                                    flex: "1",
-                                  }}
-                                >
-                                  <Input
-                                    placeholder="Nhập giá trị"
-                                    style={{
-                                      flex: "1",
-                                    }}
-                                  />
-                                </Form.Item>
-                                <Form.Item
-                                  {...restAttrField}
-                                  name={[attrName, "unitId"]}
-                                  style={{
-                                    flex: "1",
-                                  }}
-                                  label={`Đơn vị ${idx + 1}`}
-                                >
-                                  <Select
-                                    placeholder="Chọn đơn vị"
-                                    style={{
-                                      flex: "1",
-                                    }}
-                                    options={units.map((unit) => ({
-                                      value: unit.id,
-                                      label: unit.name,
-                                    }))}
-                                    popupRender={(menu) => (
-                                      <>
-                                        {menu}
-                                        <Divider
-                                          dashed
-                                          style={{ margin: "4px 0" }}
-                                        />
-                                        <Button
-                                          type="link"
-                                          block
-                                          onClick={handleAddUnit}
-                                        >
-                                          Thêm đơn vị mới
-                                        </Button>
-                                      </>
-                                    )}
-                                  />
-                                </Form.Item>
-                                <DeleteOutlined
-                                  style={{ color: "red" }}
-                                  onClick={() => removeAttr(attrName)}
-                                />
-                              </Flex>
-                            ),
-                          )}
-                          <Form.Item>
-                            <Button
-                              type="dashed"
-                              onClick={() => addAttr()}
-                              block
-                              icon={<PlusOutlined />}
-                            >
-                              Thêm thuộc tính
-                            </Button>
-                          </Form.Item>
-                        </>
-                      )}
-                    </Form.List>
-                    <Form.Item label="Hình ảnh" style={mobileFormItemStyle}>
-                      <CloudinaryImageUpload
-                        onUploaded={(url) => {
-                          setVariantImages((prev) => {
-                            const arr = [...prev];
-                            // Lưu URL ảnh mới vào mảng cho biến thể tại vị trí idx
-                            arr[idx] = arr[idx] ? [...arr[idx], url] : [url];
-                            return arr;
-                          });
-                        }}
-                        buttonText="Tải ảnh lên"
-                        disabled={
-                          variantImages[idx] &&
-                          variantImages[idx].length >= MAX_VARIANT_IMAGES
-                        }
-                      />
-                      <div
+                      <Space
+                        align="baseline"
                         style={{
                           display: "flex",
-                          gap: 8,
-                          flexWrap: "wrap",
-                          marginTop: 8,
+                          justifyContent: "space-between",
                         }}
                       >
-                        {(variantImages[idx] || []).map((url, i) => (
-                          <div key={i} style={{ position: "relative" }}>
-                            <Image
-                              src={url || null}
-                              alt="Ảnh biến thể"
-                              style={{ width: 80, borderRadius: 8 }}
-                              onClick={() => handlePreview({ url })}
-                              className="cursor-pointer"
-                            />
-                            <Button
-                              size="small"
-                              danger
-                              style={{
-                                position: "absolute",
-                                top: 0,
-                                right: 0,
-                                padding: 0,
-                                width: 20,
-                                height: 20,
-                              }}
-                              onClick={() => {
-                                setVariantImages((prev) => {
-                                  const arr = [...prev];
-                                  arr[idx] = arr[idx].filter((_, j) => j !== i);
-                                  return arr;
-                                });
-                              }}
-                            >
-                              <DeleteOutlined style={{ fontSize: 12 }} />
-                            </Button>
-                          </div>
-                        ))}
+                        <h4 className="font-semibold mb-4">Biến thể {name + 1}</h4>
+                        {fields.length > 1 && (
+                          <DeleteOutlined
+                            onClick={() => remove(name)}
+                            style={{ color: "red" }}
+                          />
+                        )}
+                      </Space>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Form.Item
+                          {...restField}
+                          name={[name, "costPrice"]}
+                          label="Giá nhập (VND)"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập giá nhập!",
+                            },
+                          ]}
+                          style={mobileFormItemStyle}
+                        >
+                          <InputNumber
+                            min={0}
+                            step={1000}
+                            style={{ width: "100%", ...mobileInputStyle }}
+                            placeholder="0"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "price"]}
+                          label="Giá bán (VND)"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập giá bán!",
+                            },
+                          ]}
+                          style={mobileFormItemStyle}
+                        >
+                          <InputNumber
+                            min={0}
+                            step={1000}
+                            style={{ width: "100%", ...mobileInputStyle }}
+                            placeholder="0"
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "quantity"]}
+                          label="Số lượng tồn kho"
+                          rules={[
+                            {
+                              required: true,
+                              message: "Vui lòng nhập số lượng!",
+                            },
+                          ]}
+                          style={mobileFormItemStyle}
+                        >
+                          <InputNumber
+                            min={0}
+                            style={{ width: "100%", ...mobileInputStyle }}
+                            placeholder="0"
+                          />
+                        </Form.Item>
                       </div>
-                    </Form.Item>
-                  </div>
-                ))}
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Thêm biến thể
-                  </Button>
-                </Form.Item>
-              </>
-            )}
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Form.Item
+                          {...restField}
+                          name={[name, "unitId"]}
+                          label="Đơn vị tính"
+                          style={mobileFormItemStyle}
+                        >
+                          <Select
+                            placeholder="Chọn đơn vị tính"
+                            style={mobileSelectStyle}
+                            options={units.map((unit) => ({
+                              value: unit.id,
+                              label: unit.name,
+                            }))}
+                            popupRender={(menu) => (
+                              <>
+                                {menu}
+                                <Divider dashed style={{ margin: "4px 0" }} />
+                                <Button
+                                  type="link"
+                                  block
+                                  onClick={handleAddUnit}
+                                >
+                                  Thêm đơn vị mới
+                                </Button>
+                              </>
+                            )}
+                          ></Select>
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "sku"]}
+                          label="SKU"
+                          style={mobileFormItemStyle}
+                        >
+                          <Input
+                            placeholder="Nhập SKU"
+                            style={mobileInputStyle}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "variantBarcode"]}
+                          label="Mã vạch"
+                          style={mobileFormItemStyle}
+                        >
+                          <Input
+                            placeholder="Nhập mã vạch"
+                            style={mobileInputStyle}
+                          />
+                        </Form.Item>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Form.Item
+                          {...restField}
+                          name={[name, "expiryDate"]}
+                          label="Ngày hết hạn"
+                          style={mobileFormItemStyle}
+                        >
+                          <DatePicker style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "variantStatus"]}
+                          label="Trạng thái biến thể"
+                          valuePropName="checked"
+                          initialValue={true}
+                          style={mobileFormItemStyle}
+                        >
+                          <Switch
+                            checkedChildren="Đang bán"
+                            unCheckedChildren="Ngừng bán"
+                            style={mobileSwitchStyle}
+                            defaultChecked
+                          />
+                        </Form.Item>
+                      </div>
+                      <Form.List name={[name, "attrAndValues"]}>
+                        {(attrFields, { add: addAttr, remove: removeAttr }) => (
+                          <>
+                            {attrFields.map(
+                              (
+                                {
+                                  key: attrKey,
+                                  name: attrName,
+                                  ...restAttrField
+                                },
+                                idx,
+                              ) => (
+                                <Flex
+                                  key={attrKey}
+                                  justify="space-between"
+                                  align="center"
+                                  gap={16}
+                                  style={{ marginBottom: 8 }}
+                                >
+                                  <Form.Item
+                                    {...restAttrField}
+                                    label={`Thuộc tính ${idx + 1}`}
+                                    name={[attrName, "attrId"]}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Vui lòng chọn thuộc tính",
+                                      },
+                                    ]}
+                                    style={{
+                                      flex: "1",
+                                    }}
+                                  >
+                                    <Select
+                                      placeholder="Chọn thuộc tính"
+                                      options={attributes.map((attr) => ({
+                                        value: attr.id,
+                                        label: attr.attributeName,
+                                      }))}
+                                      style={{
+                                        flex: "1",
+                                      }}
+                                      popupRender={(menu) => (
+                                        <>
+                                          {menu}
+                                          <Divider
+                                            dashed
+                                            style={{ margin: "4px 0" }}
+                                          />
+                                          <Button
+                                            type="link"
+                                            block
+                                            onClick={handleAddAttribute}
+                                          >
+                                            Thêm thuộc tính mới
+                                          </Button>
+                                        </>
+                                      )}
+                                    />
+                                  </Form.Item>
+                                  <Form.Item
+                                    {...restAttrField}
+                                    name={[attrName, "attrValue"]}
+                                    label={`Giá trị ${idx + 1}`}
+                                    rules={[
+                                      {
+                                        required: true,
+                                        message: "Vui lòng nhập giá trị",
+                                      },
+                                    ]}
+                                    style={{
+                                      flex: "1",
+                                    }}
+                                  >
+                                    <Input
+                                      placeholder="Nhập giá trị"
+                                      style={{
+                                        flex: "1",
+                                      }}
+                                    />
+                                  </Form.Item>
+                                  <Form.Item
+                                    {...restAttrField}
+                                    name={[attrName, "unitId"]}
+                                    style={{
+                                      flex: "1",
+                                    }}
+                                    label={`Đơn vị ${idx + 1}`}
+                                  >
+                                    <Select
+                                      placeholder="Chọn đơn vị"
+                                      style={{
+                                        flex: "1",
+                                      }}
+                                      options={units.map((unit) => ({
+                                        value: unit.id,
+                                        label: unit.name,
+                                      }))}
+                                      popupRender={(menu) => (
+                                        <>
+                                          {menu}
+                                          <Divider
+                                            dashed
+                                            style={{ margin: "4px 0" }}
+                                          />
+                                          <Button
+                                            type="link"
+                                            block
+                                            onClick={handleAddUnit}
+                                          >
+                                            Thêm đơn vị mới
+                                          </Button>
+                                        </>
+                                      )}
+                                    />
+                                  </Form.Item>
+                                  <DeleteOutlined
+                                    style={{ color: "red" }}
+                                    onClick={() => removeAttr(attrName)}
+                                  />
+                                </Flex>
+                              ),
+                            )}
+                            <Form.Item>
+                              <Button
+                                type="dashed"
+                                onClick={() => addAttr()}
+                                block
+                                icon={<PlusOutlined />}
+                              >
+                                Thêm thuộc tính
+                              </Button>
+                            </Form.Item>
+                          </>
+                        )}
+                      </Form.List>
+                      <Form.Item label="Hình ảnh" style={mobileFormItemStyle}>
+                        <CloudinaryImageUpload
+                          onUploaded={(url) => {
+                            setVariantImages((prev) => {
+                              const arr = [...prev];
+                              // Lưu URL ảnh mới vào mảng cho biến thể tại vị trí idx
+                              arr[idx] = arr[idx] ? [...arr[idx], url] : [url];
+                              return arr;
+                            });
+                          }}
+                          buttonText="Tải ảnh lên"
+                          disabled={
+                            variantImages[idx] &&
+                            variantImages[idx].length >= MAX_VARIANT_IMAGES
+                          }
+                        />
+                        <div
+                          style={{
+                            display: "flex",
+                            gap: 8,
+                            flexWrap: "wrap",
+                            marginTop: 8,
+                          }}
+                        >
+                          {(variantImages[idx] || []).map((url, i) => (
+                            <div key={i} style={{ position: "relative" }}>
+                              <Image
+                                src={url || null}
+                                alt="Ảnh biến thể"
+                                style={{ width: 80, borderRadius: 8 }}
+                                onClick={() => handlePreview({ url })}
+                                className="cursor-pointer"
+                              />
+                              <Button
+                                size="small"
+                                danger
+                                style={{
+                                  position: "absolute",
+                                  top: 0,
+                                  right: 0,
+                                  padding: 0,
+                                  width: 20,
+                                  height: 20,
+                                }}
+                                onClick={() => {
+                                  setVariantImages((prev) => {
+                                    const arr = [...prev];
+                                    arr[idx] = arr[idx].filter(
+                                      (_, j) => j !== i,
+                                    );
+                                    return arr;
+                                  });
+                                }}
+                              >
+                                <DeleteOutlined style={{ fontSize: 12 }} />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </Form.Item>
+                    </div>
+                  ))}
+                  <Form.Item>
+                    <Row gutter={8}>
+                      <Col span={12}>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          Thêm biến thể
+                        </Button>
+                      </Col>
+                      <Col span={12}>
+                        <Button
+                          type="dashed"
+                          onClick={handleCopyVariant}
+                          block
+                          icon={<CopyOutlined />}
+                        >
+                          Sao chép biến thể
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                </>
+              );
+            }}
           </Form.List>
         </Form>
       </Modal>

@@ -36,17 +36,20 @@ const ProductTable = ({
       dataIndex: "description",
       key: "description",
       ellipsis: true,
+      width: 280,
     },
     {
       title: "Danh mục",
       dataIndex: "categoryList",
       key: "categoryList",
       ellipsis: true,
+      width: 280,
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
+      width: 100,
       render: (status) => {
         const statusInfo = PRODUCT_STATUS[status];
         return statusInfo != null && statusInfo != undefined ? (
@@ -63,6 +66,7 @@ const ProductTable = ({
       dataIndex: "variantsCount",
       key: "variantsCount",
       ellipsis: true,
+      width: 100,
       render: (count) => count || 0,
     },
     {
@@ -70,6 +74,7 @@ const ProductTable = ({
       dataIndex: "quantity",
       key: "quantity",
       ellipsis: true,
+      width: 100,
       render: (quantity) =>
         quantity <= 10 ? (
           <span style={{ color: "red" }}>{quantity}</span>
@@ -80,6 +85,7 @@ const ProductTable = ({
     {
       title: "Thao tác",
       key: "actions",
+      width: 100,
       render: (_, record) => (
         <Dropdown
           menu={{
@@ -145,18 +151,26 @@ const ProductTable = ({
                 key: "name",
                 ellipsis: true,
               },
-              { title: "SKU", dataIndex: "sku", key: "sku", ellipsis: true },
+              {
+                title: "SKU",
+                dataIndex: "sku",
+                key: "sku",
+                ellipsis: true,
+                width: 160,
+              },
               {
                 title: "Mã vạch",
                 dataIndex: "barcode",
                 key: "barcode",
                 ellipsis: true,
+                width: 160,
               },
               {
                 title: "Giá nhập",
                 dataIndex: "costPrice",
                 key: "costPrice",
                 ellipsis: true,
+                width: 120,
                 render: (value) =>
                   value != null
                     ? value.toLocaleString("vi-VN", {
@@ -169,6 +183,7 @@ const ProductTable = ({
                 title: "Giá bán",
                 dataIndex: "price",
                 key: "price",
+                width: 120,
                 ellipsis: true,
                 render: (value) =>
                   value != null
@@ -183,6 +198,7 @@ const ProductTable = ({
                 dataIndex: "quantity",
                 key: "quantity",
                 ellipsis: true,
+                width: 100,
                 render: (quantity) =>
                   quantity <= 10 ? (
                     <span style={{ color: "red" }}>{quantity}</span>
@@ -194,6 +210,7 @@ const ProductTable = ({
                 title: "Trạng thái",
                 dataIndex: "status",
                 key: "status",
+                width: 100,
                 render: (status) => {
                   const statusInfo = PRODUCT_STATUS[status];
                   return statusInfo != null && statusInfo != undefined ? (
@@ -209,12 +226,14 @@ const ProductTable = ({
                 title: "Ngày tạo",
                 dataIndex: "createdDate",
                 key: "createdDate",
+                width: 100,
                 render: (date) =>
                   date ? new Date(date).toLocaleDateString("vi-VN") : "-",
               },
               {
                 title: "Thao tác",
                 key: "actions",
+                width: 100,
                 render: (_, variant) => (
                   <Dropdown
                     menu={{
