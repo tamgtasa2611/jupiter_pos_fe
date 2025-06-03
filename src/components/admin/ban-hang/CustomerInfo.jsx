@@ -1,6 +1,21 @@
 import React, { useState, memo } from "react";
-import { Card, Button, Space, Typography, Modal, Input, List } from "antd";
-import { PlusOutlined, PhoneOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Button,
+  Space,
+  Typography,
+  Modal,
+  Input,
+  List,
+  Flex,
+} from "antd";
+import {
+  PlusOutlined,
+  PhoneOutlined,
+  EditOutlined,
+  ReloadOutlined,
+  UserSwitchOutlined,
+} from "@ant-design/icons";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
@@ -26,17 +41,21 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
       <Card>
         {customer ? (
           <Space direction="vertical" size={0} style={{ width: "100%" }}>
-            <Text strong style={{ fontSize: "16px" }}>
-              {customer.name}
-            </Text>
+            <Flex justify="space-between" align="center">
+              <Text strong style={{ fontSize: "16px" }}>
+                {customer.name}
+              </Text>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 8,
-              }}
+              <Button
+                type="default"
+                icon={<UserSwitchOutlined />}
+                onClick={() => setIsModalVisible(true)}
+              />
+            </Flex>
+            <Flex
+              justify="space-between"
+              align="center"
+              style={{ marginTop: 8 }}
             >
               <Space align="center">
                 <PhoneOutlined />
@@ -50,7 +69,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
               >
                 Xóa
               </Button>
-            </div>
+            </Flex>
           </Space>
         ) : (
           <Space
