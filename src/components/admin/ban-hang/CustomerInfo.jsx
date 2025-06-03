@@ -21,7 +21,13 @@ const { Text, Title } = Typography;
 const { Search } = Input;
 
 // Mock customer data - đưa ra khỏi component để tránh khởi tạo lại
-const mockCustomers = [{ id: 1, name: "Khách lẻ", phone: "" }];
+const mockCustomers = [
+  { id: 1, name: "Khách lẻ", phone: "" },
+  { id: 2, name: "Son Goku", phone: "0123456789" },
+  { id: 3, name: "Vegeta", phone: "0987654321" },
+  { id: 4, name: "Bulma", phone: "1234567890" },
+  { id: 5, name: "Piccolo", phone: "9876543210" },
+];
 
 // Memoize để tránh re-render không cần thiết
 const CustomerInfo = memo(({ customer, onSelectCustomer }) => {

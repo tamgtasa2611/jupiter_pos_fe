@@ -249,6 +249,7 @@ const PaymentModal = memo(
         title={null}
         open={visible}
         onCancel={onCancel}
+        centered
         width={800}
         maskClosable={false}
         footer={null}
@@ -289,7 +290,7 @@ const PaymentModal = memo(
                 >
                   <Row gutter={[12, 12]}>
                     {paymentOptions.map((option) => (
-                      <Col span={6} key={option.key}>
+                      <Col span={8} key={option.key}>
                         <Radio.Button
                           value={option.key}
                           style={{
@@ -329,7 +330,7 @@ const PaymentModal = memo(
           </Button>
 
           <Space>
-            <Button icon={<PrinterOutlined />}>In trước</Button>
+            {/* <Button icon={<PrinterOutlined />}>In trước</Button> */}
             <Button
               type="primary"
               loading={isProcessing}
