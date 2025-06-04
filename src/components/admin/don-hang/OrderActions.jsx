@@ -27,4 +27,4 @@ const OrderActions = ({ onExport, onReload }) => {
   );
 };
 
-export default OrderActions;
+export default React.memo(OrderActions);

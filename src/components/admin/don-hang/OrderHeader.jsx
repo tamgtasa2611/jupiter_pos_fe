@@ -49,4 +49,4 @@ const OrderHeader = ({ isMobile, setMenuDrawerOpen, setFilterDrawerOpen }) => {
   );
 };
 
-export default OrderHeader;
+export default React.memo(OrderHeader);

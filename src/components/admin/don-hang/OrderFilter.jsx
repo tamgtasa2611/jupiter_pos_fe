@@ -22,4 +22,4 @@ const OrderFilter = ({ onStatusFilter }) => {
   );
 };
 
-export default OrderFilter;
+export default React.memo(OrderFilter);

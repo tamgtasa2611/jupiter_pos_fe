@@ -60,7 +60,10 @@ const OrderTable = ({
       key: "orderStatus",
       ellipsis: true,
       render: (status) => {
-        const currentStatus = ORDER_STATUS_MAP[status] || { label: status, color: "grey" };
+        const currentStatus = ORDER_STATUS_MAP[status] || {
+          label: status,
+          color: "grey",
+        };
         return <Tag color={currentStatus.color}>{currentStatus.label}</Tag>;
       },
     },
@@ -85,12 +88,14 @@ const OrderTable = ({
       loading={loading}
       pagination={pagination}
       onChange={onTableChange}
-      scroll={{ x: 1000, y: "calc(100vh - 368px)" }}
+      bordered
+      scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
       style={{ height: "100%" }}
       sticky
       size="middle"
+      locale={{ emptyText: "Không có dữ liệu" }}
     />
   );
 };
 
-export default OrderTable;
+export default React.memo(OrderTable);

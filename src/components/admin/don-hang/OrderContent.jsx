@@ -31,4 +31,4 @@ const OrderContent = ({
   );
 };
 
-export default OrderContent;
+export default React.memo(OrderContent);

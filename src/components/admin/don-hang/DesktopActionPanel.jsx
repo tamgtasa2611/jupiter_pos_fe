@@ -35,4 +35,4 @@ const DesktopActionPanel = ({
   );
 };
 
-export default DesktopActionPanel;
+export default React.memo(DesktopActionPanel);

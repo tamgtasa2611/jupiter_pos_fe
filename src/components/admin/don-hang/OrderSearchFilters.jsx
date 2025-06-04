@@ -44,4 +44,4 @@ const OrderSearchFilters = ({
   );
 };
 
-export default OrderSearchFilters;
+export default React.memo(OrderSearchFilters);

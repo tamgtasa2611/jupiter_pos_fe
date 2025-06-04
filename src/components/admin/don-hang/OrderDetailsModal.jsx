@@ -49,4 +49,4 @@ const OrderDetailsModal = ({ visible, onCancel, order }) => {
   );
 };
 
-export default OrderDetailsModal;
+export default React.memo(OrderDetailsModal);
