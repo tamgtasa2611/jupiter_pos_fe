@@ -122,7 +122,6 @@ const EditVariantModal = ({
       };
 
       await onEdit(variantId, payload);
-      message.success("Cập nhật biến thể sản phẩm thành công");
       form.resetFields();
       setVariantImages([]);
       setLoading(false);

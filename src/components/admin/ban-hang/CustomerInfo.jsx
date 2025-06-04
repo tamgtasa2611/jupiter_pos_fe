@@ -65,7 +65,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
             >
               <Space align="center">
                 <PhoneOutlined />
-                <Text>{customer.phone}</Text>
+                <Text>{customer.phone || "-"}</Text>
               </Space>
               <Button
                 type="text"

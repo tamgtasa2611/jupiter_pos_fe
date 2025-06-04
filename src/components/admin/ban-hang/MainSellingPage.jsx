@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Typography, theme, Flex, Row, Col } from "antd";
+import { Button, Typography, theme, Flex, Row, Col, message } from "antd";
 import { DollarOutlined } from "@ant-design/icons";
 import ProductsSection from "./ProductsSection";
 import CartSection from "./CartSection";
@@ -8,7 +8,8 @@ import CustomerInfo from "./CustomerInfo";
 import PaymentModal from "./PaymentModal";
 import NumericKeypad from "./NumericKeypad";
 import { getProducts, getProductsVariants } from "@requests/product";
-
+import { createOrder } from "@requests/order";
+import { ORDER_STATUS } from "@constants/order";
 const { Text } = Typography;
 
 const MainSellingPage = () => {
@@ -159,13 +160,34 @@ const MainSellingPage = () => {
     setShowNumericKeypad(false);
   };
 
-  const handleCheckout = () => {
-    setIsPaymentModalVisible(true);
-  };
+  const handleCheckout = async (data) => {
+    // Build your order payload based on the provided DTO structure
+    const orderPayload = {
+      customerId: customerInfo.id || null, // e.g., 0 for "Khách lẻ"
+      receiverName: customerInfo.name || "Khách lẻ",
+      receiverPhone: customerInfo.phone || "", // Optional, can be empty for "Khách lẻ"
+      receiverAddress: "", // You can gather this from a form
+      note: data.note, // Optional
+      paymentMethod: data.paymentMethod, // For example
+      orderItems: cart.map((item) => ({
+        productVariantId: item.id,
+        price: item.price,
+        soldQuantity: item.quantity,
+        soldPrice: item.price,
+      })),
+      orderStatus: ORDER_STATUS.CHO_XAC_NHAN, // Default status as per DTO
+    };
 
-  const handlePaymentComplete = (paymentDetails) => {
-    // Process payment and order creation
-    console.log("Payment completed:", paymentDetails);
+    try {
+      const result = await createOrder(orderPayload);
+      if (!result || result.error) {
+        message.error("Không thể tạo đơn hàng. Vui lòng thử lại!");
+      } else {
+        message.success("Đơn hàng đã được tạo thành công!");
+      }
+    } catch (error) {
+      message.error("Tạo đơn hàng thất bại. Vui lòng thử lại!");
+    }
     setCart([]);
     setIsPaymentModalVisible(false);
   };
@@ -232,7 +254,7 @@ const MainSellingPage = () => {
                 type="primary"
                 size="large"
                 icon={<DollarOutlined />}
-                onClick={handleCheckout}
+                onClick={() => setIsPaymentModalVisible(true)}
                 disabled={cart.length === 0}
                 block
                 style={{ height: 50 }}
@@ -249,7 +271,7 @@ const MainSellingPage = () => {
         <PaymentModal
           visible={isPaymentModalVisible}
           onCancel={() => setIsPaymentModalVisible(false)}
-          onComplete={handlePaymentComplete}
+          onCheckout={handleCheckout}
           totalAmount={totalAmount}
           cartSummary={cartSummary} // Chỉ truyền thông tin cần thiết
         />

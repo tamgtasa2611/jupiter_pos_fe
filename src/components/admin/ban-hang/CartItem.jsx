@@ -1,8 +1,9 @@
 import React, { memo } from "react";
 import { Button, Typography, Divider } from "antd";
 import { MinusOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { FALLBACK_IMAGE } from "@/constants/product.js"; // Giả sử bạn có một hằng số cho hình ảnh giả
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 // Memoize để giảm render không cần thiết
 const CartItem = memo(({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
@@ -17,7 +18,7 @@ const CartItem = memo(({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <img
-            src={item.image}
+            src={item.image || FALLBACK_IMAGE}
             alt={item.name}
             style={{
               width: 40,
@@ -25,6 +26,7 @@ const CartItem = memo(({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
               objectFit: "cover",
               marginRight: 12,
             }}
+            className="rounded-md"
           />
           <div>
             <Text strong style={{ display: "block" }}>
@@ -39,6 +41,18 @@ const CartItem = memo(({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
         />
       </div>
 
+      <div style={{ marginTop: 8 }}>
+        {item.attrValues && (
+          <Paragraph style={{ fontSize: 12 }} ellipsis={{ rows: 2 }}>
+            {item.attrValues
+              .map(
+                (attr) =>
+                  `${attr.attrName}: ${attr.attrValue} ${attr.unitName ? `(${attr.unitName})` : ""}`,
+              )
+              .join(", ")}
+          </Paragraph>
+        )}
+      </div>
       <div
         style={{
           display: "flex",

@@ -1,0 +1,13 @@
+export const ORDER_STATUS = {
+  CHO_XAC_NHAN: "CHO_XAC_NHAN",
+  DA_XAC_NHAN: "DA_XAC_NHAN",
+  DA_HUY: "DA_HUY",
+  DA_GIAO: "DA_GIAO",
+  DANG_GIAOl: "DANG_GIAO",
+};
+
+export const ORDER_PAYMENT_METHOD = {
+  TIEN_MAT: "TIEN_MAT",
+  MOMO: "MOMO",
+  VNPAY: "VNPAY",
+};
