@@ -20,14 +20,10 @@ const ProductsSection = memo(
     const [currentPage, setCurrentPage] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false);
 
-    // When searching from the SearchBar, reset page and load the first page.
-    const handleSearch = async (value) => {
-      const trimmedValue = value.trim();
-      setSearchQuery(trimmedValue);
-      setCurrentPage(0);
-      setLoading(true);
-      await onSearch({ page: 0, size: 5, search: trimmedValue });
-      setLoading(false);
+    const handleSearch = async (searchValue) => {
+      const trimmedValue = searchValue.trim();
+      // Call your API to search variants only when the user has pressed Enter
+      await onSearch({ search: trimmedValue, page: 0, size: 30 });
     };
 
     // Load more products when button "Load More" is clicked.

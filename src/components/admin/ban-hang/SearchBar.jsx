@@ -10,7 +10,7 @@ const SearchBar = memo(({ onSearch }) => {
       allowClear
       enterButton={<SearchOutlined />}
       size="large"
-      onChange={(e) => onSearch(e.target.value)}
+      onSearch={onSearch} // trigger only on enter or search button click
       prefix={<BarcodeOutlined />}
     />
   );

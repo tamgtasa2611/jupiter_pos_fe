@@ -97,6 +97,18 @@ const MainSellingPage = () => {
     fetchProducts();
   }, []);
 
+  const handleSearch = async ({ search, page, size }) => {
+    // Reset products to initial state when searching
+    setProducts([]);
+    setInitLoading(true);
+    setLoading(true);
+    // Fetch products with search query
+    await fetchProducts({ search, page, size });
+    // Reset pagination to the first page
+    setSelectedCategory("all");
+    setLoading(false);
+  };
+
   // Tính toán tổng đơn hàng
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalAmount = cart.reduce(
@@ -172,7 +184,7 @@ const MainSellingPage = () => {
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
             onProductClick={addToCart}
-            onSearch={fetchProducts}
+            onSearch={handleSearch}
             loading={loading}
             setLoading={setLoading}
             initLoading={initLoading}
