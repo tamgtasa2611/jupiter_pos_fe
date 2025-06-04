@@ -1,13 +1,9 @@
 "use client";
 
-import React from "react";
-import { Card, Flex } from "antd";
+import React, { useState, useEffect, useCallback } from "react";
+import { Card, Flex, message } from "antd";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-
-// Custom hooks
-import useOrderData from "@hooks/don-hang/useOrderData";
-import useResponsive from "@hooks/don-hang/useResponsive";
 
 // Components
 import OrderHeader from "./OrderHeader";
@@ -18,28 +14,90 @@ import MobileMenuDrawer from "./mobile/MobileMenuDrawer";
 import MobileFilterDrawer from "./mobile/MobileFilterDrawer";
 import ModalManager from "./ModalManager";
 import OrderDetailsModal from "./OrderDetailsModal";
+import { getOrders } from "@requests/order";
 
 // Configure dayjs
 dayjs.extend(isBetween);
 
 const OrderMainPage = () => {
-  // Custom hooks
-  const { isMobile } = useResponsive();
+  const isMobile = false;
+  const [orders, setOrders] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [dateRange, setDateRange] = useState(null);
 
-  const {
-    orders,
-    loading,
-    hasMore,
-    searchText,
-    selectedStatus,
-    dateRange,
-    pagination,
-    handleSearch,
-    handleStatusFilter,
-    handleDateRangeChange,
-    handleLoadMore,
-    handleTableChange,
-  } = useOrderData();
+  // Sorting
+  const [sortBy, setSortBy] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null);
+
+  // Pagination
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+    position: ["bottomCenter"],
+    showSizeChanger: true,
+  });
+
+  const fetchOrders = useCallback(
+    async (isLoadMore = false) => {
+      setLoading(true);
+      try {
+        const params = {
+          pageSize: 5,
+          pageNumber: isLoadMore ? pagination.current : 0,
+        };
+        const response = await getOrders(params);
+        setOrders(response.content || []);
+      } catch (error) {
+        message.error("Lỗi khi lấy danh sách đơn hàng");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [pagination.current],
+  );
+
+  useEffect(() => {
+    fetchOrders(false);
+  }, [searchText, selectedStatus, sortBy, sortOrder, dateRange, fetchOrders]);
+
+  const handleLoadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      fetchOrders(true);
+    }
+  }, [loading, hasMore, fetchOrders]);
+
+  const handleTableChange = useCallback((pagination, filters, sorter) => {
+    setPagination((prev) => ({
+      ...prev,
+      current: pagination.current,
+      pageSize: pagination.pageSize,
+    }));
+
+    if (sorter.field) {
+      setSortBy(sorter.field);
+      setSortOrder(sorter.order);
+    } else {
+      setSortBy(null);
+      setSortOrder(null);
+    }
+  }, []);
+
+  const handleStatusFilter = useCallback((value) => {
+    setSelectedStatus(value);
+  }, []);
+
+  const handleDateRangeChange = useCallback((dates) => {
+    setDateRange(dates);
+  }, []);
+
+  // Fetch orders khi các bộ lọc hoặc sắp xếp thay đổi
+  useEffect(() => {
+    fetchOrders(false);
+  }, [searchText, selectedStatus, sortBy, sortOrder, dateRange, fetchOrders]);
 
   const {
     menuDrawerOpen,
@@ -52,6 +110,14 @@ const OrderMainPage = () => {
     handleShowOrderDetails,
     handleExport,
   } = ModalManager();
+
+  const handleReload = () => {
+    fetchOrders(false);
+  };
+
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
 
   return (
     <div className="h-fit-screen">
@@ -74,6 +140,7 @@ const OrderMainPage = () => {
               onStatusChange={handleStatusFilter}
               onDateChange={handleDateRangeChange}
               onExport={handleExport}
+              onReload={handleReload}
             />
           )}
 

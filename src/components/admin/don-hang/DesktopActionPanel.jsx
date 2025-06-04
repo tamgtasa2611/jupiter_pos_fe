@@ -11,6 +11,7 @@ const DesktopActionPanel = ({
   onStatusChange,
   onDateChange,
   onExport,
+  onReload,
 }) => {
   return (
     <Flex
@@ -29,7 +30,7 @@ const DesktopActionPanel = ({
         onDateChange={onDateChange}
       />
 
-      <OrderActions onExport={onExport} />
+      <OrderActions onExport={onExport} onReload={onReload} />
     </Flex>
   );
 };

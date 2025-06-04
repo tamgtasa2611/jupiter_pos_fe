@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, Button, Tag, Space } from "antd";
+import { ORDER_STATUS_MAP } from "@constants/order";
 
 const OrderTable = ({
   orders,
@@ -8,65 +9,60 @@ const OrderTable = ({
   onTableChange,
   onShowDetails,
 }) => {
-  // Table columns
   const columns = [
     {
-      title: "Mã đơn hàng",
-      dataIndex: "orderId",
-      key: "orderId",
-      render: (text) => <a onClick={() => {}}>{text}</a>,
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "customerName",
-      key: "customerName",
-      sorter: true,
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
     },
     {
       title: "Ngày đặt",
       dataIndex: "orderDate",
       key: "orderDate",
-      sorter: true,
+      ellipsis: true,
+      render: (text) => new Intl.DateTimeFormat("vi-VN").format(new Date(text)),
+    },
+    {
+      title: "Tên khách hàng",
+      dataIndex: "receiverName",
+      key: "receiverName",
+      ellipsis: true,
+    },
+    {
+      title: "SĐT",
+      dataIndex: "receiverPhone",
+      key: "receiverPhone",
+      ellipsis: true,
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "receiverAddress",
+      key: "receiverAddress",
+      ellipsis: true,
+    },
+    {
+      title: "Ghi chú",
+      dataIndex: "note",
+      key: "note",
+      ellipsis: true,
+      render: (note) => note || "-",
     },
     {
       title: "Tổng tiền",
       dataIndex: "totalAmount",
       key: "totalAmount",
-      render: (amount) => (
-        <span className="font-semibold text-blue-600">
-          {new Intl.NumberFormat("vi-VN").format(amount)}đ
-        </span>
-      ),
-      sorter: true,
-    },
-    {
-      title: "SL sản phẩm",
-      dataIndex: "items",
-      key: "items",
-      sorter: true,
+      ellipsis: true,
+      render: (amount) => new Intl.NumberFormat("vi-VN").format(amount) + "đ",
     },
     {
       title: "Trạng thái",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <Tag
-          color={
-            status === "Delivered"
-              ? "green"
-              : status === "Shipped"
-                ? "blue"
-                : status === "Processing"
-                  ? "orange"
-                  : status === "Pending"
-                    ? "purple"
-                    : "red"
-          }
-        >
-          {status}
-        </Tag>
-      ),
-      sorter: true,
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      ellipsis: true,
+      render: (status) => {
+        const currentStatus = ORDER_STATUS_MAP[status] || { label: status, color: "grey" };
+        return <Tag color={currentStatus.color}>{currentStatus.label}</Tag>;
+      },
     },
     {
       title: "Thao tác",
