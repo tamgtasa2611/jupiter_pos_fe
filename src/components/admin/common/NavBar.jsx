@@ -223,42 +223,6 @@ export default function NavBar({ onLogout }) {
           </div>
         </Dropdown>
 
-        {/* Settings */}
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: "1",
-                label: "Cài đặt hệ thống",
-                icon: <SettingOutlined />,
-              },
-              { key: "2", label: "Cài đặt người dùng", icon: <UserOutlined /> },
-              {
-                key: "3",
-                label: "Cài đặt cửa hàng",
-                icon: <BarcodeOutlined />,
-              },
-            ],
-          }}
-          placement="bottomRight"
-          trigger={["click"]}
-          overlayClassName="w-56"
-          popupRender={(menu) => (
-            <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
-              {menu}
-            </div>
-          )}
-        >
-          <Tooltip title="Cài đặt">
-            <Button
-              type="text"
-              icon={<SettingOutlined />}
-              shape="circle"
-              className="flex items-center justify-center text-lg hover:bg-gray-100 transition-colors hover:rotate-45 duration-300"
-            />
-          </Tooltip>
-        </Dropdown>
-
         {/* User Profile */}
         <UserProfile scrolled={scrolled} onLogout={onLogout} />
       </Space>

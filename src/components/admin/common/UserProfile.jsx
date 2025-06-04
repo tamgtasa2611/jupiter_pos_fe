@@ -9,6 +9,28 @@ import {
 } from "@ant-design/icons";
 import { getUserFromToken } from "@/utils/utils";
 
+/*
+Hồ sơ cá nhân (Profile)
+
+Xem và cập nhật tên, email, avatar, số điện thoại.
+
+Hiển thị vai trò (quyền) trong hệ thống.
+
+Cài đặt tài khoản (Account Settings)
+
+Đổi mật khẩu.
+
+Thiết lập bảo mật (email khôi phục, xác thực 2 bước nếu có).
+
+Đổi ngôn ngữ giao diện.
+
+Đăng xuất (Logout)
+
+Thoát khỏi phiên làm việc.
+
+*/
+
+
 const UserProfile = ({ scrolled, onLogout }) => {
   const user = getUserFromToken();
   const fullName = user?.fullName || "-";
