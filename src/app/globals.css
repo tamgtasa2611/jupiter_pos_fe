@@ -91,6 +91,12 @@ body {
 }
 
 /* ===== COMPONENT STYLING ===== */
+.ant-message,
+.ant-message-notice-content {
+  font-size: 16px !important;
+  padding: 16px !important;
+}
+
 /* Card styling */
 .ant-card {
   box-shadow: var(--card-shadow) !important;
