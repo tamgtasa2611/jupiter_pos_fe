@@ -1,198 +1,206 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Card,
-  Col,
   Row,
-  Statistic,
+  Col,
   Table,
-  Tag,
-  Space,
   Button,
   Input,
-  Select,
+  Drawer,
+  message,
+  Flex,
+  Dropdown,
 } from "antd";
 import {
-  LikeOutlined,
-  ShoppingCartOutlined,
   UserOutlined,
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
+  ReloadOutlined,
+  EyeOutlined,
+  PlusOutlined,
+  MoreOutlined,
 } from "@ant-design/icons";
 import AddCustomerModal from "./AddCustomerModal";
 import EditCustomerModal from "./EditCustomerModal";
 import DeleteCustomerModal from "./DeleteCustomerModal";
-
-const { Option } = Select;
+import CustomerHeader from "./CustomerHeader";
+import { getCustomers } from "@/requests/customer";
 
 const CustomersMainPage = () => {
+  // State quản lý danh sách khách hàng và loading
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // State cho các modal
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  // State cho tìm kiếm, lọc, sắp xếp và phân trang
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
+  const [filtersDrawerVisible, setFiltersDrawerVisible] = useState(false);
+
+  // Hàm fetch khách hàng từ API
+  const fetchCustomers = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Nếu backend dự kiến nhận page bắt đầu từ 0
+      const page = pagination.current - 1;
+      const size = pagination.pageSize;
+      const sort =
+        sortBy && sortOrder
+          ? `${sortBy},${sortOrder === "ascend" ? "asc" : "desc"}`
+          : undefined;
+      const params = {
+        page,
+        size,
+        search: searchText || undefined,
+        sort, // backend có thể bỏ qua nếu sort undefined
+      };
+
+      const response = await getCustomers(params);
+      setCustomers(response.content || []);
+      setPagination((prev) => ({
+        ...prev,
+        total: response.totalElements || 0,
+      }));
+    } catch (error) {
+      const errMsg =
+        (error.response && error.response && error.response.message) ||
+        error.message ||
+        "Lỗi không xác định";
+      message.error(errMsg);
+    } finally {
+      setLoading(false);
+    }
+  }, [pagination.current, pagination.pageSize, searchText, sortBy, sortOrder]);
 
   useEffect(() => {
     fetchCustomers();
-  }, [searchText, sortBy, sortOrder]);
+  }, [fetchCustomers]);
 
-  const fetchCustomers = async () => {
-    setLoading(true);
-    // Mock API call - replace with your actual API endpoint
-    setTimeout(() => {
-      let mockData = Array(15)
-        .fill()
-        .map((_, index) => ({
-          id: index + 1,
-          name: `Khách hàng ${index + 1}`,
-          phone: `090${Math.floor(Math.random() * 10000000)}`,
-          email: `customer${index + 1}@example.com`,
-          address: `Địa chỉ ${index + 1}`,
-          totalOrders: Math.floor(Math.random() * 50),
-          totalSpent: Math.floor(Math.random() * 5000000),
-          tags: ["VIP", "Loyal", "New"][Math.floor(Math.random() * 3)],
-        }));
+  // Các cột của bảng khách hàng
+  const columns = useMemo(
+    () => [
+      {
+        title: "Tên khách hàng",
+        dataIndex: "customerName",
+        key: "customerName",
+        ellipsis: true,
+        width: 240,
+        render: (text) => <a>{text}</a>,
+      },
+      {
+        title: "Điện thoại",
+        dataIndex: "phone",
+        key: "phone",
+        ellipsis: true,
+        width: 100,
+      },
+      {
+        title: "Địa chỉ",
+        dataIndex: "address",
+        key: "address",
+        ellipsis: true,
+        width: 320,
+      },
+      {
+        title: "Tổng đơn hàng",
+        dataIndex: "totalOrders",
+        key: "totalOrders",
+        ellipsis: true,
+        width: 120,
+        render: (orders) => orders || 0,
+      },
+      {
+        title: "Tổng chi tiêu",
+        dataIndex: "totalSpent",
+        key: "totalSpent",
+        ellipsis: true,
+        width: 120,
 
-      // Apply search filter
-      if (searchText) {
-        const searchTerm = searchText.toLowerCase();
-        mockData = mockData.filter((customer) => {
-          return (
-            customer.name.toLowerCase().includes(searchTerm) ||
-            customer.phone.includes(searchTerm) ||
-            customer.email.toLowerCase().includes(searchTerm) ||
-            customer.address.toLowerCase().includes(searchTerm)
-          );
-        });
-      }
-
-      // Apply sorting
-      if (sortBy) {
-        mockData.sort((a, b) => {
-          let comparison = 0;
-          if (sortBy === "name") {
-            comparison = a.name.localeCompare(b.name);
-          } else if (sortBy === "totalOrders") {
-            comparison = a.totalOrders - b.totalOrders;
-          } else if (sortBy === "totalSpent") {
-            comparison = a.totalSpent - b.totalSpent;
-          }
-          return sortOrder === "ascend" ? comparison : -comparison;
-        });
-      }
-
-      setCustomers(mockData);
-      setLoading(false);
-    }, 500);
-  };
-
-  const columns = [
-    {
-      title: "Tên khách hàng",
-      dataIndex: "name",
-      key: "name",
-      render: (text) => <a>{text}</a>,
-      sorter: true, // Enable sorter for this column
-    },
-    {
-      title: "Điện thoại",
-      dataIndex: "phone",
-      key: "phone",
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-    },
-    {
-      title: "Địa chỉ",
-      dataIndex: "address",
-      key: "address",
-    },
-    {
-      title: "Tổng đơn hàng",
-      dataIndex: "totalOrders",
-      key: "totalOrders",
-      sorter: true, // Enable sorter for this column
-    },
-    {
-      title: "Tổng chi tiêu",
-      dataIndex: "totalSpent",
-      key: "totalSpent",
-      render: (spent) => new Intl.NumberFormat("vi-VN").format(spent) + "đ",
-      sorter: true, // Enable sorter for this column
-    },
-    {
-      title: "Tags",
-      dataIndex: "tags",
-      key: "tags",
-      render: (tags) => (
-        <>
-          <Tag color="green">{tags}</Tag>
-        </>
-      ),
-    },
-    {
-      title: "Thao tác",
-      key: "action",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => {
-              setSelectedCustomer(record);
-              setEditModalVisible(true);
+        render: (spent) => new Intl.NumberFormat("vi-VN").format(spent) + "đ",
+      },
+      {
+        title: "Ngày tạo",
+        dataIndex: "createdDate",
+        key: "createdDate",
+        ellipsis: true,
+        width: 120,
+        render: (date) =>
+          new Intl.DateTimeFormat("vi-VN").format(new Date(date)),
+      },
+      {
+        title: "Thao tác",
+        key: "action",
+        ellipsis: true,
+        width: 100,
+        render: (_, record) => (
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: "view",
+                  label: "Xem chi tiết",
+                  icon: <EyeOutlined />,
+                  onClick: () => {
+                    // Xử lý xem chi tiết nếu cần
+                  },
+                },
+                {
+                  key: "edit",
+                  label: "Chỉnh sửa",
+                  icon: <EditOutlined />,
+                  onClick: () => {
+                    setSelectedCustomer(record);
+                    setEditModalVisible(true);
+                  },
+                },
+                {
+                  key: "delete",
+                  label: "Xóa",
+                  icon: <DeleteOutlined />,
+                  onClick: () => {
+                    setSelectedCustomer(record);
+                    setDeleteModalVisible(true);
+                  },
+                },
+              ],
             }}
           >
-            Sửa
-          </Button>
-          <Button
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              setSelectedCustomer(record);
-              setDeleteModalVisible(true);
-            }}
-          >
-            Xóa
-          </Button>
-        </Space>
-      ),
-    },
-  ];
+            <Button type="text" icon={<MoreOutlined />} />
+          </Dropdown>
+        ),
+      },
+    ],
+    [],
+  );
 
-  const handleAddCustomer = (newCustomer) => {
-    // In a real app, you would make an API call here
-    console.log("Adding new customer:", newCustomer);
-    setAddModalVisible(false);
-    fetchCustomers(); // Refresh data
-  };
-
-  const handleEditCustomer = (updatedCustomer) => {
-    // In a real app, you would make an API call here
-    console.log("Updating customer:", updatedCustomer);
-    setEditModalVisible(false);
-    fetchCustomers(); // Refresh data
-  };
-
-  const handleDeleteCustomer = (id) => {
-    // In a real app, you would make an API call here
-    console.log("Deleting customer with ID:", id);
-    setDeleteModalVisible(false);
-    fetchCustomers(); // Refresh data
-  };
-
-  const handleSearch = (value) => {
+  // Handler khi tìm kiếm
+  const handleSearch = useCallback((value) => {
     setSearchText(value);
-  };
+    // Reset về trang 1 khi thay đổi điều kiện tìm kiếm
+    setPagination((prev) => ({ ...prev, current: 1 }));
+  }, []);
 
-  const handleTableChange = (pagination, filters, sorter) => {
+  // Handler thay đổi bảng: sắp xếp, phân trang
+  const handleTableChange = useCallback((tablePagination, filters, sorter) => {
+    setPagination((prev) => ({
+      ...prev,
+      current: tablePagination.current,
+      pageSize: tablePagination.pageSize,
+    }));
     if (sorter.field) {
       setSortBy(sorter.field);
       setSortOrder(sorter.order);
@@ -200,106 +208,111 @@ const CustomersMainPage = () => {
       setSortBy(null);
       setSortOrder(null);
     }
-  };
+  }, []);
+
+  // Các hàm xử lý thêm, sửa, xóa khách hàng (thực hiện API nếu có)
+  const handleAddCustomer = useCallback(
+    (newCustomer) => {
+      console.log("Thêm khách hàng:", newCustomer);
+      setAddModalVisible(false);
+      fetchCustomers();
+    },
+    [fetchCustomers],
+  );
+
+  const handleEditCustomer = useCallback(
+    (updatedCustomer) => {
+      console.log("Cập nhật khách hàng:", updatedCustomer);
+      setEditModalVisible(false);
+      fetchCustomers();
+    },
+    [fetchCustomers],
+  );
+
+  const handleDeleteCustomer = useCallback(
+    (id) => {
+      console.log("Xóa khách hàng với ID:", id);
+      setDeleteModalVisible(false);
+      fetchCustomers();
+    },
+    [fetchCustomers],
+  );
 
   return (
     <div>
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Tổng số khách hàng"
-              value={customers.length}
-              prefix={<UserOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Tổng đơn hàng"
-              value={customers.reduce(
-                (sum, customer) => sum + customer.totalOrders,
-                0,
-              )}
-              prefix={<ShoppingCartOutlined />}
-            />
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Tổng chi tiêu"
-              value={customers.reduce(
-                (sum, customer) => sum + customer.totalSpent,
-                0,
-              )}
-              prefix={<LikeOutlined />}
-              formatter={(value) =>
-                new Intl.NumberFormat("vi-VN").format(value) + "đ"
-              }
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      <Card title="Danh sách khách hàng" style={{ marginTop: 20 }}>
-        <Row
+      <Card className="transition-shadow h-fit-screen">
+        <CustomerHeader />
+        <Flex
+          gap={16}
+          vertical
           justify="space-between"
-          align="middle"
-          style={{ marginBottom: 16 }}
+          style={{ height: "100%" }}
         >
-          <Col>
-            <Button
-              type="primary"
-              icon={<UserOutlined />}
-              onClick={() => setAddModalVisible(true)}
-            >
-              Thêm khách hàng
-            </Button>
-          </Col>
-          <Col>
+          <Flex gap={8} justify="space-between" align="center">
             <Input.Search
               placeholder="Tìm kiếm khách hàng"
               onSearch={handleSearch}
               style={{ width: 200 }}
               prefix={<SearchOutlined />}
             />
-          </Col>
-        </Row>
-        <Table
-          columns={columns}
-          dataSource={customers}
-          rowKey="id"
-          loading={loading}
-          onChange={handleTableChange}
-        />
+            <Flex gap={8}>
+              <Button
+                type="primary"
+                icon={<UserOutlined />}
+                onClick={() => setAddModalVisible(true)}
+              >
+                Thêm khách hàng
+              </Button>
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={fetchCustomers}
+                loading={loading}
+              ></Button>
+            </Flex>
+          </Flex>
+
+          {/* Bảng danh sách khách hàng */}
+          <Table
+            columns={columns}
+            dataSource={customers}
+            rowKey="id"
+            loading={loading}
+            bordered
+            scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
+            style={{ height: "100%" }}
+            sticky
+            onChange={handleTableChange}
+            size="middle"
+            locale={{ emptyText: "Không có dữ liệu" }}
+          />
+
+          {/* Các modal xử lý */}
+          <AddCustomerModal
+            visible={addModalVisible}
+            onCancel={() => setAddModalVisible(false)}
+            onAdd={handleAddCustomer}
+          />
+
+          {selectedCustomer && (
+            <>
+              <EditCustomerModal
+                visible={editModalVisible}
+                onCancel={() => setEditModalVisible(false)}
+                onEdit={handleEditCustomer}
+                customer={selectedCustomer}
+              />
+              <DeleteCustomerModal
+                visible={deleteModalVisible}
+                onCancel={() => setDeleteModalVisible(false)}
+                onDelete={() => handleDeleteCustomer(selectedCustomer.id)}
+                customer={selectedCustomer}
+              />
+            </>
+          )}
+        </Flex>
       </Card>
-
-      <AddCustomerModal
-        visible={addModalVisible}
-        onCancel={() => setAddModalVisible(false)}
-        onAdd={handleAddCustomer}
-      />
-
-      {selectedCustomer && (
-        <>
-          <EditCustomerModal
-            visible={editModalVisible}
-            onCancel={() => setEditModalVisible(false)}
-            onEdit={handleEditCustomer}
-            customer={selectedCustomer}
-          />
-          <DeleteCustomerModal
-            visible={deleteModalVisible}
-            onCancel={() => setDeleteModalVisible(false)}
-            onDelete={() => handleDeleteCustomer(selectedCustomer.id)}
-            customer={selectedCustomer}
-          />
-        </>
-      )}
     </div>
   );
 };
 
-export default CustomersMainPage;
+export default React.memo(CustomersMainPage);
