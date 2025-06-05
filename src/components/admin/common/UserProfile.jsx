@@ -30,7 +30,6 @@ Thoát khỏi phiên làm việc.
 
 */
 
-
 const UserProfile = ({ scrolled, onLogout }) => {
   const user = getUserFromToken();
   const fullName = user?.fullName || "-";

@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { useMobileStyles } from "@atoms/common";
 import { getProductById } from "@requests/product";
-
+import { DANG_BAN, NGUNG_BAN } from "@/constants/product";
 const { Option } = Select;
 const { TextArea } = Input;
 
@@ -51,7 +51,7 @@ const ViewProductModal = ({
             categoryIds: product.categoryList
               ? product.categoryList.map((c) => c.id)
               : [],
-            productStatus: product.status === "ACTIVE",
+            productStatus: product.status === DANG_BAN,
           });
           setLoading(false);
           setFormLoading(false);

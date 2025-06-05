@@ -1,6 +1,7 @@
 import React from "react";
 import { Input, Select, Flex } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { DANG_BAN, NGUNG_BAN } from "@/constants/product";
 
 const { Option } = Select;
 
@@ -51,8 +52,8 @@ const ProductFilters = ({
         allowClear
       >
         <Option value="0">Tất cả trạng thái</Option>
-        <Option value="active">Đang bán</Option>
-        <Option value="inactive">Ngừng bán</Option>
+        <Option value={DANG_BAN}>Đang bán</Option>
+        <Option value={NGUNG_BAN}>Ngừng bán</Option>
       </Select>
     </Flex>
   );

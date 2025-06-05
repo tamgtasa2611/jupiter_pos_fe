@@ -19,7 +19,7 @@ const themeConfig = {
       defaultShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
     },
     Card: {
-      borderRadiusLG: 16
+      borderRadiusLG: 16,
     },
     Input: {
       borderRadius: 10,

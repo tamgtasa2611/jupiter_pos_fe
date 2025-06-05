@@ -24,7 +24,7 @@ import {
 import dayjs from "dayjs";
 import { getProductVariantById, updateVariant } from "@requests/product";
 import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
-import { MAX_VARIANT_IMAGES } from "@/constants/product";
+import { MAX_VARIANT_IMAGES, DANG_BAN, NGUNG_BAN } from "@/constants/product";
 
 const { Option } = Select;
 
@@ -63,7 +63,7 @@ const EditVariantModal = ({
             sku: detail.sku,
             variantBarcode: detail.barcode,
             expiryDate: detail.expiryDate ? dayjs(detail.expiryDate) : null,
-            variantStatus: detail.status === "ACTIVE",
+            variantStatus: detail.status === DANG_BAN,
             attrAndValues: detail.attrValues
               ? detail.attrValues.map((av) => ({
                   attrId: av.attrId,
@@ -116,7 +116,7 @@ const EditVariantModal = ({
         sku: values.sku,
         barcode: values.variantBarcode,
         expiryDate: values.expiryDate ? values.expiryDate.toISOString() : null,
-        status: values.variantStatus ? "ACTIVE" : "INACTIVE",
+        status: values.variantStatus ? DANG_BAN : NGUNG_BAN,
         attrAndValues: values.attrAndValues || [],
         imagePaths: variantImages,
       };

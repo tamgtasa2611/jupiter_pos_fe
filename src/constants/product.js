@@ -1,20 +1,20 @@
-const ACTIVE = "ACTIVE";
-const INACTIVE = "INACTIVE";
-const DELETED = "DELETED";
+export const DANG_BAN = "DANG_BAN";
+export const NGUNG_BAN = "NGUNG_BAN";
+export const DA_XOA = "DA_XOA";
 export const PRODUCT_STATUS = {
-  ACTIVE: {
+  DANG_BAN: {
     label: "Đang bán",
-    value: ACTIVE,
+    value: DANG_BAN,
     color: "green", // green
   },
-  INACTIVE: {
+  NGUNG_BAN: {
     label: "Ngừng bán",
-    value: INACTIVE,
+    value: NGUNG_BAN,
     color: "red", // magenta
   },
-  DELETED: {
+  DA_XOA: {
     label: "Đã xóa",
-    value: DELETED,
+    value: DA_XOA,
     color: "purple", // red
   },
 };

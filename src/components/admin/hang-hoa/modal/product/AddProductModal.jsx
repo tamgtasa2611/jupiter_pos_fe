@@ -20,7 +20,7 @@ import {
 import { PlusOutlined, DeleteOutlined, CopyOutlined } from "@ant-design/icons";
 import { useMobileStyles } from "@atoms/common";
 import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
-import { MAX_VARIANT_IMAGES } from "@/constants/product";
+import { MAX_VARIANT_IMAGES, DANG_BAN, NGUNG_BAN } from "@/constants/product";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -75,7 +75,7 @@ const AddProductModal = ({
         productName: values.productName,
         description: values.productDescription,
         categoryIds: values.categoryIds || [],
-        status: values.productStatus ? "ACTIVE" : "INACTIVE",
+        status: values.productStatus ? DANG_BAN : NGUNG_BAN,
       };
 
       // Thu thập dữ liệu biến thể (nhiều biến thể)
@@ -89,7 +89,7 @@ const AddProductModal = ({
         expiryDate: variant.expiryDate
           ? variant.expiryDate.toISOString()
           : null,
-        status: variant.variantStatus ? "ACTIVE" : "INACTIVE",
+        status: variant.variantStatus ? DANG_BAN : NGUNG_BAN,
         attrAndValues: variant.attrAndValues || [],
         // Dữ liệu ảnh chỉ là mảng URL đã được FE nhận ngay lúc upload
         imagePaths: variantImages[idx] || [],
@@ -211,8 +211,8 @@ const AddProductModal = ({
             style={mobileFormItemStyle}
           >
             <Switch
-              checkedChildren="ACTIVE"
-              unCheckedChildren="INACTIVE"
+              checkedChildren="Đang bán"
+              unCheckedChildren="Ngừng bán"
               style={mobileSwitchStyle}
             />
           </Form.Item>
@@ -250,7 +250,9 @@ const AddProductModal = ({
                           justifyContent: "space-between",
                         }}
                       >
-                        <h4 className="font-semibold mb-4">Biến thể {name + 1}</h4>
+                        <h4 className="font-semibold mb-4">
+                          Biến thể {name + 1}
+                        </h4>
                         {fields.length > 1 && (
                           <DeleteOutlined
                             onClick={() => remove(name)}

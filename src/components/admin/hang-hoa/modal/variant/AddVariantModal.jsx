@@ -18,8 +18,7 @@ import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpload";
 import { useMobileStyles } from "@atoms/common";
-import { MAX_VARIANT_IMAGES } from "@/constants/product";
-
+import { MAX_VARIANT_IMAGES, DANG_BAN, NGUNG_BAN } from "@/constants/product";
 const { Option } = Select;
 
 const AddVariantModal = ({
@@ -71,7 +70,7 @@ const AddVariantModal = ({
         sku: values.sku,
         barcode: values.variantBarcode,
         expiryDate: values.expiryDate ? values.expiryDate.toISOString() : null,
-        status: values.variantStatus ? "ACTIVE" : "INACTIVE",
+        status: values.variantStatus ? DANG_BAN : NGUNG_BAN,
         attrAndValues: values.attrAndValues || [],
         imagePaths: variantImages, // Chỉ là mảng URL ảnh
       };

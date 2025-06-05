@@ -17,6 +17,7 @@ import {
 
 import dayjs from "dayjs";
 import { getProductVariantById } from "@requests/product";
+import { DANG_BAN, NGUNG_BAN } from "@/constants/product";
 const { Option } = Select;
 
 const ViewVariantModal = ({
@@ -49,7 +50,7 @@ const ViewVariantModal = ({
             sku: detail.sku,
             variantBarcode: detail.barcode,
             expiryDate: detail.expiryDate ? dayjs(detail.expiryDate) : null,
-            variantStatus: detail.status === "ACTIVE",
+            variantStatus: detail.status === DANG_BAN,
             attrAndValues: detail.attrValues
               ? detail.attrValues.map((av) => ({
                   attrId: av.attrId,

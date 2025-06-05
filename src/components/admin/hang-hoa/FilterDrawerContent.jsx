@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Select, Button } from "antd";
 
 const { Option } = Select;
-
+import { DANG_BAN, NGUNG_BAN } from "@/constants/product";
 const FilterDrawerContent = ({
   selectedCategory,
   setSelectedCategory,
@@ -36,8 +36,8 @@ const FilterDrawerContent = ({
         allowClear
       >
         <Option value="all">Tất cả trạng thái</Option>
-        <Option value="active">Đang bán</Option>
-        <Option value="inactive">Ngừng bán</Option>
+        <Option value={DANG_BAN}>Đang bán</Option>
+        <Option value={NGUNG_BAN}>Ngừng bán</Option>
       </Select>
 
       <Button type="primary" block onClick={() => setFilterDrawerOpen(false)}>
