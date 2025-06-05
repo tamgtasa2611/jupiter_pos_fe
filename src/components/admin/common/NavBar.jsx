@@ -9,6 +9,7 @@ import {
   Dropdown,
   Badge,
   Tooltip,
+  Flex,
 } from "antd";
 import {
   UserOutlined,
@@ -147,17 +148,7 @@ export default function NavBar({ onLogout }) {
       </div>
 
       {/* Right side - Actions */}
-      <Space size="middle" className="flex items-center">
-        {/* Search button */}
-        <Tooltip title="Tìm kiếm">
-          <Button
-            type="text"
-            icon={<SearchOutlined />}
-            shape="circle"
-            className="flex items-center justify-center text-lg hover:bg-gray-100 transition-colors"
-          />
-        </Tooltip>
-
+      <Flex gap={8} justify="end" align="center" >
         {/* Notifications */}
         <Dropdown
           menu={{
@@ -225,7 +216,7 @@ export default function NavBar({ onLogout }) {
 
         {/* User Profile */}
         <UserProfile scrolled={scrolled} onLogout={onLogout} />
-      </Space>
+      </Flex>
     </div>
   );
 }

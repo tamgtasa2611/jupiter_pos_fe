@@ -12,9 +12,6 @@ export default function CustomerLandingPage() {
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
-    // Simple check to verify component is mounting correctly
-    console.log("Landing page mounted");
-
     // Check if running in a Capacitor/Cordova context
     const isNative =
       typeof window !== "undefined" && (window.Capacitor || window.cordova);
