@@ -44,19 +44,24 @@ const LoginForm = ({ onFinish, loading, setLoading }) => {
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập email hoặc số điện thoại!",
+              message: "Vui lòng nhập username, email hoặc số điện thoại!",
             },
             {
               validator: (_, value) => {
-                if (
-                  !value ||
-                  /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value) || // email
-                  /^(0|\+84)\d{9,10}$/.test(value) // số điện thoại VN
-                ) {
+                if (!value) {
+                  return Promise.resolve();
+                }
+                // Kiểm tra email:
+                const isEmail = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value);
+                // Kiểm tra số điện thoại VN:
+                const isPhone = /^(0|\+84)\d{9,10}$/.test(value);
+                // Kiểm tra username (cho phép chữ, số, dấu gạch dưới, độ dài từ 3 đến 20 ký tự)
+                const isUsername = /^(?=.{3,20}$)[a-zA-Z0-9_]+$/.test(value);
+                if (isEmail || isPhone || isUsername) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
-                  "Vui lòng nhập đúng email hoặc số điện thoại!",
+                  "Vui lòng nhập đúng username, email hoặc số điện thoại!",
                 );
               },
             },
