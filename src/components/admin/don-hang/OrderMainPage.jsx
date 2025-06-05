@@ -83,8 +83,9 @@ const OrderMainPage = () => {
           current: isLoadMore ? prev.current + 1 : 1,
         }));
       } catch (error) {
-        console.error("Error in fetchOrders:", error);
-        message.error("Lỗi khi lấy danh sách đơn hàng");
+        // Lấy thông báo lỗi từ response nếu có, ngược lại dùng message mặc định của error
+        const errMsg = error?.response?.data?.message || "Lỗi không xác định";
+        message.error(errMsg);
       } finally {
         setLoading(false);
       }

@@ -5,8 +5,7 @@ export const getOrders = async (params = {}) => {
     const res = await api.post(`/orders/search`, params);
     return res;
   } catch (error) {
-    console.error("Lỗi khi lấy đơn vị:", error);
-    // Return an empty array as default
+    console.error(error);
     throw error;
   }
 };
@@ -16,7 +15,7 @@ export const createOrder = async (data) => {
     const res = await api.post("/orders/create", data);
     return res;
   } catch (error) {
-    console.error("Lỗi khi tạo đơn hàng:", error);
-    return [];
+    console.error(error);
+    throw error;
   }
 };
