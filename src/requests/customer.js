@@ -9,3 +9,13 @@ export const getCustomers = async (params = {}) => {
     throw error;
   }
 };
+
+export const createCustomer = async (data = {}) => {
+  try {
+    const res = await api.post(`/customers`, data);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

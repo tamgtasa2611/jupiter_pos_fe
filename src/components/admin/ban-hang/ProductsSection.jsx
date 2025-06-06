@@ -55,7 +55,7 @@ const ProductsSection = memo(
         }}
       >
         <Flex vertical gap={16} className="h-full">
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} loading={loading} />
           <CategorySelector
             categories={categories}
             selectedCategory={selectedCategory}

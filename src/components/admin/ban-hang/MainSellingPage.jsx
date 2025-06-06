@@ -9,8 +9,10 @@ import PaymentModal from "./PaymentModal";
 import NumericKeypad from "./NumericKeypad";
 import { getProducts, getProductsVariants } from "@requests/product";
 import { createOrder } from "@requests/order";
+import { getCustomers } from "@requests/customer";
 import { ORDER_STATUS } from "@constants/order";
 const { Text } = Typography;
+import { KHACH_LE } from "@constants/customer";
 
 const MainSellingPage = () => {
   const { token } = theme.useToken();
@@ -19,11 +21,7 @@ const MainSellingPage = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
-  const [customerInfo, setCustomerInfo] = useState({
-    id: 0,
-    name: "Khách lẻ",
-    phone: "",
-  });
+  const [customerInfo, setCustomerInfo] = useState(KHACH_LE); // Khách lẻ mặc định
   const [outOfProducts, setOutOfProducts] = useState(false);
   const [showNumericKeypad, setShowNumericKeypad] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -206,6 +204,7 @@ const MainSellingPage = () => {
     } catch (error) {
       message.error("Tạo đơn hàng thất bại. Vui lòng thử lại!");
     }
+    setCustomerInfo(KHACH_LE);
     setCart([]);
     setIsPaymentModalVisible(false);
   };

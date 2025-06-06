@@ -1,4 +1,4 @@
-import React, { useState, memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import {
   Card,
   Button,
@@ -7,40 +7,70 @@ import {
   Modal,
   Input,
   List,
+  Pagination,
+  Spin,
   Flex,
 } from "antd";
 import {
-  PlusOutlined,
   PhoneOutlined,
-  EditOutlined,
-  ReloadOutlined,
+  PlusOutlined,
   UserSwitchOutlined,
 } from "@ant-design/icons";
+import { getCustomers } from "@requests/customer";
+import CreateCustomerModal from "./CreateCustomerModal";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
 
-// Mock customer data - đưa ra khỏi component để tránh khởi tạo lại
-const mockCustomers = [
-  { id: 1, name: "Khách lẻ", phone: "" },
-  { id: 2, name: "Son Goku", phone: "0123456789" },
-  { id: 3, name: "Vegeta", phone: "0987654321" },
-  { id: 4, name: "Bulma", phone: "1234567890" },
-  { id: 5, name: "Piccolo", phone: "9876543210" },
-];
-
-// Memoize để tránh re-render không cần thiết
 const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [createCustomerModalVisible, setCreateCustomerModalVisible] =
+    useState(false);
+  const [customers, setCustomers] = useState([]);
   const [searchValue, setSearchValue] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(5); // Điều chỉnh số mục mỗi trang nếu cần
+  const [totalCustomers, setTotalCustomers] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const filteredCustomers = searchValue
-    ? mockCustomers.filter(
-        (cust) =>
-          cust.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-          cust.phone.includes(searchValue),
-      )
-    : mockCustomers;
+  const fetchCustomers = async (page = 0, search = "") => {
+    setLoading(true);
+    try {
+      // Backend giả sử yêu cầu page bắt đầu từ 0
+      const params = {
+        page: page > 0 ? page - 1 : page, // Chuyển đổi sang 0-based index nếu cần
+        size: pageSize,
+        search: search ? search : undefined,
+      };
+      const response = await getCustomers(params);
+      // Giả sử API trả về dữ liệu dạng: { content: [...], totalElements: number }
+      setCustomers(response.content || []);
+      setTotalCustomers(response.totalElements || 0);
+    } catch (error) {
+      // Xử lý lỗi (có thể hiển thị message.error)
+      console.error("Lỗi khi tải khách hàng:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch lại danh sách khách hàng khi Modal mở, hoặc khi currentPage/search thay đổi
+  useEffect(() => {
+    if (isModalVisible) {
+      fetchCustomers(currentPage, searchValue);
+    }
+  }, [isModalVisible, currentPage]);
+
+  const handleSearch = async (value) => {
+    const trimmedValue = value?.trim();
+    setSearchValue(trimmedValue);
+    setCurrentPage(0);
+    await fetchCustomers(0, trimmedValue);
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <>
@@ -49,7 +79,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
           <Space direction="vertical" size={0} style={{ width: "100%" }}>
             <Flex justify="space-between" align="center">
               <Text strong style={{ fontSize: "16px" }}>
-                {customer.name}
+                {customer.customerName}
               </Text>
 
               <Button
@@ -99,47 +129,97 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
         <Modal
           title="Chọn khách hàng"
           open={isModalVisible}
-          onCancel={() => setIsModalVisible(false)}
-          footer={null}
-          width={400}
-          styles={{
-            wrapper: { animation: "none" },
-            body: { animation: "none" },
-            content: { animation: "none" },
+          onCancel={() => {
+            setIsModalVisible(false);
+            setSearchValue(""); // Reset search value khi đóng modal
+            setCurrentPage(0); // Reset về trang đầu tiên
           }}
+          footer={null}
+          centered
+          width={480}
         >
           <Space direction="vertical" style={{ width: "100%" }}>
             <Search
               placeholder="Tìm khách hàng theo tên hoặc SĐT"
               allowClear
               enterButton
-              onChange={(e) => setSearchValue(e.target.value)}
+              // Khi người dùng nhập, cập nhật giá trị tìm kiếm
+              value={searchValue}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchValue(value);
+                // Nếu cleared (rỗng) thì search lại
+                if (value === "") {
+                  handleSearch("");
+                }
+              }}
+              onSearch={handleSearch}
             />
-            <List
-              dataSource={filteredCustomers}
-              renderItem={(item) => (
-                <List.Item
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    onSelectCustomer(item);
-                    setIsModalVisible(false);
+            {loading ? (
+              <Flex
+                justify="center"
+                align="center"
+                style={{ marginTop: 16, height: "348px" }}
+              >
+                <Spin
+                  style={{
+                    height: "100%",
                   }}
-                >
-                  <List.Item.Meta title={item.name} description={item.phone} />
-                </List.Item>
-              )}
+                />
+              </Flex>
+            ) : (
+              <List
+                style={{
+                  height: "364px",
+                  overflowY: "auto",
+                }}
+                dataSource={customers}
+                renderItem={(item) => (
+                  <List.Item
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      onSelectCustomer(item);
+                      setIsModalVisible(false);
+                    }}
+                  >
+                    <List.Item.Meta
+                      title={item.customerName}
+                      description={`${item.phone} - ${item.address}`}
+                    />
+                  </List.Item>
+                )}
+              />
+            )}
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={totalCustomers}
+              onChange={handlePageChange}
+              align="center"
+              style={{ marginTop: 16, textAlign: "center" }}
             />
             <Button
               type="dashed"
               icon={<PlusOutlined />}
               block
               style={{ marginTop: 16 }}
+              onClick={() => {
+                setCreateCustomerModalVisible(true);
+              }}
             >
               Thêm khách hàng mới
             </Button>
           </Space>
         </Modal>
       )}
+
+      <CreateCustomerModal
+        visible={createCustomerModalVisible}
+        onCancel={() => setCreateCustomerModalVisible(false)}
+        onCreated={(newCustomer) => {
+          handleSearch();
+        }}
+      />
     </>
   );
 });
