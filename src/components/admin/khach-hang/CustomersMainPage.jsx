@@ -1,33 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Table,
-  Button,
-  Input,
-  Drawer,
-  message,
-  Flex,
-  Dropdown,
-} from "antd";
-import {
-  UserOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  SearchOutlined,
-  ReloadOutlined,
-  EyeOutlined,
-  PlusOutlined,
-  MoreOutlined,
-} from "@ant-design/icons";
+import { Card, Button, message, Flex } from "antd";
+import { UserOutlined, ReloadOutlined } from "@ant-design/icons";
 import AddCustomerModal from "./AddCustomerModal";
 import EditCustomerModal from "./EditCustomerModal";
 import DeleteCustomerModal from "./DeleteCustomerModal";
 import CustomerHeader from "./CustomerHeader";
 import { getCustomers } from "@/requests/customer";
+import SearchBar from "./SearchBar";
+import CustomerTable from "./CustomerTable";
 
 const CustomersMainPage = () => {
   // State quản lý danh sách khách hàng và loading
@@ -45,19 +27,20 @@ const CustomersMainPage = () => {
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const [pagination, setPagination] = useState({
-    current: 1,
+    current: 0,
     pageSize: 10,
     total: 0,
   });
-  const [filtersDrawerVisible, setFiltersDrawerVisible] = useState(false);
 
-  // Hàm fetch khách hàng từ API
-  const fetchCustomers = useCallback(async () => {
+  const fetchCustomers = async (
+    tarPage = 0,
+    tarSize = pagination.pageSize,
+    searchValue = searchText,
+  ) => {
     setLoading(true);
     try {
-      // Nếu backend dự kiến nhận page bắt đầu từ 0
-      const page = pagination.current - 1;
-      const size = pagination.pageSize;
+      const page = tarPage;
+      const size = tarSize;
       const sort =
         sortBy && sortOrder
           ? `${sortBy},${sortOrder === "ascend" ? "asc" : "desc"}`
@@ -65,8 +48,8 @@ const CustomersMainPage = () => {
       const params = {
         page,
         size,
-        search: searchText || undefined,
-        sort, // backend có thể bỏ qua nếu sort undefined
+        search: searchValue || undefined,
+        sort,
       };
 
       const response = await getCustomers(params);
@@ -77,166 +60,63 @@ const CustomersMainPage = () => {
       }));
     } catch (error) {
       const errMsg =
-        (error.response && error.response && error.response.message) ||
+        (error.response && error.response.message) ||
         error.message ||
         "Lỗi không xác định";
       message.error(errMsg);
     } finally {
       setLoading(false);
     }
-  }, [pagination.current, pagination.pageSize, searchText, sortBy, sortOrder]);
+  };
 
+  // Gọi API 1 lần khi component mount
   useEffect(() => {
     fetchCustomers();
-  }, [fetchCustomers]);
-
-  // Các cột của bảng khách hàng
-  const columns = useMemo(
-    () => [
-      {
-        title: "Tên khách hàng",
-        dataIndex: "customerName",
-        key: "customerName",
-        ellipsis: true,
-        width: 240,
-        render: (text) => <a>{text}</a>,
-      },
-      {
-        title: "Điện thoại",
-        dataIndex: "phone",
-        key: "phone",
-        ellipsis: true,
-        width: 100,
-      },
-      {
-        title: "Địa chỉ",
-        dataIndex: "address",
-        key: "address",
-        ellipsis: true,
-        width: 320,
-      },
-      {
-        title: "Tổng đơn hàng",
-        dataIndex: "totalOrders",
-        key: "totalOrders",
-        ellipsis: true,
-        width: 120,
-        render: (orders) => orders || 0,
-      },
-      {
-        title: "Tổng chi tiêu",
-        dataIndex: "totalSpent",
-        key: "totalSpent",
-        ellipsis: true,
-        width: 120,
-
-        render: (spent) => new Intl.NumberFormat("vi-VN").format(spent) + "đ",
-      },
-      {
-        title: "Ngày tạo",
-        dataIndex: "createdDate",
-        key: "createdDate",
-        ellipsis: true,
-        width: 120,
-        render: (date) =>
-          new Intl.DateTimeFormat("vi-VN").format(new Date(date)),
-      },
-      {
-        title: "Thao tác",
-        key: "action",
-        ellipsis: true,
-        width: 100,
-        render: (_, record) => (
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: "view",
-                  label: "Xem chi tiết",
-                  icon: <EyeOutlined />,
-                  onClick: () => {
-                    // Xử lý xem chi tiết nếu cần
-                  },
-                },
-                {
-                  key: "edit",
-                  label: "Chỉnh sửa",
-                  icon: <EditOutlined />,
-                  onClick: () => {
-                    setSelectedCustomer(record);
-                    setEditModalVisible(true);
-                  },
-                },
-                {
-                  key: "delete",
-                  label: "Xóa",
-                  icon: <DeleteOutlined />,
-                  onClick: () => {
-                    setSelectedCustomer(record);
-                    setDeleteModalVisible(true);
-                  },
-                },
-              ],
-            }}
-          >
-            <Button type="text" icon={<MoreOutlined />} />
-          </Dropdown>
-        ),
-      },
-    ],
-    [],
-  );
-
-  // Handler khi tìm kiếm
-  const handleSearch = useCallback((value) => {
-    setSearchText(value);
-    // Reset về trang 1 khi thay đổi điều kiện tìm kiếm
-    setPagination((prev) => ({ ...prev, current: 1 }));
+    // Nếu đang chạy trong StrictMode (React 18 dev mode), có thể thấy gọi 2 lần – tuy nhiên ở production chỉ gọi 1 lần.
   }, []);
 
+  // Handler khi tìm kiếm
+  const handleSearch = (value) => {
+    const trimmedValue = value.trim();
+    setSearchText(trimmedValue);
+    setPagination((prev) => ({ ...prev, current: 0 }));
+    fetchCustomers(0, pagination.pageSize, trimmedValue);
+  };
+
   // Handler thay đổi bảng: sắp xếp, phân trang
-  const handleTableChange = useCallback((tablePagination, filters, sorter) => {
+  const handleTableChange = (tablePagination, filters, sorter) => {
+    const currentPage = tablePagination.current - 1; // nếu backend dùng 0-index
     setPagination((prev) => ({
       ...prev,
-      current: tablePagination.current,
+      current: currentPage,
       pageSize: tablePagination.pageSize,
     }));
     if (sorter.field) {
       setSortBy(sorter.field);
       setSortOrder(sorter.order);
+      fetchCustomers(currentPage, tablePagination.pageSize, searchText);
     } else {
-      setSortBy(null);
-      setSortOrder(null);
+      fetchCustomers(currentPage, tablePagination.pageSize, searchText);
     }
-  }, []);
+  };
 
-  // Các hàm xử lý thêm, sửa, xóa khách hàng (thực hiện API nếu có)
-  const handleAddCustomer = useCallback(
-    (newCustomer) => {
-      console.log("Thêm khách hàng:", newCustomer);
-      setAddModalVisible(false);
-      fetchCustomers();
-    },
-    [fetchCustomers],
-  );
+  const handleAddCustomer = (newCustomer) => {
+    console.log("Thêm khách hàng:", newCustomer);
+    setAddModalVisible(false);
+    fetchCustomers();
+  };
 
-  const handleEditCustomer = useCallback(
-    (updatedCustomer) => {
-      console.log("Cập nhật khách hàng:", updatedCustomer);
-      setEditModalVisible(false);
-      fetchCustomers();
-    },
-    [fetchCustomers],
-  );
+  const handleEditCustomer = (updatedCustomer) => {
+    console.log("Cập nhật khách hàng:", updatedCustomer);
+    setEditModalVisible(false);
+    fetchCustomers();
+  };
 
-  const handleDeleteCustomer = useCallback(
-    (id) => {
-      console.log("Xóa khách hàng với ID:", id);
-      setDeleteModalVisible(false);
-      fetchCustomers();
-    },
-    [fetchCustomers],
-  );
+  const handleDeleteCustomer = (id) => {
+    console.log("Xóa khách hàng với ID:", id);
+    setDeleteModalVisible(false);
+    fetchCustomers();
+  };
 
   return (
     <div>
@@ -249,11 +129,12 @@ const CustomersMainPage = () => {
           style={{ height: "100%" }}
         >
           <Flex gap={8} justify="space-between" align="center">
-            <Input.Search
-              placeholder="Tìm kiếm khách hàng"
+            <SearchBar
               onSearch={handleSearch}
-              style={{ width: 200 }}
-              prefix={<SearchOutlined />}
+              loading={loading}
+              searchText={searchText}
+              setSearchText={setSearchText}
+              isMobile={false}
             />
             <Flex gap={8}>
               <Button
@@ -265,25 +146,20 @@ const CustomersMainPage = () => {
               </Button>
               <Button
                 icon={<ReloadOutlined />}
-                onClick={fetchCustomers}
+                onClick={() => fetchCustomers()}
                 loading={loading}
               ></Button>
             </Flex>
           </Flex>
 
           {/* Bảng danh sách khách hàng */}
-          <Table
-            columns={columns}
-            dataSource={customers}
-            rowKey="id"
+          <CustomerTable
+            customers={customers}
             loading={loading}
-            bordered
-            scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
-            style={{ height: "100%" }}
-            sticky
-            onChange={handleTableChange}
-            size="middle"
-            locale={{ emptyText: "Không có dữ liệu" }}
+            handleTableChange={handleTableChange}
+            setSelectedCustomer={setSelectedCustomer}
+            setEditModalVisible={setEditModalVisible}
+            setDeleteModalVisible={setDeleteModalVisible}
           />
 
           {/* Các modal xử lý */}

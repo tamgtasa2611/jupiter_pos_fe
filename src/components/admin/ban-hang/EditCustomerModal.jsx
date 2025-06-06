@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Form, Input, Switch, Button, message } from "antd";
-import { createCustomer } from "@requests/customer";
+import { updateCustomer } from "@requests/customer";
 
-const CreateCustomerModal = ({ visible, onCancel, onCreated }) => {
+const EditCustomerModal = ({ visible, onCancel, onCreated, customer }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (visible && customer) {
+      form.setFieldsValue({
+        phone: customer.phone,
+        customerName: customer.customerName,
+        gender: customer.gender,
+        address: customer.address,
+      });
+    }
+  }, [visible, customer, form]);
 
   const handleFinish = async (values) => {
     setLoading(true);
@@ -15,17 +26,17 @@ const CreateCustomerModal = ({ visible, onCancel, onCreated }) => {
         address: values.address,
         phone: values.phone,
       };
-      const res = await createCustomer(payload);
+      const res = await updateCustomer(customer.id, payload);
       console.log(res);
 
       if (res && !res?.data?.message) {
-        message.success("Tạo khách hàng thành công");
+        message.success("Cập nhật khách hàng thành công");
         form.resetFields();
         onCreated();
         onCancel();
       }
     } catch (error) {
-      message.error("Lỗi khi tạo khách hàng");
+      message.error("Lỗi khi cập nhật khách hàng");
       console.error(error);
     } finally {
       setLoading(false);
@@ -34,7 +45,7 @@ const CreateCustomerModal = ({ visible, onCancel, onCreated }) => {
 
   return (
     <Modal
-      title="Tạo khách hàng mới"
+      title="Chỉnh sửa khách hàng"
       open={visible}
       onCancel={onCancel}
       footer={null}
@@ -77,4 +88,4 @@ const CreateCustomerModal = ({ visible, onCancel, onCreated }) => {
   );
 };
 
-export default CreateCustomerModal;
+export default EditCustomerModal;

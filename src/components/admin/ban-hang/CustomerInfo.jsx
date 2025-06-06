@@ -10,8 +10,10 @@ import {
   Pagination,
   Spin,
   Flex,
+  Tooltip,
 } from "antd";
 import {
+  EditOutlined,
   ManOutlined,
   PhoneOutlined,
   PlusOutlined,
@@ -20,6 +22,7 @@ import {
 } from "@ant-design/icons";
 import { getCustomers } from "@requests/customer";
 import CreateCustomerModal from "./CreateCustomerModal";
+import EditCustomerModal from "./EditCustomerModal";
 
 const { Text, Title } = Typography;
 const { Search } = Input;
@@ -28,12 +31,15 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [createCustomerModalVisible, setCreateCustomerModalVisible] =
     useState(false);
+  const [editCustomerModalVisible, setEditCustomerModalVisible] =
+    useState(false);
   const [customers, setCustomers] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize] = useState(5); // Điều chỉnh số mục mỗi trang nếu cần
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const fetchCustomers = async (page = 0, search = "") => {
     setLoading(true);
@@ -161,7 +167,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
               <Flex
                 justify="center"
                 align="center"
-                style={{ marginTop: 16, height: "348px" }}
+                style={{ marginTop: 16, height: "364px" }}
               >
                 <Spin
                   style={{
@@ -172,7 +178,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
             ) : (
               <List
                 style={{
-                  height: "364px",
+                  height: "380px",
                   overflowY: "auto",
                 }}
                 dataSource={customers}
@@ -206,9 +212,23 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
                         </Flex>
                       </Flex>
 
-                      <Text type="secondary" ellipsis>
-                        {item.address || "-"}
-                      </Text>
+                      <Flex justify="space-between" align="center" gap={8}>
+                        <Tooltip title={item.address || "-"} placement="bottom">
+                          <Text type="secondary" ellipsis>
+                            {item.address || "-"}
+                          </Text>
+                        </Tooltip>
+                        <Button
+                          icon={<EditOutlined />}
+                          type="text"
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
+                            setSelectedCustomer(item);
+                            setEditCustomerModalVisible(true);
+                          }}
+                        ></Button>
+                      </Flex>
                     </Flex>
                   </List.Item>
                 )}
@@ -240,9 +260,14 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
       <CreateCustomerModal
         visible={createCustomerModalVisible}
         onCancel={() => setCreateCustomerModalVisible(false)}
-        onCreated={(newCustomer) => {
-          handleSearch();
-        }}
+        onCreated={handleSearch}
+      />
+
+      <EditCustomerModal
+        visible={editCustomerModalVisible}
+        onCancel={() => setEditCustomerModalVisible(false)}
+        onCreated={handleSearch}
+        customer={selectedCustomer}
       />
     </>
   );

@@ -27,7 +27,7 @@ const ProductActionBar = ({
       className="mb-6"
     >
       {/* Search and filters */}
-      <ProductFilters {...filterProps} />
+      <ProductFilters {...filterProps} loading={loading} />
 
       {/* Action buttons */}
       <Flex gap={8} wrap="wrap">

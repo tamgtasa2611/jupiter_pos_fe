@@ -19,3 +19,13 @@ export const createCustomer = async (data = {}) => {
     throw error;
   }
 };
+
+export const updateCustomer = async (id, data = {}) => {
+  try {
+    const res = await api.put(`/customers/${id}`, data);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

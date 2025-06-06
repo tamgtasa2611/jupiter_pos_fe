@@ -1,11 +1,12 @@
 import React from "react";
-import { Input, Select, Flex } from "antd";
+import { Input, Select, Flex, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { DANG_BAN, NGUNG_BAN } from "@/constants/product";
 
 const { Option } = Select;
 
 const ProductFilters = ({
+  loading,
   searchText,
   setSearchText,
   selectedCategory,
@@ -18,7 +19,7 @@ const ProductFilters = ({
 }) => {
   return (
     <Flex gap={12} wrap="wrap">
-      <Input
+      <Input.Search
         placeholder="Tìm kiếm theo tên, mã sản phẩm..."
         prefix={<SearchOutlined />}
         value={searchText}
@@ -27,6 +28,14 @@ const ProductFilters = ({
         style={{ width: isMobile ? "100%" : 300 }}
         allowClear
         onClear={() => onSearch("")}
+        enterButton={
+          loading ? (
+            <Spin size="small" style={{ color: "white" }} />
+          ) : (
+            <SearchOutlined />
+          )
+        }
+        readOnly={loading}
       />
 
       <Select
