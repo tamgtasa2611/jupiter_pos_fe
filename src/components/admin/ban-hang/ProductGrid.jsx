@@ -1,7 +1,8 @@
 import React, { memo } from "react";
-import { Row, Col, Button, Spin } from "antd";
+import { Row, Col, Button, Spin, Typography } from "antd";
 import ProductCard from "./ProductCard";
 
+const { Text } = Typography;
 const ProductGrid = memo(
   ({
     products,
@@ -10,6 +11,8 @@ const ProductGrid = memo(
     handleLoadMore,
     isInitial,
     loading,
+    outOfProducts,
+    setOutOfProducts,
   }) => {
     return (
       <>
@@ -24,17 +27,27 @@ const ProductGrid = memo(
             </Col>
           ))}
         </Row>
-        {/* Chỉ hiển thị nút "Xem thêm sản phẩm" nếu không phải load đầu */}
+        {/* Chỉ hiển thị nút "Xem thêm sản phẩm" nếu không phải load đầu và chưa hết sản phẩm */}
         {!isInitial &&
           (loadingMore ? (
-            <div style={{ textAlign: "center", marginTop: 16 }}>
+            <div
+              style={{ textAlign: "center", marginTop: 24, marginBottom: 8 }}
+            >
               <Spin />
             </div>
-          ) : (
-            <div style={{ textAlign: "center", marginTop: 16 }}>
+          ) : !outOfProducts ? (
+            <div
+              style={{ textAlign: "center", marginTop: 24, marginBottom: 8 }}
+            >
               <Button onClick={handleLoadMore} type="default">
                 Xem thêm sản phẩm
               </Button>
+            </div>
+          ) : (
+            <div
+              style={{ textAlign: "center", marginTop: 24, marginBottom: 8 }}
+            >
+              <Text type="secondary">Không còn sản phẩm nào để hiển thị</Text>
             </div>
           ))}
       </>

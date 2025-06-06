@@ -23,8 +23,8 @@ const MainSellingPage = () => {
     id: 0,
     name: "Khách lẻ",
     phone: "",
-    points: 0,
   });
+  const [outOfProducts, setOutOfProducts] = useState(false);
   const [showNumericKeypad, setShowNumericKeypad] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -48,17 +48,17 @@ const MainSellingPage = () => {
       };
       const response = await getProductsVariants(params);
       const mappedProducts = [];
+      if (response.content.length === 0) {
+        setOutOfProducts(true);
+      } else {
+        setOutOfProducts(false);
+      }
       response.content.forEach((item) => {
         const parent = item.product;
-        // Bắt đầu với tên sản phẩm cha
         let productName = parent.productName;
-        // Nếu variant có attrValues và mảng không rỗng, thêm vào sau tên theo định dạng: "Tên sản phẩm (attr1, attr2)"
-        // if (item.attrValues && item.attrValues.length > 0) {
-        //   const attrs = item.attrValues.map(
-        //     (attr) => `${attr.attrName}: ${attr.attrValue}`,
-        //   );
-        //   productName = `${productName} (${attrs.join(", ")})`;
-        // }
+        const sortedAttrValues = [...item.attrValues].sort((a, b) =>
+          JSON.stringify(a).localeCompare(JSON.stringify(b)),
+        );
         mappedProducts.push({
           id: item.id,
           name: productName || parent.productName || "",
@@ -74,14 +74,30 @@ const MainSellingPage = () => {
           barcode: item.barcode,
           expiryDate: item.expiryDate,
           image: item.imagePaths?.[0] || "",
-          attrValues: item.attrValues,
+          attrValues: sortedAttrValues,
         });
       });
-      // If loading the first page, replace. Otherwise, append.
+      // Sử dụng Set để lọc các sản phẩm trùng lặp chỉ dựa trên id
+      const seenIds = new Set();
+      const uniqueProducts = mappedProducts.filter((item) => {
+        if (seenIds.has(item.id)) {
+          return false;
+        }
+        seenIds.add(item.id);
+        return true;
+      });
+      // Nếu page = 0, thay thế danh sách sản phẩm, còn nếu > 0 thì cộng thêm sản phẩm mới vào danh sách cũ
       if (page === 0) {
-        setProducts(mappedProducts);
+        setProducts(uniqueProducts);
       } else {
-        setProducts((prev) => [...prev, ...mappedProducts]);
+        setProducts((prev) => {
+          const merged = new Map();
+          [...prev, ...uniqueProducts].forEach((product) => {
+            merged.set(product.id, product);
+          });
+          const uniqueCombined = Array.from(merged.values());
+          return uniqueCombined;
+        });
       }
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
@@ -97,14 +113,18 @@ const MainSellingPage = () => {
   }, []);
 
   const handleSearch = async ({ search, page, size }) => {
-    // Reset products to initial state when searching
-    setProducts([]);
     setInitLoading(true);
     setLoading(true);
     // Fetch products with search query
     await fetchProducts({ search, page, size });
     // Reset pagination to the first page
     setSelectedCategory("all");
+    setLoading(false);
+  };
+
+  const handleLoadMore = async ({ search, page, size }) => {
+    setLoading(true);
+    await fetchProducts({ search, page, size });
     setLoading(false);
   };
 
@@ -205,9 +225,12 @@ const MainSellingPage = () => {
             onSelectCategory={setSelectedCategory}
             onProductClick={addToCart}
             onSearch={handleSearch}
+            onLoadMore={handleLoadMore}
             loading={loading}
             setLoading={setLoading}
             initLoading={initLoading}
+            outOfProducts={outOfProducts}
+            setOutOfProducts={setOutOfProducts}
           />
         </Col>
 

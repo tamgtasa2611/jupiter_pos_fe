@@ -12,9 +12,12 @@ const ProductsSection = memo(
     onSelectCategory,
     onProductClick,
     onSearch, // onSearch callback receives { page, size, search }
+    onLoadMore,
     loading,
     setLoading,
-    initLoading, // Initial loading state for the first load
+    initLoading,
+    outOfProducts,
+    setOutOfProducts,
   }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(0);
@@ -22,35 +25,24 @@ const ProductsSection = memo(
 
     const handleSearch = async (searchValue) => {
       const trimmedValue = searchValue.trim();
-      // Call your API to search variants only when the user has pressed Enter
+      setSearchQuery(trimmedValue);
+      // Reset trang về 0
+      setCurrentPage(0);
       await onSearch({ search: trimmedValue, page: 0, size: 30 });
     };
 
-    // Load more products when button "Load More" is clicked.
     const handleLoadMore = async () => {
       const nextPage = currentPage + 1;
       setLoadingMore(true);
       try {
-        await onSearch({ page: nextPage, size: 15, search: searchQuery });
+        await onLoadMore({ page: nextPage, size: 20, search: searchQuery });
         setCurrentPage(nextPage);
       } catch (error) {
-        console.error("Lỗi load thêm sản phẩm:", error);
+        console.error("Lỗi khi load thêm sản phẩm:", error);
       } finally {
         setLoadingMore(false);
       }
     };
-
-    // Filter products by category and search text for immediate UI display.
-    const filteredProducts = useMemo(() => {
-      return Array.isArray(products)
-        ? products.filter(
-            (product) =>
-              (selectedCategory === "all" ||
-                product.category === selectedCategory) &&
-              product.name.toLowerCase().includes(searchQuery.toLowerCase()),
-          )
-        : [];
-    }, [products, selectedCategory, searchQuery]);
 
     return (
       <Card
@@ -90,12 +82,14 @@ const ProductsSection = memo(
               </div>
             ) : (
               <ProductGrid
-                products={filteredProducts}
+                products={products}
                 onProductClick={onProductClick}
                 loading={loading}
                 loadingMore={loadingMore}
                 handleLoadMore={handleLoadMore}
                 isInitial={initLoading} // Ẩn nút khi là lần load đầu
+                outOfProducts={outOfProducts}
+                setOutOfProducts={setOutOfProducts}
               />
             )}
           </div>
