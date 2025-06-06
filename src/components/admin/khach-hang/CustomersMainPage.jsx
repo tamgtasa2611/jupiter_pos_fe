@@ -160,6 +160,12 @@ const CustomersMainPage = () => {
             setSelectedCustomer={setSelectedCustomer}
             setEditModalVisible={setEditModalVisible}
             setDeleteModalVisible={setDeleteModalVisible}
+            paginationConfig={{
+              current: pagination.current + 1, // chuyển đổi 0-index sang 1-index cho Table
+              pageSize: pagination.pageSize,
+              total: pagination.total,
+              showSizeChanger: true,
+            }}
           />
 
           {/* Các modal xử lý */}
