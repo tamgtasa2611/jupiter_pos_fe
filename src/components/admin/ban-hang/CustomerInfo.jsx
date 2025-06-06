@@ -12,9 +12,11 @@ import {
   Flex,
 } from "antd";
 import {
+  ManOutlined,
   PhoneOutlined,
   PlusOutlined,
   UserSwitchOutlined,
+  WomanOutlined,
 } from "@ant-design/icons";
 import { getCustomers } from "@requests/customer";
 import CreateCustomerModal from "./CreateCustomerModal";
@@ -176,16 +178,38 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
                 dataSource={customers}
                 renderItem={(item) => (
                   <List.Item
-                    style={{ cursor: "pointer" }}
                     onClick={() => {
                       onSelectCustomer(item);
                       setIsModalVisible(false);
                     }}
+                    style={{ width: "100%", cursor: "pointer" }}
                   >
-                    <List.Item.Meta
-                      title={item.customerName}
-                      description={`${item.phone} - ${item.address}`}
-                    />
+                    <Flex vertical style={{ width: "100%" }} gap={4}>
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        style={{ width: "100%" }}
+                      >
+                        <Flex gap={8}>
+                          {item?.gender ? (
+                            <ManOutlined
+                              style={{ color: "var(--primary-color)" }}
+                            />
+                          ) : (
+                            <WomanOutlined style={{ color: "#ff1493" }} />
+                          )}
+                          {item.customerName}
+                        </Flex>
+                        <Flex gap={8}>
+                          <PhoneOutlined />
+                          {item.phone || "-"}
+                        </Flex>
+                      </Flex>
+
+                      <Text type="secondary" ellipsis>
+                        {item.address || "-"}
+                      </Text>
+                    </Flex>
                   </List.Item>
                 )}
               />
