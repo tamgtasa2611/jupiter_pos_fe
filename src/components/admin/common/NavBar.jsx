@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import NotificationList from "../thong-bao/NotificationList";
+
 import {
   Menu,
   Button,
@@ -34,6 +36,7 @@ const { Title } = Typography;
 
 export default function NavBar({ onLogout }) {
   const [scrolled, setScrolled] = useState(false);
+  const [showAllNotifications, setShowAllNotifications] = useState(false); 
   const pathname = usePathname();
 
   // Track scroll position to add shadow when scrolled
@@ -174,11 +177,16 @@ export default function NavBar({ onLogout }) {
                 icon: <ShoppingOutlined className="text-orange-500" />,
               },
               { type: "divider" },
+
               {
                 key: "3",
-                label: "Xem tất cả thông báo",
+                label: (
+                  <div onClick={() => setShowAllNotifications(true)}>
+                    Xem tất cả thông báo
+                  </div>
+                ),
                 icon: <BellOutlined />,
-              },
+              }
             ],
           }}
           placement="bottomRight"
@@ -217,6 +225,10 @@ export default function NavBar({ onLogout }) {
         {/* User Profile */}
         <UserProfile scrolled={scrolled} onLogout={onLogout} />
       </Flex>
+
+      {showAllNotifications && (
+        <NotificationList onClose={() => setShowAllNotifications(false)} />
+      )}
     </div>
   );
 }

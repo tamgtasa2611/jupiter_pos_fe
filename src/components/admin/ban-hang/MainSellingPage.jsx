@@ -180,11 +180,12 @@ const MainSellingPage = () => {
     // Build your order payload based on the provided DTO structure
     const orderPayload = {
       customerId: customerInfo.id || null, // e.g., 0 for "Khách lẻ"
-      receiverName: customerInfo.name || "Khách lẻ",
+      receiverName: customerInfo.nyame || "Khách lẻ",
       receiverPhone: customerInfo.phone || "", // Optional, can be empty for "Khách lẻ"
       receiverAddress: "", // You can gather this from a form
       note: data.note, // Optional
       paymentMethod: data.paymentMethod, // For example
+      paid: data.paid || 0,
       orderItems: cart.map((item) => ({
         productVariantId: item.id,
         price: item.price,

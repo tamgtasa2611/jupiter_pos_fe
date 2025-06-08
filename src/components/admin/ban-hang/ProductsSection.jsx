@@ -47,11 +47,13 @@ const ProductsSection = memo(
     return (
       <Card
         className="h-full w-full"
-        bodyStyle={{
-          height: "100%",
-          padding: 16,
-          display: "flex",
-          flexDirection: "column",
+        styles={{ 
+          body:{
+            height: "100%",
+            padding: 16,
+            display: "flex",
+            flexDirection: "column",
+          }
         }}
       >
         <Flex vertical gap={16} className="h-full">
