@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, Button, message, Flex } from "antd";
 import { UserOutlined, ReloadOutlined } from "@ant-design/icons";
 import AddCustomerModal from "./AddCustomerModal";
+import ViewCustomerModal from "./ViewCustomerModal";
 import EditCustomerModal from "./EditCustomerModal";
 import DeleteCustomerModal from "./DeleteCustomerModal";
 import CustomerHeader from "./CustomerHeader";
@@ -18,6 +19,7 @@ const CustomersMainPage = () => {
 
   // State cho các modal
   const [addModalVisible, setAddModalVisible] = useState(false);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -157,6 +159,7 @@ const CustomersMainPage = () => {
             customers={customers}
             loading={loading}
             handleTableChange={handleTableChange}
+            setViewModalVisible={setViewModalVisible}
             setSelectedCustomer={setSelectedCustomer}
             setEditModalVisible={setEditModalVisible}
             setDeleteModalVisible={setDeleteModalVisible}
@@ -177,11 +180,17 @@ const CustomersMainPage = () => {
 
           {selectedCustomer && (
             <>
+              <ViewCustomerModal
+                visible={viewModalVisible}
+                onCancel={() => setViewModalVisible(false)}
+                customerId={selectedCustomer.id}
+              />
+
               <EditCustomerModal
                 visible={editModalVisible}
                 onCancel={() => setEditModalVisible(false)}
                 onEdit={handleEditCustomer}
-                customer={selectedCustomer}
+                customerId={selectedCustomer.id}
               />
               <DeleteCustomerModal
                 visible={deleteModalVisible}

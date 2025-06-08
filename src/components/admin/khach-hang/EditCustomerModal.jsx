@@ -1,60 +1,104 @@
-import React, { useEffect } from "react";
-import { Modal, Form, Input } from "antd";
+import React, { useEffect, useState } from "react";
+import { Modal, Form, Input, Button, Switch, message, Spin } from "antd";
+import { getCustomerById, updateCustomer } from "@/requests/customer";
 
-const EditCustomerModal = ({ visible, onCancel, onEdit, customer }) => {
+const EditCustomerModal = ({ visible, onCancel, onEdit, customerId }) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
+  // Khi modal mở và có customerId, gọi API lấy thông tin khách hàng
   useEffect(() => {
-    if (customer) {
-      form.setFieldsValue({
-        name: customer.name,
-        phone: customer.phone,
-        email: customer.email,
-        address: customer.address,
-      });
+    if (visible && customerId) {
+      setLoading(true);
+      getCustomerById(customerId)
+        .then((res) => {
+          // Set các trường của form: customerName, phone, gender, address
+          form.setFieldsValue({
+            customerName: res.customerName,
+            phone: res.phone,
+            gender: res.gender,
+            address: res.address,
+          });
+        })
+        .catch((error) => {
+          message.error("Lỗi khi tải thông tin khách hàng");
+          console.error(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
-  }, [customer, form]);
+  }, [visible, customerId, form]);
 
-  const handleOk = () => {
-    form.validateFields().then((values) => {
+  const handleFinish = async (values) => {
+    try {
+      // Gọi API cập nhật khách hàng, truyền customerId và payload values
+      const res = await updateCustomer(customerId, values);
+      message.success("Cập nhật khách hàng thành công");
       form.resetFields();
-      onEdit({ ...customer, ...values });
-    });
+      if (onEdit) onEdit(res.data);
+      onCancel();
+    } catch (error) {
+      message.error(
+        error.response?.data?.message || "Lỗi khi cập nhật khách hàng",
+      );
+      console.error(error);
+    }
   };
 
   return (
     <Modal
-      title="Sửa khách hàng"
-      visible={visible}
-      onOk={handleOk}
-      onCancel={onCancel}
+      title="Sửa thông tin khách hàng"
+      open={visible}
+      onCancel={() => {
+        form.resetFields();
+        onCancel();
+      }}
+      footer={null}
+      centered
+      width={600}
     >
-      <Form form={form} layout="vertical">
-        <Form.Item
-          name="name"
-          label="Tên khách hàng"
-          rules={[{ required: true, message: "Vui lòng nhập tên khách hàng!" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="phone"
-          label="Điện thoại"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[{ type: "email", message: "Email không hợp lệ!" }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item name="address" label="Địa chỉ">
-          <Input />
-        </Form.Item>
-      </Form>
+      {loading ? (
+        <div style={{ textAlign: "center", padding: 20 }}>
+          <Spin />
+        </div>
+      ) : (
+        <Form form={form} layout="vertical" onFinish={handleFinish}>
+          <Form.Item
+            name="customerName"
+            label="Tên khách hàng"
+            rules={[
+              { required: true, message: "Vui lòng nhập tên khách hàng!" },
+            ]}
+          >
+            <Input placeholder="Nhập tên khách hàng" />
+          </Form.Item>
+          <Form.Item
+            name="phone"
+            label="Số điện thoại"
+            rules={[
+              { required: true, message: "Vui lòng nhập số điện thoại!" },
+              {
+                pattern: /^[0-9]{10}$/,
+                message: "Số điện thoại không hợp lệ (10 chữ số)!",
+              },
+            ]}
+          >
+            <Input placeholder="Nhập số điện thoại" />
+          </Form.Item>
+          <Form.Item name="gender" label="Giới tính" valuePropName="checked">
+            <Switch checkedChildren="Nam" unCheckedChildren="Nữ" />
+          </Form.Item>
+          <Form.Item name="address" label="Địa chỉ">
+            <Input placeholder="Nhập địa chỉ" />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" block>
+              Cập nhật khách hàng
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 };

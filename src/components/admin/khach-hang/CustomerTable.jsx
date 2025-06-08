@@ -15,6 +15,7 @@ const CustomerTable = ({
   loading,
   handleTableChange,
   setSelectedCustomer,
+  setViewModalVisible,
   setEditModalVisible,
   setDeleteModalVisible,
   paginationConfig
@@ -103,7 +104,8 @@ const CustomerTable = ({
                   label: "Xem chi tiết",
                   icon: <EyeOutlined />,
                   onClick: () => {
-                    // Xử lý xem chi tiết nếu cần
+                    setSelectedCustomer(record);
+                    setViewModalVisible(true);
                   },
                 },
                 {

@@ -14,7 +14,7 @@ const AddCustomerModal = ({ visible, onCancel, onAdd }) => {
       if (onAdd) onAdd(response.data);
       onCancel();
     } catch (error) {
-      message.error("Lỗi khi thêm khách hàng");
+      message.error(error.response?.data?.message || "Lỗi khi thêm khách hàng");
       console.error(error);
     }
   };
@@ -26,11 +26,11 @@ const AddCustomerModal = ({ visible, onCancel, onAdd }) => {
       onCancel={onCancel}
       footer={null}
       centered
-      width={400}
+      width={600}
     >
       <Form form={form} layout="vertical" onFinish={handleFinish}>
         <Form.Item
-          name="name"
+          name="customerName"
           label="Tên khách hàng"
           rules={[{ required: true, message: "Vui lòng nhập tên khách hàng!" }]}
         >
