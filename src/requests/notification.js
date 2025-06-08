@@ -1,21 +1,13 @@
 import api from "@utils/request";
 
-export const getNotifications = async () => {
+export const getNotifications = async (page) => {
   try {
-    const notifications = await api.get(`/notifications/search`);
+    const notifications = await api.get(`/notifications/search`, {
+      params : { page }
+    });
     return notifications; 
   } catch (error) {
     console.error("Lỗi khi lấy thông báo:", error);
-    return []; // Trả về mảng rỗng nếu lỗi
-  }
-};
-
-export const getStreams = async () => {
-  try {
-    const notifications = await api.get(`/notifications/stream`);
-    return notifications; 
-  } catch (error) {
-    console.error("Lỗi khi lấy thông báo:", error);
-    return []; // Trả về mảng rỗng nếu lỗi
+    return [];
   }
 };

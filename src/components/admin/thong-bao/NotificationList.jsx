@@ -1,27 +1,44 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button, Spin, Empty } from "antd";
 import { getNotifications } from "../../../requests/notification";
 
 export default function NotificationList({ onClose }) {
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+  const listRef = useRef(null);
+
+  const fetchNotifications = async (page) => {
+    setLoading(true);
+    try {
+      const data = await getNotifications(page);
+      if (data && data.length > 0) {
+        setNotifications((prev) => [...prev, ...data]);
+        setHasMore(true);
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      setHasMore(false);
+      console.error("Lỗi khi tải thông báo:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const data = await getNotifications();
-        setNotifications(data || []);
-      } catch (error) {
-        console.error("Lỗi khi tải thông báo:", error);
-        setNotifications([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchNotifications(page);
+  }, [page]);
 
-    fetchNotifications();
-  }, []);
+  // Hàm xử lý scroll
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    if (scrollTop + clientHeight >= scrollHeight - 10 && !loading && hasMore) {
+      setPage((prev) => prev + 1);
+    }
+  };
 
   return (
     <div className="absolute top-16 right-6 w-96 max-w-full bg-white shadow-lg border border-gray-200 rounded-lg p-4 z-20 animate-fadeIn">
@@ -32,14 +49,19 @@ export default function NotificationList({ onClose }) {
         </Button>
       </div>
 
-      {loading ? (
+      {loading && notifications.length === 0 ? (
         <div className="flex justify-center items-center h-32">
           <Spin />
         </div>
       ) : notifications.length === 0 ? (
         <Empty description="Không có thông báo nào." />
       ) : (
-        <div className="space-y-3 max-h-96 overflow-y-auto">
+        <div
+          className="space-y-3 max-h-96 overflow-y-auto"
+          style={{ height: 384 }}
+          ref={listRef}
+          onScroll={handleScroll}
+        >
           {notifications.map((notification) => (
             <div
               key={notification.id}
@@ -52,6 +74,11 @@ export default function NotificationList({ onClose }) {
               </div>
             </div>
           ))}
+          {loading && (
+            <div className="flex justify-center items-center py-2">
+              <Spin size="small" />
+            </div>
+          )}
         </div>
       )}
     </div>
