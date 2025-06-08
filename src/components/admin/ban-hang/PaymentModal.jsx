@@ -24,6 +24,7 @@ import {
 } from "@ant-design/icons";
 import { ORDER_PAYMENT_METHOD } from "@constants/order";
 import TextArea from "antd/es/input/TextArea";
+import { getQRCode } from "../../../requests/payment";
 
 const { Title, Text } = Typography;
 
@@ -36,12 +37,28 @@ const PaymentModal = memo(
     );
     const [received, setReceived] = useState(0); 
     const [isProcessing, setIsProcessing] = useState(false);
+    const [qrCodeUrl, setQrCodeUrl] = useState("");
+    const [qrLoading, setQrLoading] = useState(false);
 
     // Khởi tạo giá trị received khi totalAmount thay đổi
     useEffect(() => {
       form.setFieldsValue({ paid: received });
     }, [paymentMethod, received, form]);
 
+    const handleGetQR = async () => {
+      setQrLoading(true);
+      try {
+        const res = await getQRCode(received);
+        setQrCodeUrl(res?.qrUrl || "");
+        console.log("QR Code URL:", res?.qrUrl);
+        debugger;
+      } catch {
+        setQrCodeUrl("");
+        message.error("Không lấy được mã QR");
+      } finally {
+        setQrLoading(false);
+      }
+    };
 
     const handleFinish = (values) => {
       // Check if cash received (received state) is more than the total amount
@@ -81,14 +98,9 @@ const PaymentModal = memo(
         icon: <DollarCircleOutlined />,
       },
       {
-        key: ORDER_PAYMENT_METHOD.VNPAY,
-        label: "Ví VNPay",
+        key: ORDER_PAYMENT_METHOD.BANKING,
+        label: "Chuyển khoản",
         icon: <CreditCardOutlined />,
-      },
-      {
-        key: ORDER_PAYMENT_METHOD.MOMO,
-        label: "Ví MoMo",
-        icon: <MobileOutlined />,
       },
     ];
 
@@ -168,34 +180,82 @@ const PaymentModal = memo(
               </Col>
             </Row>
           </Card>
-          {paymentMethod === ORDER_PAYMENT_METHOD.TIEN_MAT && (
-            <Flex>
-              <div className=" w-full">
-                <Text
-                  type="secondary"
-                  style={{ marginBottom: 8, display: "block" }}
+          {/* Quick amount: luôn hiển thị */}
+          <Flex>
+            <div className="w-full">
+              <Text
+                type="secondary"
+                style={{ marginBottom: 8, display: "block" }}
+              >
+                Chọn nhanh:
+              </Text>
+              <Flex
+                wrap
+                gap={16}
+                justify="space-between"
+                align="center"
+                style={{ margin: "0" }}
+              >
+                {quickAmounts.map((option) => (
+                  <Button
+                    key={option.value}
+                    onClick={() => setReceived(option.value)}
+                    style={{ minWidth: 100 }}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </Flex>
+            </div>
+          </Flex>
+          {/* QR cho BANKING */}
+          {paymentMethod === ORDER_PAYMENT_METHOD.BANKING && (
+            <Card
+              variant="borderless"
+              style={{ background: "#f9f9f9", textAlign: "center", marginTop: 24 }}
+            >
+              <Flex
+                gap={80}
+                justify="center"
+                align="center"
+                style={{ width: "100%" }}
+              >
+                <div
+                  style={{
+                    margin: "0",
+                    background: "white",
+                    padding: 16,
+                    borderRadius: 8,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                  }}
                 >
-                  Chọn nhanh:
-                </Text>
-                <Flex
-                  wrap
-                  gap={16}
-                  justify="space-between"
-                  align="center"
-                  style={{ margin: "0" }}
-                >
-                  {quickAmounts.map((option) => (
+                  {!qrCodeUrl ? (
                     <Button
-                      key={option.value}
-                      onClick={() => setReceived(option.value)}
-                      style={{ minWidth: 100 }}
+                      type="primary"
+                      loading={qrLoading}
+                      onClick={handleGetQR}
+                      disabled={received <= 0}
                     >
-                      {option.label}
+                      Quét mã QR
                     </Button>
-                  ))}
+                  ) : (
+                    <img
+                      src={qrCodeUrl}
+                      alt="QR code"
+                      style={{ width: "200px", height: "220px" }}
+                    />
+                  )}
+                </div>
+                <Flex vertical align="center" gap={8}>
+                  <Text strong style={{ fontSize: 20, marginTop: 12 }}>
+                    {received.toLocaleString()}đ
+                  </Text>
+                  <Text type="secondary">
+                    Quét mã để thanh toán
+                  </Text>
                 </Flex>
-              </div>
-            </Flex>
+              </Flex>
+            </Card>
           )}
         </div>
       );
