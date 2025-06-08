@@ -1,342 +1,187 @@
-"use client";
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  Divider,
-  Typography,
-  Tabs,
-  message,
-  Modal,
-  Table,
-  Tag,
-  Button,
-  Form,
-} from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
-import EmployeeList from "./EmployeeList";
+import { Card, message, Button, Spin, Flex } from "antd";
+import { ReloadOutlined, UserOutlined } from "@ant-design/icons";
+import EmployeeHeader from "./EmployeeHeader";
 import EmployeeSearch from "./EmployeeSearch";
-import EmployeeSales from "./EmployeeSales";
+import EmployeeTable from "./EmployeeTable";
 import {
   AddEmployeeModal,
   EditEmployeeModal,
   DeleteEmployeeModal,
+  ViewEmployeeModal,
 } from "./EmployeeModals";
-import { fetchUsers } from "@requests/user";
-
-const { Title } = Typography;
-
-// Mock data for employees
-const initialEmployees = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    code: "NV001",
-    position: "Quản lý",
-    department: "Ban quản lý",
-    phone: "0901234567",
-    email: "nguyenvana@example.com",
-    status: "active",
-    joinDate: "2022-06-15",
-    avatar: null,
-  },
-  {
-    id: 2,
-    name: "Trần Thị B",
-    code: "NV002",
-    position: "Nhân viên bán hàng",
-    department: "Kinh doanh",
-    phone: "0907654321",
-    email: "tranthib@example.com",
-    status: "active",
-    joinDate: "2022-08-10",
-    avatar: null,
-  },
-  {
-    id: 3,
-    name: "Lê Văn C",
-    code: "NV003",
-    position: "Nhân viên kho",
-    department: "Kho vận",
-    phone: "0905678123",
-    email: "levanc@example.com",
-    status: "inactive",
-    joinDate: "2023-01-05",
-    avatar: null,
-  },
-];
-
-// Mock data for attendance
-const generateMockAttendanceData = () => {
-  const attendanceData = {};
-  const today = dayjs();
-
-  // Generate attendance data for the past 30 days
-  for (let i = 0; i < 30; i++) {
-    const date = today.subtract(i, "day").format("YYYY-MM-DD");
-
-    // For each employee
-    initialEmployees.forEach((employee) => {
-      if (!attendanceData[employee.id]) {
-        attendanceData[employee.id] = [];
-      }
-
-      // Skip weekends
-      const dayOfWeek = dayjs(date).day();
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        return;
-      }
-
-      // Random attendance status
-      const random = Math.random();
-      let status;
-      let checkIn;
-      let checkOut;
-
-      if (random > 0.9) {
-        status = "absent";
-      } else if (random > 0.8) {
-        status = "late";
-        checkIn = "09:15:00";
-        checkOut = "18:05:00";
-      } else {
-        status = "present";
-        checkIn =
-          "08:" +
-          Math.floor(Math.random() * 10)
-            .toString()
-            .padStart(2, "0") +
-          ":00";
-        checkOut =
-          "18:" +
-          Math.floor(Math.random() * 30)
-            .toString()
-            .padStart(2, "0") +
-          ":00";
-      }
-
-      attendanceData[employee.id].push({
-        date,
-        status,
-        checkIn: status !== "absent" ? checkIn : null,
-        checkOut: status !== "absent" ? checkOut : null,
-      });
-    });
-  }
-
-  return attendanceData;
-};
+import {
+  getEmployees,
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+} from "@/requests/employee";
 
 const EmployeePage = () => {
-  const [employees, setEmployees] = useState(initialEmployees);
-  const [filteredEmployees, setFilteredEmployees] = useState(initialEmployees);
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [attendanceModalVisible, setAttendanceModalVisible] = useState(false);
-  const [employeeAttendance, setEmployeeAttendance] = useState({});
-  const [attendanceData, setAttendanceData] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("list");
-  const [form] = Form.useForm();
+  const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 0,
+    pageSize: 10,
+    total: 0,
+  });
 
-  // Simulating data fetching
-  useEffect(() => {
-    setTimeout(() => {
-      setAttendanceData(generateMockAttendanceData());
+  const fetchEmployees = async (
+    page = 0,
+    size = pagination.pageSize,
+    search = searchText,
+  ) => {
+    setLoading(true);
+    try {
+      const res = await getEmployees({ page, size, search });
+      setEmployees(res.content || []);
+      setPagination((prev) => ({
+        ...prev,
+        total: res.totalElements || 0,
+        current: page,
+      }));
+    } catch (error) {
+      message.error("Lỗi khi tải danh sách nhân viên");
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
+  };
 
-    fetchUsers();
+  useEffect(() => {
+    fetchEmployees();
   }, []);
 
-  // Filter employees when search text changes
-  useEffect(() => {
-    const filtered = employees.filter(
-      (employee) =>
-        employee.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        employee.code.toLowerCase().includes(searchText.toLowerCase()) ||
-        employee.position.toLowerCase().includes(searchText.toLowerCase()) ||
-        employee.department.toLowerCase().includes(searchText.toLowerCase()),
-    );
-    setFilteredEmployees(filtered);
-  }, [searchText, employees]);
-
-  const handleAddEmployee = (values) => {
-    const newEmployee = {
-      id: employees.length + 1,
-      ...values,
-      status: "active",
-      joinDate: values.joinDate.format("YYYY-MM-DD"),
-    };
-    setEmployees([...employees, newEmployee]);
-    setAddModalVisible(false);
-    form.resetFields();
-    message.success("Thêm nhân viên thành công!");
+  const handleSearch = (value) => {
+    const trimmedValue = value.trim();
+    setSearchText(trimmedValue);
+    setPagination((prev) => ({ ...prev, current: 0 }));
+    fetchEmployees(0, pagination.pageSize, trimmedValue);
   };
 
-  const handleEditEmployee = (values) => {
-    const updatedEmployees = employees.map((employee) =>
-      employee.id === selectedEmployee.id
-        ? {
-            ...employee,
-            ...values,
-            joinDate: values.joinDate.format("YYYY-MM-DD"),
-          }
-        : employee,
-    );
-    setEmployees(updatedEmployees);
-    setEditModalVisible(false);
-    message.success("Cập nhật thông tin nhân viên thành công!");
+  const handleAddEmployee = async (values) => {
+    try {
+      await createEmployee(values);
+      message.success("Thêm nhân viên thành công");
+      setAddModalVisible(false);
+      fetchEmployees();
+    } catch (error) {
+      message.error(error.response?.data?.message || "Lỗi khi thêm nhân viên");
+    }
   };
 
-  const handleDeleteEmployee = () => {
-    const updatedEmployees = employees.filter(
-      (employee) => employee.id !== selectedEmployee.id,
-    );
-    setEmployees(updatedEmployees);
-    setDeleteModalVisible(false);
-    message.success("Xóa nhân viên thành công!");
+  const handleEditEmployee = async (values) => {
+    try {
+      await updateEmployee(selectedEmployee.id, values);
+      message.success("Cập nhật nhân viên thành công");
+      setEditModalVisible(false);
+      fetchEmployees();
+    } catch (error) {
+      message.error(
+        error.response?.data?.message || "Lỗi khi cập nhật nhân viên",
+      );
+    }
   };
 
-  const showEditModal = (employee) => {
-    setSelectedEmployee(employee);
-    form.setFieldsValue({
-      ...employee,
-      joinDate: dayjs(employee.joinDate),
-    });
-    setEditModalVisible(true);
+  const handleDeleteEmployee = async () => {
+    try {
+      await deleteEmployee(selectedEmployee.id);
+      message.success("Xóa nhân viên thành công");
+      setDeleteModalVisible(false);
+      fetchEmployees();
+    } catch (error) {
+      message.error(error.response?.data?.message || "Lỗi khi xóa nhân viên");
+    }
   };
 
-  const showDeleteModal = (employee) => {
-    setSelectedEmployee(employee);
-    setDeleteModalVisible(true);
-  };
-
-  const showAttendanceModal = (employee) => {
-    setSelectedEmployee(employee);
-    setEmployeeAttendance(attendanceData[employee.id] || []);
-    setAttendanceModalVisible(true);
-  };
-
-  const renderTabs = () => {
-    const items = [
-      {
-        key: "list",
-        label: "Danh sách nhân viên",
-        children: (
-          <>
-            <EmployeeSearch
-              searchText={searchText}
-              setSearchText={setSearchText}
-              setAddModalVisible={setAddModalVisible}
-              form={form}
-            />
-            <EmployeeList
-              employees={filteredEmployees}
-              loading={loading}
-              showAttendanceModal={showAttendanceModal}
-              showEditModal={showEditModal}
-              showDeleteModal={showDeleteModal}
-            />
-          </>
-        ),
-      },
-      {
-        key: "sales",
-        label: "Doanh số",
-        children: <EmployeeSales />,
-      },
-    ];
-
-    return <Tabs activeKey={activeTab} onChange={setActiveTab} items={items} />;
+  const handleTableChange = (tablePagination, filters, sorter) => {
+    // Backend dùng page 0-index
+    const page = tablePagination.current - 1;
+    setPagination((prev) => ({
+      ...prev,
+      current: page,
+      pageSize: tablePagination.pageSize,
+    }));
+    fetchEmployees(page, tablePagination.pageSize, searchText);
   };
 
   return (
-    <div className="employee-management-container">
-      <Card>
-        <Title level={4}>Nhân viên</Title>
-        <Divider />
-        {renderTabs()}
-      </Card>
+    <Card className="transition-shadow h-fit-screen">
+      <EmployeeHeader />
+      <Flex
+        gap={16}
+        vertical
+        justify="space-between"
+        style={{ height: "100%" }}
+      >
+        <Flex gap={8} justify="space-between" align="center">
+          <EmployeeSearch
+            onSearch={handleSearch}
+            loading={loading}
+            searchText={searchText}
+            setSearchText={setSearchText}
+            isMobile={false}
+          />
+          <Flex gap={8}>
+            <Button
+              type="primary"
+              icon={<UserOutlined />}
+              onClick={() => setAddModalVisible(true)}
+            >
+              Thêm nhân viên
+            </Button>
+            <Button
+              icon={<ReloadOutlined />}
+              onClick={() => fetchEmployees()}
+              loading={loading}
+            ></Button>
+          </Flex>
+        </Flex>
 
+        <EmployeeTable
+          employees={employees}
+          loading={loading}
+          handleTableChange={handleTableChange}
+          setSelectedEmployee={setSelectedEmployee}
+          setViewModalVisible={setViewModalVisible}
+          setEditModalVisible={setEditModalVisible}
+          setDeleteModalVisible={setDeleteModalVisible}
+          paginationConfig={{
+            current: pagination.current + 1, // chuyển từ 0-index sang 1-index cho Table
+            pageSize: pagination.pageSize,
+            total: pagination.total,
+            showSizeChanger: true,
+          }}
+        />
+      </Flex>
       <AddEmployeeModal
-        addModalVisible={addModalVisible}
-        setAddModalVisible={setAddModalVisible}
-        handleAddEmployee={handleAddEmployee}
-        form={form}
+        visible={addModalVisible}
+        onCancel={() => setAddModalVisible(false)}
+        onAdd={handleAddEmployee}
       />
       <EditEmployeeModal
-        editModalVisible={editModalVisible}
-        setEditModalVisible={setEditModalVisible}
-        handleEditEmployee={handleEditEmployee}
-        form={form}
-        selectedEmployee={selectedEmployee}
+        visible={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        onEdit={handleEditEmployee}
+        employeeId={selectedEmployee?.id}
       />
       <DeleteEmployeeModal
-        deleteModalVisible={deleteModalVisible}
-        setDeleteModalVisible={setDeleteModalVisible}
-        handleDeleteEmployee={handleDeleteEmployee}
-        selectedEmployee={selectedEmployee}
+        visible={deleteModalVisible}
+        onCancel={() => setDeleteModalVisible(false)}
+        onDelete={handleDeleteEmployee}
+        employee={selectedEmployee}
       />
-
-      {/* Employee Attendance Modal */}
-      <Modal
-        title={`Bảng chấm công: ${selectedEmployee?.name}`}
-        open={attendanceModalVisible}
-        onCancel={() => setAttendanceModalVisible(false)}
-        footer={null}
-        width={800}
-      >
-        <Table
-          dataSource={employeeAttendance}
-          rowKey="date"
-          pagination={{ pageSize: 10 }}
-          loading={loading}
-          columns={[
-            {
-              title: "Ngày",
-              dataIndex: "date",
-              key: "date",
-              render: (date) => dayjs(date).format("DD/MM/YYYY"),
-            },
-            {
-              title: "Trạng thái",
-              dataIndex: "status",
-              key: "status",
-              render: (status) => {
-                let color = "green";
-                let text = "Có mặt";
-
-                if (status === "late") {
-                  color = "orange";
-                  text = "Đi muộn";
-                } else if (status === "absent") {
-                  color = "red";
-                  text = "Vắng mặt";
-                }
-
-                return <Tag color={color}>{text}</Tag>;
-              },
-            },
-            {
-              title: "Giờ vào",
-              dataIndex: "checkIn",
-              key: "checkIn",
-              render: (checkIn) => checkIn || "—",
-            },
-            {
-              title: "Giờ ra",
-              dataIndex: "checkOut",
-              key: "checkOut",
-              render: (checkOut) => checkOut || "—",
-            },
-          ]}
-        />
-      </Modal>
-    </div>
+      <ViewEmployeeModal
+        visible={viewModalVisible}
+        onCancel={() => setViewModalVisible(false)}
+        employeeId={selectedEmployee?.id}
+      />
+    </Card>
   );
 };
 

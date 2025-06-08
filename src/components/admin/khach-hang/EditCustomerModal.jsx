@@ -5,6 +5,7 @@ import { getCustomerById, updateCustomer } from "@/requests/customer";
 const EditCustomerModal = ({ visible, onCancel, onEdit, customerId }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [oldValues, setOldValues] = useState({});
 
   // Khi modal mở và có customerId, gọi API lấy thông tin khách hàng
   useEffect(() => {
@@ -14,6 +15,12 @@ const EditCustomerModal = ({ visible, onCancel, onEdit, customerId }) => {
         .then((res) => {
           // Set các trường của form: customerName, phone, gender, address
           form.setFieldsValue({
+            customerName: res.customerName,
+            phone: res.phone,
+            gender: res.gender,
+            address: res.address,
+          });
+          setOldValues({
             customerName: res.customerName,
             phone: res.phone,
             gender: res.gender,
@@ -32,11 +39,15 @@ const EditCustomerModal = ({ visible, onCancel, onEdit, customerId }) => {
 
   const handleFinish = async (values) => {
     try {
-      // Gọi API cập nhật khách hàng, truyền customerId và payload values
-      const res = await updateCustomer(customerId, values);
+      // Kiểm tra nếu không có thay đổi gì thì không cần cập nhật
+      if (JSON.stringify(oldValues) !== JSON.stringify(values)) {
+        // Gọi API cập nhật khách hàng, truyền customerId và payload values
+        const res = await updateCustomer(customerId, values);
+        if (onEdit) onEdit(res.data);
+      }
       message.success("Cập nhật khách hàng thành công");
       form.resetFields();
-      if (onEdit) onEdit(res.data);
+
       onCancel();
     } catch (error) {
       message.error(
