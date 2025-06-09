@@ -1,4 +1,4 @@
-import React, { useState, memo, useEffect } from "react";
+import React, { useState, memo, useEffect, useRef } from "react";
 import {
   Modal,
   Button,
@@ -8,12 +8,13 @@ import {
   Col,
   Card,
   Typography,
-  Divider,
+  Spin,
   Space,
   InputNumber,
   Radio,
   message,
   Flex,
+  Image,
 } from "antd";
 import {
   MobileOutlined,
@@ -25,6 +26,7 @@ import {
 import { ORDER_PAYMENT_METHOD } from "@constants/order";
 import TextArea from "antd/es/input/TextArea";
 import { getQRCode } from "../../../requests/payment";
+import Draggable from "react-draggable";
 
 const { Title, Text } = Typography;
 
@@ -35,10 +37,19 @@ const PaymentModal = memo(
     const [paymentMethod, setPaymentMethod] = useState(
       ORDER_PAYMENT_METHOD.TIEN_MAT,
     );
-    const [received, setReceived] = useState(0); 
+    const [received, setReceived] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
     const [qrCodeUrl, setQrCodeUrl] = useState("");
     const [qrLoading, setQrLoading] = useState(false);
+    const [qrModalVisible, setQrModalVisible] = useState(false);
+    const [disabledDraggable, setDisabledDraggable] = useState(true);
+    const [bounds, setBounds] = useState({
+      left: 0,
+      top: 0,
+      bottom: 0,
+      right: 0,
+    });
+    const draggleRef = useRef(null);
 
     // Khởi tạo giá trị received khi totalAmount thay đổi
     useEffect(() => {
@@ -51,7 +62,7 @@ const PaymentModal = memo(
         const res = await getQRCode(received);
         setQrCodeUrl(res?.qrUrl || "");
         console.log("QR Code URL:", res?.qrUrl);
-        debugger;
+        setQrModalVisible(true);
       } catch {
         setQrCodeUrl("");
         message.error("Không lấy được mã QR");
@@ -60,34 +71,58 @@ const PaymentModal = memo(
       }
     };
 
-    const handleFinish = (values) => {
-      // Check if cash received (received state) is more than the total amount
-      if (received > totalAmount) {
-        Modal.confirm({
-          title: "Xác nhận số tiền khách trả vượt mức",
-          content: `Số tiền khách trả (${received.toLocaleString()}đ) VƯỢT QUÁ số tiền cần thanh toán (${totalAmount.toLocaleString()}đ). Bạn có chắc chắn muốn tiếp tục?`,
-          onOk: () => {
-            console.log(values);
-            onCheckout(values);
-            form.resetFields();
-          },
-          onCancel: () => {},
-        });
-      } else if (received < totalAmount) {
-        Modal.confirm({
-          title: "Xác nhận số tiền khách trả không đủ",
-          content: `Số tiền khách trả (${received.toLocaleString()}đ) KHÔNG ĐỦ số tiền cần thanh toán (${totalAmount.toLocaleString()}đ). Bạn có chắc chắn muốn tiếp tục?`,
-          onOk: () => {
-            console.log(values);
-            onCheckout(values);
-            form.resetFields();
-          },
-          onCancel: () => {},
-        });
-      } else {
-        console.log(values);
-        onCheckout({...values, paid: received});
-        form.resetFields();
+    const validateReceivedAmount = () => {
+      return new Promise((resolve) => {
+        if (received < 0) {
+          message.error("Số tiền nhận không hợp lệ");
+          return resolve(false);
+        }
+        if (received > totalAmount) {
+          Modal.confirm({
+            title: "Xác nhận số tiền khách trả vượt mức",
+            content: `Số tiền khách trả (${received.toLocaleString()}đ) VƯỢT QUÁ số tiền cần thanh toán (${totalAmount.toLocaleString()}đ). Bạn có chắc chắn muốn tiếp tục?`,
+            onOk: () => resolve(true),
+            onCancel: () => resolve(false),
+          });
+        } else if (received < totalAmount) {
+          Modal.confirm({
+            title: "Xác nhận số tiền khách trả không đủ",
+            content: `Số tiền khách trả (${received.toLocaleString()}đ) KHÔNG ĐỦ số tiền cần thanh toán (${totalAmount.toLocaleString()}đ). Bạn có chắc chắn muốn tiếp tục?`,
+            onOk: () => resolve(true),
+            onCancel: () => resolve(false),
+          });
+        } else {
+          resolve(true);
+        }
+      });
+    };
+
+    const handleGenerateQRCode = async () => {
+      const valid = await validateReceivedAmount();
+      if (!valid) return;
+      handleGetQR();
+    };
+
+    const handleFinish = async (values) => {
+      const valid = await validateReceivedAmount();
+      if (!valid) return;
+      if (paymentMethod === ORDER_PAYMENT_METHOD.BANKING) {
+        if (!qrCodeUrl) {
+          message.error("Vui lòng tạo mã QR trước khi thanh toán");
+          return;
+        } else {
+          Modal.confirm({
+            title: "Xác nhận thanh toán bằng mã QR",
+            content: `Bạn có chắc chắn khách đã thanh toán (${totalAmount.toLocaleString()}đ)?`,
+            onOk: () => {
+              // Nếu xác nhận thành công thì mới tiến hành thanh toán
+              console.log(values);
+              onCheckout({ ...values, paid: received });
+              form.resetFields();
+            },
+            onCancel: () => {},
+          });
+        }
       }
     };
 
@@ -116,7 +151,14 @@ const PaymentModal = memo(
     ];
 
     const handleQuickAmount = (amount) => {
-      setReceived(amount);
+      if (amount === null || amount === undefined) {
+        setReceived(0);
+        return;
+      }
+      if (amount !== received) {
+        setReceived(amount);
+        setQrCodeUrl(""); // Reset QR code when changing amount
+      }
     };
 
     const changeAmount = received - totalAmount;
@@ -155,7 +197,7 @@ const PaymentModal = memo(
                   style={{ width: "100%" }}
                   size="large"
                   value={received}
-                  onChange={setReceived}
+                  onChange={(value) => handleQuickAmount(value)}
                   formatter={(value) =>
                     `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                   }
@@ -172,7 +214,7 @@ const PaymentModal = memo(
                   strong
                   style={{
                     fontSize: "18px",
-                    color: (received - totalAmount) < 0 ? "#ff4d4f" : "#52c41a",
+                    color: received - totalAmount < 0 ? "#ff4d4f" : "#52c41a",
                   }}
                 >
                   {(received - totalAmount).toLocaleString()}đ
@@ -199,7 +241,7 @@ const PaymentModal = memo(
                 {quickAmounts.map((option) => (
                   <Button
                     key={option.value}
-                    onClick={() => setReceived(option.value)}
+                    onClick={() => handleQuickAmount(option.value)}
                     style={{ minWidth: 100 }}
                   >
                     {option.label}
@@ -212,7 +254,11 @@ const PaymentModal = memo(
           {paymentMethod === ORDER_PAYMENT_METHOD.BANKING && (
             <Card
               variant="borderless"
-              style={{ background: "#f9f9f9", textAlign: "center", marginTop: 24 }}
+              style={{
+                background: "#f9f9f9",
+                textAlign: "center",
+                marginTop: 24,
+              }}
             >
               <Flex
                 gap={80}
@@ -220,39 +266,22 @@ const PaymentModal = memo(
                 align="center"
                 style={{ width: "100%" }}
               >
-                <div
-                  style={{
-                    margin: "0",
-                    background: "white",
-                    padding: 16,
-                    borderRadius: 8,
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                <Button
+                  type="primary"
+                  loading={qrLoading}
+                  onClick={() => {
+                    handleGenerateQRCode();
                   }}
+                  disabled={received <= 0}
                 >
-                  {!qrCodeUrl ? (
-                    <Button
-                      type="primary"
-                      loading={qrLoading}
-                      onClick={handleGetQR}
-                      disabled={received <= 0}
-                    >
-                      Quét mã QR
-                    </Button>
-                  ) : (
-                    <img
-                      src={qrCodeUrl}
-                      alt="QR code"
-                      style={{ width: "200px", height: "220px" }}
-                    />
-                  )}
-                </div>
+                  Tạo mã QR
+                </Button>
+
                 <Flex vertical align="center" gap={8}>
                   <Text strong style={{ fontSize: 20, marginTop: 12 }}>
                     {received.toLocaleString()}đ
                   </Text>
-                  <Text type="secondary">
-                    Quét mã để thanh toán
-                  </Text>
+                  <Text type="secondary">Quét mã để thanh toán</Text>
                 </Flex>
               </Flex>
             </Card>
@@ -262,133 +291,200 @@ const PaymentModal = memo(
     };
 
     return (
-      <Modal
-        title={null}
-        open={visible}
-        onCancel={onCancel}
-        centered
-        width={1024}
-        maskClosable={false}
-        footer={null}
-        styles={{
-          body: { padding: "0" },
-        }}
-        className="payment-modal"
-      >
-        <div
-          style={{
-            borderBottom: "1px solid #f0f0f0",
-            padding: "16px 24px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+      <>
+        <Modal
+          title={null}
+          open={visible}
+          onCancel={onCancel}
+          centered
+          width={1024}
+          maskClosable={false}
+          footer={null}
+          styles={{
+            body: { padding: "0" },
           }}
+          className="payment-modal"
         >
-          <Title level={4} style={{ margin: 0 }}>
-            Thanh toán
-          </Title>
-          <Text strong style={{ fontSize: "18px", color: "#1890ff" }}>
-            {totalAmount.toLocaleString()}đ
-          </Text>
-        </div>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFinish}
-          style={{ width: "100%", padding: "0", margin: "0" }}
-        >
-          <div style={{ padding: "24px" }}>
-            <Row gutter={[24, 24]}>
-              <Col span={24}>
-                <div style={{ padding: "16px" }}>
-                  <Form.Item name="paymentMethod" initialValue={paymentMethod} style={{ margin: 0 }}>
-                    <Radio.Group
-                      onChange={(e) => {
-                        setPaymentMethod(e.target.value);
-                        form.setFieldsValue({ paymentMethod: e.target.value });
-                      }}
-                      buttonStyle="solid"
-                      size="large"
-                      style={{ width: "100%" }}
-                    >
-                      <Row gutter={[12, 12]}>
-                        {paymentOptions.map((option) => (
-                          <Col span={8} key={option.key}>
-                            <Radio.Button
-                              value={option.key}
-                              style={{
-                                width: "100%",
-                                height: "40px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                              }}
-                            >
-                              <Flex align="center" justify="center" gap={8}>
-                                {option.icon}
-                                {option.label}
-                              </Flex>
-                            </Radio.Button>
-                          </Col>
-                        ))}
-                      </Row>
-                    </Radio.Group>
-                  </Form.Item>
-                </div>
-              </Col>
-
-              <Col span={24}>{renderPaymentForm()}</Col>
-            </Row>
-
-            <Form.Item name="paid" hidden initialValue={received}>
-              <Input />
-            </Form.Item>
-          </div>
-
-          <div style={{ width: "100%", padding: "0 24px" }}>
-            <Form.Item
-              name="note"
-              label="Ghi chú"
-              rules={[{ required: false }]}
-              style={{ width: "100%" }}
-            >
-              <TextArea
-                placeholder="Nhập ghi chú nếu có"
-                style={{ width: "100%" }}
-                rows={1}
-              />
-            </Form.Item>
-          </div>
-
           <div
             style={{
-              borderTop: "1px solid #f0f0f0",
+              borderBottom: "1px solid #f0f0f0",
               padding: "16px 24px",
               display: "flex",
               justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <Button onClick={onCancel} icon={<CloseCircleOutlined />}>
-              Hủy
-            </Button>
-
-            <Space>
-              {/* <Button icon={<PrinterOutlined />}>In trước</Button> */}
-              <Button
-                type="primary"
-                loading={isProcessing}
-                onClick={() => {
-                  form.submit();
-                }}
-                disabled={paymentMethod === "cash" && changeAmount < 0}
-                icon={<CheckCircleFilled />}
-              >
-                Hoàn tất
-              </Button>
-            </Space>
+            <Title level={4} style={{ margin: 0 }}>
+              Thanh toán
+            </Title>
+            <Text strong style={{ fontSize: "18px", color: "#1890ff" }}>
+              {totalAmount.toLocaleString()}đ
+            </Text>
           </div>
-        </Form>
-      </Modal>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleFinish}
+            style={{ width: "100%", padding: "0", margin: "0" }}
+          >
+            <div style={{ padding: "24px" }}>
+              <Row gutter={[24, 24]}>
+                <Col span={24}>
+                  <div style={{ padding: "16px" }}>
+                    <Form.Item
+                      name="paymentMethod"
+                      initialValue={paymentMethod}
+                      style={{ margin: 0 }}
+                    >
+                      <Radio.Group
+                        onChange={(e) => {
+                          setPaymentMethod(e.target.value);
+                          form.setFieldsValue({
+                            paymentMethod: e.target.value,
+                          });
+                        }}
+                        buttonStyle="solid"
+                        size="large"
+                        style={{ width: "100%" }}
+                      >
+                        <Row gutter={[12, 12]}>
+                          {paymentOptions.map((option) => (
+                            <Col span={12} key={option.key}>
+                              <Radio.Button
+                                value={option.key}
+                                style={{
+                                  width: "100%",
+                                  height: "40px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <Flex align="center" justify="center" gap={8}>
+                                  {option.icon}
+                                  {option.label}
+                                </Flex>
+                              </Radio.Button>
+                            </Col>
+                          ))}
+                        </Row>
+                      </Radio.Group>
+                    </Form.Item>
+                  </div>
+                </Col>
+
+                <Col span={24}>{renderPaymentForm()}</Col>
+              </Row>
+
+              <Form.Item name="paid" hidden initialValue={received}>
+                <Input />
+              </Form.Item>
+            </div>
+
+            <div style={{ width: "100%", padding: "0 24px" }}>
+              <Form.Item
+                name="note"
+                label="Ghi chú"
+                rules={[{ required: false }]}
+                style={{ width: "100%" }}
+              >
+                <TextArea
+                  placeholder="Nhập ghi chú nếu có"
+                  style={{ width: "100%" }}
+                  rows={1}
+                />
+              </Form.Item>
+            </div>
+
+            <div
+              style={{
+                borderTop: "1px solid #f0f0f0",
+                padding: "16px 24px",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button onClick={onCancel} icon={<CloseCircleOutlined />}>
+                Hủy
+              </Button>
+
+              <Space>
+                {/* <Button icon={<PrinterOutlined />}>In trước</Button> */}
+                <Button
+                  type="primary"
+                  loading={isProcessing}
+                  onClick={() => {
+                    form.submit();
+                  }}
+                  disabled={paymentMethod === "cash" && changeAmount < 0}
+                  icon={<CheckCircleFilled />}
+                >
+                  Hoàn tất
+                </Button>
+              </Space>
+            </div>
+          </Form>
+        </Modal>
+
+        {/* Draggable QR Code Modal */}
+        <Modal
+          zIndex={1001}
+          maskClosable={false}
+          open={qrModalVisible}
+          centered
+          title={
+            <div style={{ width: "100%", cursor: "move" }}>
+              QR Code Thanh Toán
+            </div>
+          }
+          footer={null}
+          onCancel={() => {
+            setQrModalVisible(false);
+          }}
+          modalRender={(modal) => (
+            <Draggable
+              nodeRef={draggleRef} // sử dụng nodeRef thay vì findDOMNode
+              disabled={false}
+              bounds={bounds}
+              onStart={(event, uiData) => {
+                const targetRect = draggleRef.current?.getBoundingClientRect();
+                if (targetRect) {
+                  const { clientWidth, clientHeight } =
+                    document.documentElement;
+                  setBounds({
+                    left: -targetRect.left + uiData.x,
+                    right: clientWidth - (targetRect.right - uiData.x),
+                    top: -targetRect.top + uiData.y,
+                    bottom: clientHeight - (targetRect.bottom - uiData.y),
+                  });
+                }
+                return true;
+              }}
+            >
+              <div ref={draggleRef}>{modal}</div>
+            </Draggable>
+          )}
+        >
+          <Flex
+            vertical
+            gap={8}
+            align="center"
+            justify="center"
+            style={{ padding: "16px", cursor: "move" }}
+          >
+            <Text strong>Số tiền: {received.toLocaleString()}đ</Text>
+            {qrCodeUrl ? (
+              <img
+                src={qrCodeUrl}
+                alt="QR Code"
+                style={{ width: "480px", height: "500px" }}
+              />
+            ) : (
+              <Spin />
+            )}
+          </Flex>
+        </Modal>
+      </>
     );
   },
 );
