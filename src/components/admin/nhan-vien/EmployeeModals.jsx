@@ -9,6 +9,7 @@ import {
   Switch,
   Select,
   Flex,
+  Descriptions,
 } from "antd";
 import { getEmployeeById } from "@/requests/employee";
 const { Option } = Select;
@@ -19,12 +20,14 @@ export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
   const handleFinish = async (values) => {
     try {
       // Gọi API tạo nhân viên với các trường: username, fullname, email, password, phone, gender, role, is_active
-      await onAdd(values);
-      message.success("Thêm nhân viên thành công");
-      form.resetFields();
-    } catch (error) {
-      message.error(error.response?.data?.message || "Lỗi khi thêm nhân viên");
-    }
+      const res = await onAdd(values);
+
+      if (res.response?.data?.error) {
+        return;
+      } else {
+        form.resetFields();
+      }
+    } catch (error) {}
   };
 
   return (
@@ -57,12 +60,7 @@ export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
           >
             <Input placeholder="Nhập tên đăng nhập" />
           </Form.Item>
-          <Form.Item
-            name="fullname"
-            label="Họ và tên"
-            rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
-            style={{ flex: 1 }}
-          >
+          <Form.Item name="fullname" label="Họ và tên" style={{ flex: 1 }}>
             <Input placeholder="Nhập họ và tên" />
           </Form.Item>
         </Flex>
@@ -119,7 +117,7 @@ export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
               />
             </Form.Item>
             <Form.Item
-              name="is_active"
+              name="active"
               label="Trạng thái"
               valuePropName="checked"
               initialValue={true}
@@ -159,15 +157,14 @@ export const EditEmployeeModal = ({
       setLoading(true);
       getEmployeeById(employeeId)
         .then((res) => {
-          const data = res.data;
           form.setFieldsValue({
-            code: data.code,
-            name: data.name,
-            position: data.position,
-            department: data.department,
-            phone: data.phone,
-            email: data.email,
-            joinDate: data.joinDate,
+            username: res.username,
+            fullname: res.fullname,
+            phone: res.phone,
+            email: res.email,
+            gender: res.gender, // boolean: true (Nam), false (Nữ)
+            active: res.active,
+            // Không map password để bảo mật, nếu muốn cập nhật mật khẩu thì người dùng nhập mới.
           });
         })
         .catch((error) => {
@@ -182,11 +179,15 @@ export const EditEmployeeModal = ({
 
   const handleFinish = async (values) => {
     try {
-      await onEdit(values);
-      form.resetFields();
-    } catch (error) {
-      message.error("Lỗi khi cập nhật nhân viên");
-    }
+      const res = await onEdit(values);
+      console.log(res.response?.data?.error);
+
+      if (res.response?.data?.error) {
+        return;
+      } else {
+        form.resetFields();
+      }
+    } catch (error) {}
   };
 
   return (
@@ -197,6 +198,7 @@ export const EditEmployeeModal = ({
         form.resetFields();
         onCancel();
       }}
+      maskClosable={false}
       footer={null}
       centered
       width={600}
@@ -207,60 +209,81 @@ export const EditEmployeeModal = ({
         </div>
       ) : (
         <Form form={form} layout="vertical" onFinish={handleFinish}>
-          <Form.Item
-            name="code"
-            label="Mã NV"
-            rules={[{ required: true, message: "Vui lòng nhập mã nhân viên!" }]}
+          <Flex
+            gap={8}
+            justify="space-between"
+            align="center"
+            style={{ width: "100%" }}
           >
-            <Input placeholder="Nhập mã nhân viên" />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            label="Họ và tên"
-            rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+            <Form.Item
+              name="username"
+              label="Tên đăng nhập"
+              rules={[
+                { required: true, message: "Vui lòng nhập tên đăng nhập!" },
+              ]}
+              style={{ flex: 1 }}
+            >
+              <Input placeholder="Nhập tên đăng nhập" />
+            </Form.Item>
+            <Form.Item name="fullname" label="Họ và tên" style={{ flex: 1 }}>
+              <Input placeholder="Nhập họ và tên" />
+            </Form.Item>
+          </Flex>
+          <Flex
+            gap={8}
+            justify="space-between"
+            align="center"
+            style={{ width: "100%" }}
           >
-            <Input placeholder="Nhập họ và tên" />
-          </Form.Item>
-          <Form.Item
-            name="position"
-            label="Vị trí"
-            rules={[{ required: true, message: "Vui lòng nhập vị trí!" }]}
+            <Form.Item
+              name="phone"
+              label="Số điện thoại"
+              style={{ flex: 1 }}
+              rules={[
+                {
+                  pattern: /^[0-9]{10}$/,
+                  message: "Số điện thoại không hợp lệ (10 chữ số)!",
+                },
+              ]}
+            >
+              <Input placeholder="Nhập số điện thoại" />
+            </Form.Item>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[{ type: "email", message: "Email không hợp lệ!" }]}
+              style={{ flex: 1 }}
+            >
+              <Input placeholder="Nhập email" />
+            </Form.Item>
+          </Flex>
+          <Flex
+            gap={8}
+            justify="space-between"
+            align="center"
+            style={{ width: "100%" }}
           >
-            <Input placeholder="Nhập vị trí" />
-          </Form.Item>
-          <Form.Item
-            name="department"
-            label="Phòng ban"
-            rules={[{ required: true, message: "Vui lòng nhập phòng ban!" }]}
-          >
-            <Input placeholder="Nhập phòng ban" />
-          </Form.Item>
-          <Form.Item
-            name="phone"
-            label="Số điện thoại"
-            rules={[
-              { required: true, message: "Vui lòng nhập số điện thoại!" },
-            ]}
-          >
-            <Input placeholder="Nhập số điện thoại" />
-          </Form.Item>
-          <Form.Item
-            name="email"
-            label="Email"
-            rules={[
-              { required: true, message: "Vui lòng nhập email!" },
-              { type: "email", message: "Email không hợp lệ!" },
-            ]}
-          >
-            <Input placeholder="Nhập email" />
-          </Form.Item>
-          <Form.Item
-            name="joinDate"
-            label="Ngày vào làm"
-            rules={[{ required: true, message: "Vui lòng nhập ngày vào làm!" }]}
-          >
-            <Input placeholder="YYYY-MM-DD" />
-          </Form.Item>
+            <Flex gap={8} justify="space-between" align="center">
+              <Form.Item
+                name="gender"
+                label="Giới tính"
+                valuePropName="checked"
+              >
+                <Switch checkedChildren="Nam" unCheckedChildren="Nữ" />
+              </Form.Item>
+              <Form.Item
+                name="active"
+                label="Trạng thái"
+                valuePropName="checked"
+                initialValue={true}
+              >
+                <Switch
+                  checkedChildren="Hoạt động"
+                  unCheckedChildren="Ngưng hoạt động"
+                />
+              </Form.Item>
+            </Flex>
+          </Flex>
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
               Cập nhật nhân viên
@@ -306,7 +329,7 @@ export const ViewEmployeeModal = ({ visible, onCancel, employeeId }) => {
       setLoading(true);
       getEmployeeById(employeeId)
         .then((res) => {
-          setEmployee(res.data);
+          setEmployee(res);
         })
         .catch((error) => {
           message.error("Lỗi khi tải thông tin nhân viên");
@@ -332,34 +355,27 @@ export const ViewEmployeeModal = ({ visible, onCancel, employeeId }) => {
           <Spin />
         </div>
       ) : employee ? (
-        <div>
-          <p>
-            <strong>Mã NV:</strong> {employee.code}
-          </p>
-          <p>
-            <strong>Họ và tên:</strong> {employee.name}
-          </p>
-          <p>
-            <strong>Vị trí:</strong> {employee.position}
-          </p>
-          <p>
-            <strong>Phòng ban:</strong> {employee.department}
-          </p>
-          <p>
-            <strong>SĐT:</strong> {employee.phone}
-          </p>
-          <p>
-            <strong>Email:</strong> {employee.email}
-          </p>
-          <p>
-            <strong>Ngày vào làm:</strong>{" "}
-            {new Intl.DateTimeFormat("vi-VN").format(
-              new Date(employee.joinDate),
-            )}
-          </p>
-        </div>
+        <Descriptions bordered column={1}>
+          <Descriptions.Item label="ID">{employee.id}</Descriptions.Item>
+          <Descriptions.Item label="Họ và tên">
+            {employee.fullname}
+          </Descriptions.Item>
+          <Descriptions.Item label="Tên đăng nhập">
+            {employee.username}
+          </Descriptions.Item>
+          <Descriptions.Item label="Email">{employee.email}</Descriptions.Item>
+          <Descriptions.Item label="Số điện thoại">
+            {employee.phone}
+          </Descriptions.Item>
+          <Descriptions.Item label="Giới tính">
+            {employee.gender ? "Nam" : "Nữ"}
+          </Descriptions.Item>
+          <Descriptions.Item label="Trạng thái">
+            {employee.is_active ? "Hoạt động" : "Ngưng hoạt động"}
+          </Descriptions.Item>
+        </Descriptions>
       ) : (
-        <p>Không có dữ liệu</p>
+        <div>Không có dữ liệu</div>
       )}
     </Modal>
   );

@@ -28,6 +28,12 @@ api.interceptors.response.use(
   (response) => response.data,
   (error) => {
     // Có thể xử lý lỗi toàn cục ở đây (ví dụ: thông báo hết hạn phiên đăng nhập)
+    // todo: phân biệt với lỗi khác là nhân viên ko có quyền
+    if (error?.status === 403) {
+      if (typeof window !== "undefined") {
+        window.location.href = "/dang-nhap";
+      }
+    }
     return Promise.reject(error);
   },
 );

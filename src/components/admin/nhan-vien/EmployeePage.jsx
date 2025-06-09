@@ -12,6 +12,7 @@ import {
 } from "./EmployeeModals";
 import {
   getEmployees,
+  getEmployeeById,
   createEmployee,
   updateEmployee,
   deleteEmployee,
@@ -77,14 +78,33 @@ const EmployeePage = () => {
 
   const handleEditEmployee = async (values) => {
     try {
-      await updateEmployee(selectedEmployee.id, values);
-      message.success("Cập nhật nhân viên thành công");
-      setEditModalVisible(false);
-      fetchEmployees();
+      let res;
+
+      if (
+        !(
+          selectedEmployee.username === values.username &&
+          selectedEmployee.email === values.email &&
+          selectedEmployee.fullname === values.fullname &&
+          selectedEmployee.phoneNumber === values.phoneNumber &&
+          selectedEmployee.gender === values.gender &&
+          selectedEmployee.active === values.active
+        )
+      ) {
+        res = await updateEmployee(selectedEmployee.id, values);
+      }
+      if (res?.response?.data?.error) {
+        message.error(res.response.data.message);
+        return;
+      } else {
+        message.success("Cập nhật nhân viên thành công");
+        setEditModalVisible(false);
+        fetchEmployees();
+      }
     } catch (error) {
       message.error(
         error.response?.data?.message || "Lỗi khi cập nhật nhân viên",
       );
+      return error;
     }
   };
 
