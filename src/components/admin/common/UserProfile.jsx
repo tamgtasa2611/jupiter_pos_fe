@@ -8,6 +8,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { getUserFromToken } from "@/utils/utils";
+import Link from "next/link";
 
 /*
 Hồ sơ cá nhân (Profile)
@@ -41,10 +42,13 @@ const UserProfile = ({ scrolled, onLogout }) => {
       menu={{
         items: [
           {
-            key: "1",
+            key: "/admin/tai-khoan",
             icon: <UserOutlined />,
-            label: "Hồ sơ cá nhân",
-            onClick: () => {},
+            label: (
+              <Link href="/admin/tai-khoan">
+                Hồ sơ cá nhân
+              </Link>
+            ),
           },
           {
             key: "2",

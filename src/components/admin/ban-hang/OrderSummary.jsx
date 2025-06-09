@@ -12,14 +12,14 @@ const OrderSummary = memo(({ cart, totalAmount }) => {
     <Card
       title="Tổng đơn hàng"
       className="h-full"
-      bodyStyle={{
+    styles={{ body: { 
         height: "calc(100% - 46px)", // Account for header height
         padding: "16px",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden", // Prevent the card body from expanding
-      }}
-    >
+     } 
+    }}>
       {/* Scrollable product list */}
       <div
         style={{
