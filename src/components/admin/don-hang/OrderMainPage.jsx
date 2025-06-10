@@ -25,7 +25,7 @@ const OrderMainPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState([]);
   const [dateRange, setDateRange] = useState(null);
 
   // Sorting
@@ -43,16 +43,25 @@ const OrderMainPage = () => {
   // Memo hóa các tham số truyền vào API
   const apiParams = useMemo(() => {
     return {
-      pageSize: 5,
-      pageNumber: pagination.current - 1, // Giả sử API dùng pageNumber bắt đầu từ 0
+      pageSize: pagination.pageSize,
+      pageNumber: pagination.current - 1,
       search: searchText,
-      status: selectedStatus !== "all" ? selectedStatus : undefined,
-      dateRange,
+      orderStatuses: selectedStatus.length > 0 ? selectedStatus : undefined,
+      // Chuyển dateRange thành startDate và endDate theo định dạng YYYY-MM-DD
+      startDate:
+        dateRange && dateRange[0]
+          ? dayjs(dateRange[0]).format("YYYY-MM-DD")
+          : undefined,
+      endDate:
+        dateRange && dateRange[1]
+          ? dayjs(dateRange[1]).format("YYYY-MM-DD")
+          : undefined,
       sortBy,
       sortOrder,
     };
   }, [
     pagination.current,
+    pagination.pageSize,
     searchText,
     selectedStatus,
     dateRange,
@@ -60,50 +69,53 @@ const OrderMainPage = () => {
     sortOrder,
   ]);
 
-  const fetchOrders = useCallback(
-    async (isLoadMore = false) => {
-      setLoading(true);
-      try {
-        // Nếu load thêm => giữ nguyên current, nếu không thì reset current về 1
-        const params = {
-          ...apiParams,
-          pageNumber: isLoadMore ? pagination.current : 0,
-        };
-        const response = await getOrders(params);
-        // Nếu load thêm: nối thêm, ngược lại thay thế
-        setOrders((prev) =>
-          isLoadMore
-            ? [...prev, ...(response.content || [])]
-            : response.content || [],
-        );
-        // Cập nhật lại pagination nếu có dữ liệu từ API
-        setPagination((prev) => ({
-          ...prev,
-          total: response.totalElements || prev.total,
-          current: isLoadMore ? prev.current + 1 : 1,
-        }));
-      } catch (error) {
-        // Lấy thông báo lỗi từ response nếu có, ngược lại dùng message mặc định của error
-        const errMsg = error?.response?.data?.message || "Lỗi không xác định";
-        message.error(errMsg);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [apiParams, pagination.current],
-  );
+  const fetchOrders = async (isLoadMore = false) => {
+    setLoading(true);
+    try {
+      // Nếu load thêm: giữ nguyên current, nếu không thì thiết lập trang hiện tại về 1 (0-index)
+      const params = {
+        ...apiParams,
+        pageNumber: isLoadMore ? pagination.current : 0,
+      };
+      const response = await getOrders(params);
+      // Nếu đang load thêm thì nối các đơn hàng, ngược lại thay thế
+      setOrders((prev) =>
+        isLoadMore
+          ? [...prev, ...(response.content || [])]
+          : response.content || [],
+      );
+      setPagination((prev) => ({
+        ...prev,
+        total: response.totalElements || prev.total,
+        current: isLoadMore ? prev.current + 1 : 1,
+      }));
+    } catch (error) {
+      const errMsg = error?.response?.data?.error || "Lỗi không xác định";
+      message.error(errMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Tương tự như trang khách hàng, khi search thay đổi gọi lại fetchOrders
+  const handleSearch = (value) => {
+    const trimmed = value.trim();
+    setSearchText(trimmed);
+    setPagination((prev) => ({ ...prev, current: 1 }));
+    fetchOrders(false);
+  };
 
   useEffect(() => {
     fetchOrders(false);
-  }, [searchText, selectedStatus, sortBy, sortOrder, dateRange, fetchOrders]);
+  }, [selectedStatus, sortBy, sortOrder, dateRange]);
 
-  const handleLoadMore = useCallback(() => {
+  const handleLoadMore = () => {
     if (!loading && hasMore) {
       fetchOrders(true);
     }
-  }, [loading, hasMore, fetchOrders]);
+  };
 
-  const handleTableChange = useCallback((newPagination, filters, sorter) => {
+  const handleTableChange = (newPagination, filters, sorter) => {
     setPagination((prev) => ({
       ...prev,
       current: newPagination.current,
@@ -116,23 +128,19 @@ const OrderMainPage = () => {
       setSortBy(null);
       setSortOrder(null);
     }
-  }, []);
+  };
 
-  const handleStatusFilter = useCallback((value) => {
+  const handleStatusFilter = (value) => {
     setSelectedStatus(value);
-  }, []);
+  };
 
-  const handleDateRangeChange = useCallback((dates) => {
+  const handleDateRangeChange = (dates) => {
     setDateRange(dates);
-  }, []);
+  };
 
-  const handleReload = useCallback(() => {
+  const handleReload = () => {
     fetchOrders(false);
-  }, [fetchOrders]);
-
-  const handleSearch = useCallback((value) => {
-    setSearchText(value);
-  }, []);
+  };
 
   const {
     menuDrawerOpen,
@@ -170,6 +178,8 @@ const OrderMainPage = () => {
             onDateChange={handleDateRangeChange}
             onExport={handleExport}
             onReload={handleReload}
+            setSearchText={setSearchText}
+            loading={loading}
           />
 
           {/* Order content (table or list) */}

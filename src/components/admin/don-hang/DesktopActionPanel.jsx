@@ -12,16 +12,20 @@ const DesktopActionPanel = ({
   onDateChange,
   onExport,
   onReload,
+  setSearchText,
+  loading
 }) => {
   return (
     <Flex gap={8} justify="space-between" align="center">
       <OrderSearchFilters
         searchText={searchText}
+        setSearchText={setSearchText}
         selectedStatus={selectedStatus}
         dateRange={dateRange}
         onSearch={onSearch}
         onStatusChange={onStatusChange}
         onDateChange={onDateChange}
+        loading={loading}
       />
 
       <OrderActions onExport={onExport} onReload={onReload} />
