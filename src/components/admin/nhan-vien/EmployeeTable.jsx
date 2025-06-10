@@ -29,7 +29,6 @@ const EmployeeTable = ({
       const res = await deleteUser(selectedEmployee.id);
       if (res) {
         message.error(res || "Xóa nhân viên thất bại!");
-        debugger;
         return;
       }
       message.success("Xóa nhân viên thành công!");
@@ -37,7 +36,6 @@ const EmployeeTable = ({
       if (onDeleteUser) onDeleteUser();
     } catch (error) {
       console.log(res);
-
       message.error(error?.response?.data?.message || "Xóa nhân viên thất bại!");
     }
   };

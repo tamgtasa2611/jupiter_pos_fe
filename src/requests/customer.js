@@ -39,3 +39,13 @@ export const updateCustomer = async (id, data = {}) => {
     throw error;
   }
 };
+
+export const deleteCustomer = async (customerId) => {
+  try {
+    const res = await api.delete(`/customers/delete/${customerId}`);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
