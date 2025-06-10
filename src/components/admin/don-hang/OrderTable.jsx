@@ -1,5 +1,6 @@
 import React from "react";
-import { Table, Button, Tag, Space } from "antd";
+import { Table, Button, Tag, Space, Dropdown } from "antd";
+import { EyeOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
 import { ORDER_STATUS_MAP } from "@constants/order";
 
 const OrderTable = ({
@@ -71,11 +72,33 @@ const OrderTable = ({
       title: "Thao tác",
       key: "action",
       render: (_, record) => (
-        <Space size="middle">
-          <Button type="text" onClick={() => onShowDetails(record)}>
-            Xem chi tiết
-          </Button>
-        </Space>
+        <Dropdown
+          trigger={["click"]}
+          menu={{
+            items: [
+              {
+                key: "view",
+                label: "Xem chi tiết",
+                icon: <EyeOutlined />,
+                onClick: () => {
+                  // setSelectedCustomer(record);
+                  // setViewModalVisible(true);
+                },
+              },
+              {
+                key: "edit",
+                label: "Chỉnh sửa",
+                icon: <EditOutlined />,
+                onClick: () => {
+                  // setSelectedCustomer(record);
+                  // setEditModalVisible(true);
+                },
+              },
+            ],
+          }}
+        >
+          <Button type="text" icon={<MoreOutlined />} />
+        </Dropdown>
       ),
     },
   ];

@@ -97,6 +97,7 @@ const CustomerTable = ({
         width: 100,
         render: (_, record) => (
           <Dropdown
+          trigger={["click"]}
             menu={{
               items: [
                 {

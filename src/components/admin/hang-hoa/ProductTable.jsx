@@ -88,6 +88,7 @@ const ProductTable = ({
       width: 100,
       render: (_, record) => (
         <Dropdown
+        trigger={["click"]}
           menu={{
             items: [
               {
@@ -236,6 +237,7 @@ const ProductTable = ({
                 width: 100,
                 render: (_, variant) => (
                   <Dropdown
+                  trigger={["click"]}
                     menu={{
                       items: [
                         {

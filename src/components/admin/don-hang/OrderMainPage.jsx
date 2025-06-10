@@ -172,11 +172,6 @@ const OrderMainPage = () => {
               />
             )}
 
-            {/* Mobile search bar */}
-            {isMobile && (
-              <MobileControls searchText={searchText} onSearch={handleSearch} />
-            )}
-
             {/* Order content (table or list) */}
             <OrderContent
               isMobile={isMobile}
@@ -191,23 +186,6 @@ const OrderMainPage = () => {
           </Flex>
         </div>
       </Card>
-
-      {/* Mobile Menu Drawer */}
-      <MobileMenuDrawer
-        open={menuDrawerOpen}
-        onClose={() => setMenuDrawerOpen(false)}
-        onExport={handleExport}
-      />
-
-      {/* Mobile Filter Drawer */}
-      <MobileFilterDrawer
-        open={filterDrawerOpen}
-        onClose={() => setFilterDrawerOpen(false)}
-        selectedStatus={selectedStatus}
-        dateRange={dateRange}
-        onStatusChange={handleStatusFilter}
-        onDateChange={handleDateRangeChange}
-      />
 
       {/* Order Details Modal */}
       <OrderDetailsModal

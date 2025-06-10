@@ -62,6 +62,7 @@ const EmployeeTable = ({
         width: 100,
         render: (_, record) => (
           <Dropdown
+            trigger={["click"]}
             menu={{
               items: [
                 {

@@ -358,7 +358,7 @@ export const ViewEmployeeModal = ({ visible, onCancel, employeeId }) => {
         <Descriptions bordered column={1}>
           <Descriptions.Item label="ID">{employee.id}</Descriptions.Item>
           <Descriptions.Item label="Họ và tên">
-            {employee.fullname}
+            {employee.fullName}
           </Descriptions.Item>
           <Descriptions.Item label="Tên đăng nhập">
             {employee.username}
@@ -371,7 +371,7 @@ export const ViewEmployeeModal = ({ visible, onCancel, employeeId }) => {
             {employee.gender ? "Nam" : "Nữ"}
           </Descriptions.Item>
           <Descriptions.Item label="Trạng thái">
-            {employee.is_active ? "Hoạt động" : "Ngưng hoạt động"}
+            {employee.active ? "Hoạt động" : "Ngưng hoạt động"}
           </Descriptions.Item>
         </Descriptions>
       ) : (

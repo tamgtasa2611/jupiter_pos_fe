@@ -44,11 +44,7 @@ const UserProfile = ({ scrolled, onLogout }) => {
           {
             key: "/admin/tai-khoan",
             icon: <UserOutlined />,
-            label: (
-              <Link href="/admin/tai-khoan">
-                Hồ sơ cá nhân
-              </Link>
-            ),
+            label: <Link href="/admin/tai-khoan">Hồ sơ cá nhân</Link>,
           },
           {
             key: "2",
