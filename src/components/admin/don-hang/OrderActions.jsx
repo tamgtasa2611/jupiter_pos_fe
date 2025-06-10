@@ -12,7 +12,7 @@ import Link from "next/link";
 
 const OrderActions = ({ onExport, onReload }) => {
   return (
-    <Flex gap={8} wrap="wrap">
+    <Flex gap={8}>
       <Link href="/admin/ban-hang">
         <Button type="primary" icon={<PlusOutlined />}>
           Thêm đơn hàng

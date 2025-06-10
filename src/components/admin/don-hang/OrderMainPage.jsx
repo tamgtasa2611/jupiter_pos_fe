@@ -149,42 +149,41 @@ const OrderMainPage = () => {
   return (
     <>
       <Card className="transition-shadow h-fit-screen">
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          <Flex vertical gap={16}>
-            {/* Header with title */}
-            <OrderHeader
-              isMobile={isMobile}
-              setMenuDrawerOpen={setMenuDrawerOpen}
-              setFilterDrawerOpen={setFilterDrawerOpen}
-            />
+        <OrderHeader
+          isMobile={isMobile}
+          setMenuDrawerOpen={setMenuDrawerOpen}
+          setFilterDrawerOpen={setFilterDrawerOpen}
+        />
 
-            {/* Desktop Search and Actions */}
-            {!isMobile && (
-              <DesktopActionPanel
-                searchText={searchText}
-                selectedStatus={selectedStatus}
-                dateRange={dateRange}
-                onSearch={handleSearch}
-                onStatusChange={handleStatusFilter}
-                onDateChange={handleDateRangeChange}
-                onExport={handleExport}
-                onReload={handleReload}
-              />
-            )}
+        <Flex
+          gap={16}
+          vertical
+          justify="space-between"
+          style={{ height: "100%", flex: 1 }}
+        >
+          <DesktopActionPanel
+            searchText={searchText}
+            selectedStatus={selectedStatus}
+            dateRange={dateRange}
+            onSearch={handleSearch}
+            onStatusChange={handleStatusFilter}
+            onDateChange={handleDateRangeChange}
+            onExport={handleExport}
+            onReload={handleReload}
+          />
 
-            {/* Order content (table or list) */}
-            <OrderContent
-              isMobile={isMobile}
-              orders={orders}
-              loading={loading}
-              pagination={pagination}
-              hasMore={hasMore}
-              onTableChange={handleTableChange}
-              onLoadMore={handleLoadMore}
-              onShowDetails={handleShowOrderDetails}
-            />
-          </Flex>
-        </div>
+          {/* Order content (table or list) */}
+          <OrderContent
+            isMobile={isMobile}
+            orders={orders}
+            loading={loading}
+            pagination={pagination}
+            hasMore={hasMore}
+            onTableChange={handleTableChange}
+            onLoadMore={handleLoadMore}
+            onShowDetails={handleShowOrderDetails}
+          />
+        </Flex>
       </Card>
 
       {/* Order Details Modal */}

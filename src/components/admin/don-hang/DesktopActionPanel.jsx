@@ -14,13 +14,7 @@ const DesktopActionPanel = ({
   onReload,
 }) => {
   return (
-    <Flex
-      justify="space-between"
-      align="center"
-      wrap="wrap"
-      gap={16}
-      className="mb-6"
-    >
+    <Flex gap={8} justify="space-between" align="center">
       <OrderSearchFilters
         searchText={searchText}
         selectedStatus={selectedStatus}

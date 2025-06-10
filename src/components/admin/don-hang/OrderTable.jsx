@@ -15,11 +15,14 @@ const OrderTable = ({
       title: "ID",
       dataIndex: "id",
       key: "id",
+      width: 80,
+      ellipsis: true,
     },
     {
       title: "Ngày đặt",
       dataIndex: "orderDate",
       key: "orderDate",
+      width: 100,
       ellipsis: true,
       render: (text) => new Intl.DateTimeFormat("vi-VN").format(new Date(text)),
     },
@@ -28,18 +31,22 @@ const OrderTable = ({
       dataIndex: "receiverName",
       key: "receiverName",
       ellipsis: true,
+      render: (name) => name || "-",
     },
     {
       title: "SĐT",
       dataIndex: "receiverPhone",
       key: "receiverPhone",
+      width: 100,
       ellipsis: true,
+      render: (phone) => phone || "-",
     },
     {
       title: "Địa chỉ",
       dataIndex: "receiverAddress",
       key: "receiverAddress",
       ellipsis: true,
+      render: (address) => address || "-",
     },
     {
       title: "Ghi chú",
@@ -52,13 +59,16 @@ const OrderTable = ({
       title: "Tổng tiền",
       dataIndex: "totalAmount",
       key: "totalAmount",
+      width: 140,
       ellipsis: true,
-      render: (amount) => new Intl.NumberFormat("vi-VN").format(amount) + "đ",
+      render: (amount) =>
+        new Intl.NumberFormat("vi-VN").format(amount || 0) + "đ",
     },
     {
       title: "Trạng thái",
       dataIndex: "orderStatus",
       key: "orderStatus",
+      width: 140,
       ellipsis: true,
       render: (status) => {
         const currentStatus = ORDER_STATUS_MAP[status] || {
@@ -71,6 +81,7 @@ const OrderTable = ({
     {
       title: "Thao tác",
       key: "action",
+      width: 100,
       render: (_, record) => (
         <Dropdown
           trigger={["click"]}
@@ -113,7 +124,7 @@ const OrderTable = ({
       onChange={onTableChange}
       bordered
       scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
-      style={{ height: "100%" }}
+      style={{ height: "100%", flex: 1 }}
       sticky
       size="middle"
       locale={{ emptyText: "Không có dữ liệu" }}

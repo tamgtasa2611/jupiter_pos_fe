@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Input, Select, DatePicker } from "antd";
+import { Flex, Input, Select, DatePicker, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
@@ -7,21 +7,34 @@ const { RangePicker } = DatePicker;
 
 const OrderSearchFilters = ({
   searchText,
+  setSearchText,
   selectedStatus,
   dateRange,
   onSearch,
   onStatusChange,
   onDateChange,
+  loading,
 }) => {
   return (
     <Flex gap={12} wrap="wrap">
-      <Input
-        placeholder="Tìm kiếm theo mã, tên khách hàng..."
+      <Input.Search
+        placeholder="Tìm kiếm theo tên khách hàng, email, số điện thoại..."
         prefix={<SearchOutlined />}
         value={searchText}
-        onChange={(e) => onSearch(e.target.value)}
-        style={{ width: 300 }}
+        onChange={(e) => setSearchText(e.target.value)}
+        // Chỉ gọi API khi bấm Enter hoặc click nút tìm kiếm
+        onSearch={onSearch}
+        enterButton={
+          loading ? (
+            <Spin size="small" style={{ color: "white" }} />
+          ) : (
+            <SearchOutlined />
+          )
+        }
+        readOnly={loading}
+        style={{ width: 440 }}
         allowClear
+        onClear={() => onSearch("")}
       />
 
       <Select
