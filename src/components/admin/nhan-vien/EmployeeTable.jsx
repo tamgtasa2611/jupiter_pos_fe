@@ -1,11 +1,13 @@
-import React, { useMemo } from "react";
-import { Table, Dropdown, Button, Space } from "antd";
+import React, { useMemo, useState } from "react";
+import { Table, Dropdown, Button, Space, message } from "antd";
 import {
   MoreOutlined,
   EditOutlined,
   DeleteOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
+import { deleteUser } from "@/requests/user";
+import DeleteEmployeeModal from "./DeleteEmployeeModal";
 
 const EmployeeTable = ({
   employees,
@@ -16,7 +18,30 @@ const EmployeeTable = ({
   setEditModalVisible,
   setDeleteModalVisible,
   paginationConfig,
+  onDeleteUser,
 }) => {
+  const [selectedEmployee, setSelectedEmployeeState] = useState(null);
+  const [localDeleteModalVisible, setLocalDeleteModalVisible] = useState(false); // renamed
+
+  const handleDeleteEmployee = async () => {
+    if (!selectedEmployee) return;
+    try {
+      const res = await deleteUser(selectedEmployee.id);
+      if (res) {
+        message.error(res || "Xóa nhân viên thất bại!");
+        debugger;
+        return;
+      }
+      message.success("Xóa nhân viên thành công!");
+      setLocalDeleteModalVisible(false);
+      if (onDeleteUser) onDeleteUser();
+    } catch (error) {
+      console.log(res);
+
+      message.error(error?.response?.data?.message || "Xóa nhân viên thất bại!");
+    }
+  };
+
   const columns = useMemo(
     () => [
       { title: "ID", dataIndex: "id", key: "id", width: 60 },
@@ -88,8 +113,8 @@ const EmployeeTable = ({
                   label: "Xóa",
                   icon: <DeleteOutlined />,
                   onClick: () => {
-                    setSelectedEmployee(record);
-                    setDeleteModalVisible(true);
+                    setSelectedEmployeeState(record);
+                    setLocalDeleteModalVisible(true); // use the renamed setter
                   },
                 },
               ],
@@ -109,20 +134,28 @@ const EmployeeTable = ({
   );
 
   return (
-    <Table
-      columns={columns}
-      dataSource={employees}
-      rowKey="id"
-      loading={loading}
-      pagination={paginationConfig}
-      onChange={handleTableChange}
-      bordered
-      size="middle"
-      scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
-      style={{ height: "100%" }}
-      sticky
-      locale={{ emptyText: "Không có dữ liệu" }}
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={employees}
+        rowKey="id"
+        loading={loading}
+        pagination={paginationConfig}
+        onChange={handleTableChange}
+        bordered
+        size="middle"
+        scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
+        style={{ height: "100%" }}
+        sticky
+        locale={{ emptyText: "Không có dữ liệu" }}
+      />
+      <DeleteEmployeeModal
+        visible={localDeleteModalVisible}
+        onCancel={() => setLocalDeleteModalVisible(false)}
+        onDelete={handleDeleteEmployee}
+        employee={selectedEmployee}
+      />
+    </>
   );
 };
 

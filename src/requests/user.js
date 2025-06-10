@@ -39,3 +39,13 @@ export const verifyOtpAndChangePws = async (data) => {
     return [];
   }
 };
+
+export const deleteUser = async (userId) => {
+  try {
+    const res = await api.delete(`/users/delete/${userId}`);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi xóa user!", error);
+    return error?.response?.data?.message;
+  }
+};
