@@ -205,6 +205,8 @@ const ModalManager = ({
             reloadUnits={reloadUnits}
             reloadAttributes={reloadAttributes}
             isMobile={isMobile}
+            handleAddUnit={handleAddUnit}
+            handleAddAttribute={handleAddAttribute}
           />
         </>
       )}

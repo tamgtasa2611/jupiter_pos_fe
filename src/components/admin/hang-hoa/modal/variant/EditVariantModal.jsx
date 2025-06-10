@@ -40,6 +40,8 @@ const EditVariantModal = ({
   attributes = [],
   reloadAttributes,
   isMobile,
+  handleAddUnit = () => {},
+  handleAddAttribute = () => {},
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -121,7 +123,7 @@ const EditVariantModal = ({
         imagePaths: variantImages,
       };
 
-      await onEdit(variantId, payload);
+      const result = await onEdit(variantId, payload);
       form.resetFields();
       setVariantImages([]);
       setLoading(false);
@@ -203,7 +205,18 @@ const EditVariantModal = ({
             <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
           </Form.Item>
           <Form.Item name="unitId" label="Đơn vị tính">
-            <Select placeholder="Chọn đơn vị tính">
+            <Select
+              placeholder="Chọn đơn vị tính"
+              popupRender={(menu) => (
+                <>
+                  {menu}
+                  <Divider dashed style={{ margin: "4px 0" }} />
+                  <Button type="link" block onClick={handleAddUnit}>
+                    Thêm đơn vị mới
+                  </Button>
+                </>
+              )}
+            >
               {units.map((unit) => (
                 <Option key={unit.id} value={unit.id}>
                   {unit.name}
@@ -262,6 +275,19 @@ const EditVariantModal = ({
                           value: attr.id,
                           label: attr.attributeName,
                         }))}
+                        popupRender={(menu) => (
+                          <>
+                            {menu}
+                            <Divider dashed style={{ margin: "4px 0" }} />
+                            <Button
+                              type="link"
+                              block
+                              onClick={handleAddAttribute}
+                            >
+                              Thêm thuộc tính mới
+                            </Button>
+                          </>
+                        )}
                       />
                     </Form.Item>
                     <Form.Item
@@ -288,6 +314,15 @@ const EditVariantModal = ({
                           value: unit.id,
                           label: unit.name,
                         }))}
+                        popupRender={(menu) => (
+                          <>
+                            {menu}
+                            <Divider dashed style={{ margin: "4px 0" }} />
+                            <Button type="link" block onClick={handleAddUnit}>
+                              Thêm đơn vị mới
+                            </Button>
+                          </>
+                        )}
                       />
                     </Form.Item>
                     <DeleteOutlined

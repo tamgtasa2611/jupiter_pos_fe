@@ -84,7 +84,10 @@ const ProductCard = memo(
           <Paragraph
             level={5}
             style={{ margin: 0, fontWeight: "bold" }}
-            ellipsis={{ rows: 2 }}
+            ellipsis={{
+              rows: 2,
+              tooltip: { title: product.name, placement: "right" },
+            }}
           >
             {product.name}
           </Paragraph>
@@ -92,7 +95,13 @@ const ProductCard = memo(
 
         {/* Thuoc tinh sản phẩm */}
         <div style={{ flex: 1, minHeight: 40, maxHeight: 40 }}>
-          <Paragraph style={{ margin: 0 }} ellipsis={{ rows: 2 }}>
+          <Paragraph
+            style={{ margin: 0 }}
+            ellipsis={{
+              rows: 2,
+              tooltip: { title: attrValues, placement: "right" },
+            }}
+          >
             {attrValues}
           </Paragraph>
         </div>
