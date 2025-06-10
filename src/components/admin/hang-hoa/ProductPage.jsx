@@ -353,13 +353,14 @@ const ProductPage = () => {
         updateVariant(id, data),
         timeoutPromise,
       ]);
-      if (!response || response.error) {
-        throw new Error(response?.error || "API error");
+      if (!response || response?.data?.error) {
+        throw new Error(response?.data?.error || "API error");
+      } else {
+        // Refresh product list after editing
+        handleRefresh();
+        message.success("Cập nhật biến thể sản phẩm thành công");
+        setEditVariantModalVisible(false);
       }
-      // Refresh product list after editing
-      handleRefresh();
-      message.success("Cập nhật biến thể sản phẩm thành công");
-      setEditVariantModalVisible(false);
     } catch (error) {
       console.error("Lỗi khi cập nhật biến thể sản phẩm:", error);
       message.error(
