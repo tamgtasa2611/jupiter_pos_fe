@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/:path*/index.txt",
+      "destination": "/404"
+    }
+  ]
+}
