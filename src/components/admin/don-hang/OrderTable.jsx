@@ -8,7 +8,8 @@ const OrderTable = ({
   loading,
   pagination,
   onTableChange,
-  onShowDetails,
+  setSelectedOrderId,
+  setViewModalVisible,
 }) => {
   const columns = [
     {
@@ -92,8 +93,8 @@ const OrderTable = ({
                 label: "Xem chi tiết",
                 icon: <EyeOutlined />,
                 onClick: () => {
-                  // setSelectedCustomer(record);
-                  // setViewModalVisible(true);
+                  setSelectedOrderId(record.id);
+                  setViewModalVisible(true);
                 },
               },
               {

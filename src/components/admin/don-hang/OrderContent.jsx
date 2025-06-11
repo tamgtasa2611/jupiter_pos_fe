@@ -10,7 +10,8 @@ const OrderContent = ({
   hasMore,
   onTableChange,
   onLoadMore,
-  onShowDetails,
+  setSelectedOrderId,
+  setViewModalVisible,
 }) => {
   return isMobile ? (
     <MobileOrderList
@@ -18,7 +19,7 @@ const OrderContent = ({
       loading={loading}
       hasMore={hasMore}
       onLoadMore={onLoadMore}
-      onShowDetails={onShowDetails}
+      onShowDetails={() => {}}
     />
   ) : (
     <OrderTable
@@ -26,7 +27,8 @@ const OrderContent = ({
       loading={loading}
       pagination={pagination}
       onTableChange={onTableChange}
-      onShowDetails={onShowDetails}
+      setSelectedOrderId={setSelectedOrderId}
+      setViewModalVisible={setViewModalVisible}
     />
   );
 };

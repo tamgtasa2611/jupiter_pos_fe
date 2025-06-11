@@ -19,3 +19,13 @@ export const createOrder = async (data) => {
     throw error;
   }
 };
+
+export const getOrderById = async (id) => {
+  try {
+    const res = await api.get(`/orders/${id}`);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

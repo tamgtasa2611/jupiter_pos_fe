@@ -10,7 +10,7 @@ import NumericKeypad from "./NumericKeypad";
 import { getProducts, getProductsVariants } from "@requests/product";
 import { createOrder } from "@requests/order";
 import { getCustomers } from "@requests/customer";
-import { ORDER_STATUS } from "@constants/order";
+import { ORDER_STATUS, PAYMENT_METHOD } from "@constants/order";
 const { Text } = Typography;
 import { KHACH_LE } from "@constants/customer";
 
@@ -180,7 +180,6 @@ const MainSellingPage = () => {
       receiverPhone: customerInfo.phone || "",
       receiverAddress: "",
       note: data.note,
-      paymentMethod: data.paymentMethod,
       paid: data.paid || 0,
       orderItems: cart.map((item) => ({
         productVariantId: item.id,
@@ -189,6 +188,7 @@ const MainSellingPage = () => {
         soldPrice: item.price,
       })),
       orderStatus: ORDER_STATUS.CHO_XAC_NHAN,
+      paymentMethod: data?.paymentMethod || PAYMENT_METHOD.TIEN_MAT,
     };
 
     try {

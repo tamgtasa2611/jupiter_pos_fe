@@ -41,8 +41,50 @@ export const ORDER_STATUS_MAP = {
   },
 };
 
-export const ORDER_PAYMENT_METHOD = {
+export const PAYMENT_METHOD = {
   TIEN_MAT: "TIEN_MAT",
-  MOMO: "MOMO",
-  VNPAY: "VNPAY",
+  BANKING: "BANKING",
+};
+
+export const PAYMENT_METHOD_MAP = {
+  TIEN_MAT: {
+    label: "Tiền mặt",
+    value: PAYMENT_METHOD.TIEN_MAT,
+    color: "blue",
+  },
+  BANKING: {
+    label: "Ngân hàng",
+    value: PAYMENT_METHOD.BANKING,
+    color: "orange",
+  },
+};
+
+export const PAYMENT_STATUS = {
+  CHUA_THANH_TOAN: "CHUA_THANH_TOAN",
+  THANH_TOAN_THANH_CONG: "THANH_TOAN_THANH_CONG",
+  THANH_TOAN_THAT_BAI: "THANH_TOAN_THAT_BAI",
+  THANH_TOAN_CO_THE_BI_GIA_MAO: "THANH_TOAN_CO_THE_BI_GIA_MAO",
+};
+
+export const PAYMENT_STATUS_MAP = {
+  CHUA_THANH_TOAN: {
+    label: "Chưa thanh toán",
+    value: PAYMENT_STATUS.CHUA_THANH_TOAN,
+    color: "red",
+  },
+  THANH_TOAN_THANH_CONG: {
+    label: "Thanh toán thành công",
+    value: PAYMENT_STATUS.THANH_TOAN_THANH_CONG,
+    color: "green",
+  },
+  THANH_TOAN_THAT_BAI: {
+    label: "Thanh toán thất bại",
+    value: PAYMENT_STATUS.THANH_TOAN_THAT_BAI,
+    color: "orange",
+  },
+  THANH_TOAN_CO_THE_BI_GIA_MAO: {
+    label: "Thanh toán có thể bị giả mạo",
+    value: PAYMENT_STATUS.THANH_TOAN_CO_THE_BI_GIA_MAO,
+    color: "purple",
+  },
 };

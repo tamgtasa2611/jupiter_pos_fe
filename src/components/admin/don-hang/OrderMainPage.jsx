@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, Flex, message } from "antd";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
@@ -8,11 +8,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import OrderHeader from "./OrderHeader";
 import DesktopActionPanel from "./DesktopActionPanel";
 import OrderContent from "./OrderContent";
-import MobileControls from "./mobile/MobileControls";
-import MobileMenuDrawer from "./mobile/MobileMenuDrawer";
-import MobileFilterDrawer from "./mobile/MobileFilterDrawer";
-import ModalManager from "./ModalManager";
-import OrderDetailsModal from "./OrderDetailsModal";
+import ViewOrderModal from "./ViewOrderModal";
 import { getOrders } from "@requests/order";
 
 dayjs.extend(isBetween);
@@ -35,6 +31,9 @@ const OrderMainPage = () => {
     total: 0,
     showSizeChanger: true,
   });
+
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [viewModalVisible, setViewModalVisible] = useState(false);
 
   const apiParams = useMemo(() => {
     return {
@@ -136,25 +135,13 @@ const OrderMainPage = () => {
     fetchOrders(false);
   };
 
-  const {
-    menuDrawerOpen,
-    setMenuDrawerOpen,
-    filterDrawerOpen,
-    setFilterDrawerOpen,
-    isDetailsModalVisible,
-    setIsDetailsModalVisible,
-    selectedOrder,
-    handleShowOrderDetails,
-    handleExport,
-  } = ModalManager();
-
   return (
     <>
       <Card className="transition-shadow h-fit-screen">
         <OrderHeader
           isMobile={isMobile}
-          setMenuDrawerOpen={setMenuDrawerOpen}
-          setFilterDrawerOpen={setFilterDrawerOpen}
+          setMenuDrawerOpen={() => {}}
+          setFilterDrawerOpen={() => {}}
         />
 
         <Flex
@@ -170,7 +157,7 @@ const OrderMainPage = () => {
             onSearch={handleSearch}
             onStatusChange={handleStatusFilter}
             onDateChange={handleDateRangeChange}
-            onExport={handleExport}
+            onExport={() => {}}
             onReload={handleReload}
             setSearchText={setSearchText}
             loading={loading}
@@ -185,16 +172,17 @@ const OrderMainPage = () => {
             hasMore={hasMore}
             onTableChange={handleTableChange}
             onLoadMore={handleLoadMore}
-            onShowDetails={handleShowOrderDetails}
+            setSelectedOrderId={setSelectedOrderId}
+            setViewModalVisible={setViewModalVisible}
           />
         </Flex>
       </Card>
 
       {/* Order Details Modal */}
-      <OrderDetailsModal
-        visible={isDetailsModalVisible}
-        onCancel={() => setIsDetailsModalVisible(false)}
-        order={selectedOrder}
+      <ViewOrderModal
+        visible={viewModalVisible}
+        onCancel={() => setViewModalVisible(false)}
+        orderId={selectedOrderId}
       />
     </>
   );

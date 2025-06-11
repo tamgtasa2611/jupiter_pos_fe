@@ -23,7 +23,7 @@ import {
   CreditCardOutlined,
   DollarCircleOutlined,
 } from "@ant-design/icons";
-import { ORDER_PAYMENT_METHOD } from "@constants/order";
+import { PAYMENT_METHOD } from "@constants/order";
 import TextArea from "antd/es/input/TextArea";
 import { getQRCode } from "../../../requests/payment";
 import Draggable from "react-draggable";
@@ -33,15 +33,12 @@ const { Title, Text } = Typography;
 const PaymentModal = memo(
   ({ visible, onCancel, onCheckout, totalAmount, cartSummary }) => {
     const [form] = Form.useForm();
-    const [paymentMethod, setPaymentMethod] = useState(
-      ORDER_PAYMENT_METHOD.TIEN_MAT,
-    );
+    const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHOD.TIEN_MAT);
     const [received, setReceived] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
     const [qrCodeUrl, setQrCodeUrl] = useState("");
     const [qrLoading, setQrLoading] = useState(false);
     const [qrModalVisible, setQrModalVisible] = useState(false);
-    const [disabledDraggable, setDisabledDraggable] = useState(true);
     const [bounds, setBounds] = useState({
       left: 0,
       top: 0,
@@ -106,7 +103,7 @@ const PaymentModal = memo(
       if (!valid) {
         return;
       } else {
-        if (paymentMethod === ORDER_PAYMENT_METHOD.BANKING) {
+        if (paymentMethod === PAYMENT_METHOD.BANKING) {
           if (!qrCodeUrl) {
             message.error("Vui lòng tạo mã QR trước khi thanh toán");
             return;
@@ -117,15 +114,23 @@ const PaymentModal = memo(
               onOk: () => {
                 // Nếu xác nhận thành công thì mới tiến hành thanh toán
                 console.log(values);
-                onCheckout({ ...values, paid: received });
+                onCheckout({
+                  ...values,
+                  paid: received,
+                  paymentMethod: paymentMethod,
+                });
                 form.resetFields();
               },
               onCancel: () => {},
             });
           }
-        } else if (paymentMethod === ORDER_PAYMENT_METHOD.TIEN_MAT) {
+        } else if (paymentMethod === PAYMENT_METHOD.TIEN_MAT) {
           console.log(values);
-          onCheckout({ ...values, paid: received });
+          onCheckout({
+            ...values,
+            paid: received,
+            paymentMethod: paymentMethod,
+          });
           form.resetFields();
         }
       }
@@ -133,12 +138,12 @@ const PaymentModal = memo(
 
     const paymentOptions = [
       {
-        key: ORDER_PAYMENT_METHOD.TIEN_MAT,
+        key: PAYMENT_METHOD.TIEN_MAT,
         label: "Tiền mặt",
         icon: <DollarCircleOutlined />,
       },
       {
-        key: ORDER_PAYMENT_METHOD.BANKING,
+        key: PAYMENT_METHOD.BANKING,
         label: "Chuyển khoản",
         icon: <CreditCardOutlined />,
       },
@@ -175,7 +180,6 @@ const PaymentModal = memo(
         <div className="payment-details">
           <Card
             className="payment-summary-card"
-            bordered={false}
             style={{ background: "#f9f9f9", marginBottom: 16 }}
           >
             <Row gutter={[16, 20]} align="middle">
@@ -190,7 +194,7 @@ const PaymentModal = memo(
 
               <Col span={12}>
                 <Text type="secondary">
-                  {paymentMethod === ORDER_PAYMENT_METHOD.TIEN_MAT
+                  {paymentMethod === PAYMENT_METHOD.TIEN_MAT
                     ? "Khách trả:"
                     : "Khách chuyển:"}
                 </Text>
@@ -254,7 +258,7 @@ const PaymentModal = memo(
             </div>
           </Flex>
           {/* QR cho BANKING */}
-          {paymentMethod === ORDER_PAYMENT_METHOD.BANKING && (
+          {paymentMethod === PAYMENT_METHOD.BANKING && (
             <Card
               variant="borderless"
               style={{
@@ -336,16 +340,17 @@ const PaymentModal = memo(
                   <div style={{ padding: "16px" }}>
                     <Form.Item
                       name="paymentMethod"
-                      initialValue={paymentMethod}
+                      initialValue={PAYMENT_METHOD.TIEN_MAT}
                       style={{ margin: 0 }}
                     >
                       <Radio.Group
                         onChange={(e) => {
-                          setPaymentMethod(e.target.value);
-                          form.setFieldsValue({
-                            paymentMethod: e.target.value,
-                          });
+                          const selectedValue = e.target.value;
+
+                          setPaymentMethod(selectedValue);
+                          form.setFieldsValue({ paymentMethod: selectedValue });
                         }}
+                        initialValue={PAYMENT_METHOD.TIEN_MAT}
                         buttonStyle="solid"
                         size="large"
                         style={{ width: "100%" }}
