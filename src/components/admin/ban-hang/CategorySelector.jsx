@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import { Tabs, theme } from "antd";
 
-// Memoize component
 const CategorySelector = memo(
   ({ categories, selectedCategory, onSelectCategory }) => {
     const { token } = theme.useToken();

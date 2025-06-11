@@ -39,7 +39,6 @@ const NumericKeypad = memo(
       ".",
     ];
 
-    // Chỉ render nội dung khi modal được mở
     if (!visible) return null;
 
     return (

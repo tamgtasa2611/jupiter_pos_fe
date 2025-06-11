@@ -3,9 +3,9 @@ import api from "@utils/request";
 export const getNotifications = async (page) => {
   try {
     const notifications = await api.get(`/notifications/search`, {
-      params : { page }
+      params: { page },
     });
-    return notifications; 
+    return notifications;
   } catch (error) {
     console.error("Lỗi khi lấy thông báo:", error);
     return [];

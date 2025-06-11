@@ -32,13 +32,9 @@ const RegisterForm = () => {
     setLoading(true);
 
     try {
-      // Giả lập API call đăng ký - thay thế bằng API thực tế sau này
-      console.log("Register values:", values);
-
-      // Giả lập đăng ký thành công
       setTimeout(() => {
         message.success("Đăng ký tài khoản thành công!");
-        router.replace("/dang-nhap"); // Chuyển đến trang đăng nhập sau khi đăng ký
+        router.replace("/dang-nhap");
         setLoading(false);
       }, 1000);
     } catch (error) {

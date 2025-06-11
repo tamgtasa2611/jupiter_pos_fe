@@ -11,7 +11,7 @@ const CreateCustomerModal = ({ visible, onCancel, onCreated }) => {
     try {
       const payload = {
         customerName: values.customerName,
-        gender: values.gender || true, // true (Male) hoặc false (Female)
+        gender: values.gender || true,
         address: values.address,
         phone: values.phone,
       };

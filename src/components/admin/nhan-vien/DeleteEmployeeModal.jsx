@@ -11,7 +11,9 @@ const DeleteEmployeeModal = ({ visible, onCancel, onDelete, employee }) => (
     cancelText="Hủy"
     okButtonProps={{ danger: true }}
   >
-    <p>Bạn có chắc chắn muốn xóa nhân viên <b>{employee?.fullName}</b>?</p>
+    <p>
+      Bạn có chắc chắn muốn xóa nhân viên <b>{employee?.fullName}</b>?
+    </p>
   </Modal>
 );
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { message } from "antd";
 import dynamic from "next/dynamic";
-import { createCategory } from "@requests/category"; // Import hàm tạo danh mục mới
-import { createUnit } from "@requests/unit"; // Import hàm tạo đơn vị mới
-import { createAttribute } from "@requests/attribute"; // Import hàm tạo thuộc tính mới
-import AddCategoryModal from "./common/AddCategoryModal"; // Import modal thêm danh mục
+import { createCategory } from "@requests/category";
+import { createUnit } from "@requests/unit";
+import { createAttribute } from "@requests/attribute";
+import AddCategoryModal from "./common/AddCategoryModal";
 import AddAttributeModal from "./common/AddAttributeModal";
 import AddUnitModal from "./common/AddUnitModal";
 import AddVariantModal from "./variant/AddVariantModal";
@@ -30,21 +30,21 @@ const EditVariantModal = dynamic(() => import("./variant/EditVariantModal"), {
 
 const ModalManager = ({
   addProductModalVisible,
-  editProductModalVisible, // state cho sửa product
+  editProductModalVisible,
   viewProductModalVisible,
   addVariantModalVisible,
   importModalVisible,
   setAddProductModalVisible,
-  setEditProductModalVisible, // setter cho modal sửa product
+  setEditProductModalVisible,
   setViewProductModalVisible,
   setAddVariantModalVisible,
   setImportModalVisible,
-  selectedProductId, // sử dụng để truyền thông tin cho cả 2 modal
-  selectedVariantId, // sử dụng để truyền thông tin cho modal sửa variant
+  selectedProductId,
+  selectedVariantId,
   handleAddProduct,
-  handleEditProduct, // hàm cập nhật product
-  handleAddVariant, // hàm thêm variant
-  handleEditProductVariant, // hàm cập nhật product variant
+  handleEditProduct,
+  handleAddVariant,
+  handleEditProductVariant,
   handleUpdateProductStatus,
   handleImportProducts,
   categories,
@@ -54,32 +54,27 @@ const ModalManager = ({
   attributes,
   reloadAttributes,
   isMobile,
-  viewVariantModalVisible, // state cho modal xem variant
+  viewVariantModalVisible,
   setViewVariantModalVisible,
-  editVariantModalVisible, // state cho modal sửa variant
-  setEditVariantModalVisible, // setter cho modal sửa variant
+  editVariantModalVisible,
+  setEditVariantModalVisible,
 }) => {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [attributeModalVisible, setAttributeModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);
 
-  // Mở modal thêm danh mục
   const handleAddCategory = () => {
     setCategoryModalVisible(true);
   };
 
-  // Xử lý submit modal danh mục
   const handleCategorySubmit = async (values) => {
     try {
       const res = await createCategory({ name: values.categoryName });
       if (!res || res?.error) {
-        // Nếu có lỗi từ API, hiển thị thông báo lỗi
         message.error(res?.message || "Thêm danh mục thất bại!");
         return;
       } else {
-        // Gọi API thêm danh mục mới với values.categoryName ở đây
         message.success("Danh mục mới được thêm thành công!");
-        // Sau khi thêm mới thành công, bạn có thể cập nhật lại danh sách categories
         reloadCategories();
         setCategoryModalVisible(false);
       }
@@ -97,7 +92,6 @@ const ModalManager = ({
     try {
       const res = await createAttribute({ name: values.attributeName });
       if (!res || res?.error) {
-        // Nếu có lỗi từ API, hiển thị thông báo lỗi
         message.error(res?.message || "Thêm thuộc tính thất bại!");
         return;
       } else {
@@ -119,12 +113,11 @@ const ModalManager = ({
     try {
       const res = await createUnit({ name: values.unitName });
       if (!res || res?.error) {
-        // Nếu có lỗi từ API, hiển thị thông báo lỗi
         message.error(res?.message || "Thêm đơn vị thất bại!");
         return;
       } else {
         message.success("Đơn vị mới được thêm thành công!");
-        reloadUnits(); // Cập nhật lại danh sách đơn vị
+        reloadUnits();
         setUnitModalVisible(false);
       }
     } catch (error) {

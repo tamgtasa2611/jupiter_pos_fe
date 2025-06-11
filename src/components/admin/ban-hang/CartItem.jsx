@@ -1,11 +1,10 @@
 import React, { memo } from "react";
 import { Button, Typography, Divider } from "antd";
 import { MinusOutlined, PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import { FALLBACK_IMAGE } from "@/constants/product.js"; // Giả sử bạn có một hằng số cho hình ảnh giả
+import { FALLBACK_IMAGE } from "@/constants/product.js";
 
 const { Text, Paragraph } = Typography;
 
-// Memoize để giảm render không cần thiết
 const CartItem = memo(({ item, onRemove, onUpdateQuantity, onOpenKeypad }) => {
   return (
     <div style={{ marginBottom: "12px" }}>

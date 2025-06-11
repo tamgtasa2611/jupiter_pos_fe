@@ -2,7 +2,6 @@ import React, { memo } from "react";
 import { Input, Spin } from "antd";
 import { SearchOutlined, BarcodeOutlined } from "@ant-design/icons";
 
-// Memoize để tránh re-render khi không cần
 const SearchBar = memo(({ onSearch, loading }) => {
   return (
     <Input.Search
@@ -16,7 +15,7 @@ const SearchBar = memo(({ onSearch, loading }) => {
         )
       }
       size="large"
-      onSearch={onSearch} // trigger only on enter or search button click
+      onSearch={onSearch}
       prefix={<BarcodeOutlined />}
       readOnly={loading} // Chặn người dùng khi loading
     />

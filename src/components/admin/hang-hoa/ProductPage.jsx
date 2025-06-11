@@ -44,19 +44,19 @@ const ProductPage = () => {
   const [importModalVisible, setImportModalVisible] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
 
-  const [selectedVariantId, setSelectedVariantId] = useState(null); // Dùng để lưu variant được chọn
-  const [viewVariantModalVisible, setViewVariantModalVisible] = useState(false); // Modal xem variant
-  const [editProductModalVisible, setEditProductModalVisible] = useState(false); // Modal sửa product
-  const [editVariantModalVisible, setEditVariantModalVisible] = useState(false); // Modal sửa product variant
+  const [selectedVariantId, setSelectedVariantId] = useState(null);
+  const [viewVariantModalVisible, setViewVariantModalVisible] = useState(false);
+  const [editProductModalVisible, setEditProductModalVisible] = useState(false);
+  const [editVariantModalVisible, setEditVariantModalVisible] = useState(false);
 
   // States cho product và bộ lọc
   const [products, setProducts] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("0"); // "0" là tất cả danh mục
   const [selectedStatus, setSelectedStatus] = useState("0"); // "0" là tất cả trạng thái
-  const [categories, setCategories] = useState([]); // Giả sử danh mục sẽ được load riêng
-  const [units, setUnits] = useState([]); // Giả sử đơn vị sẽ được load riêng
-  const [attributes, setAttributes] = useState([]); // Giả sử thuộc tính sẽ được load riêng
+  const [categories, setCategories] = useState([]);
+  const [units, setUnits] = useState([]);
+  const [attributes, setAttributes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -101,11 +101,9 @@ const ProductPage = () => {
   }, []);
 
   const handleRefresh = () => {
-    // Hàm này sẽ được gọi khi người dùng nhấn nút "Tải lại" trong ProductActionBar
     fetchProducts({ page: 0, size: pagination.pageSize });
   };
 
-  // Dummy handleScanCode (bạn có thể điều chỉnh lại theo logic thực tế)
   const handleScanCode = (code) => {
     setSearchText(code);
   };
@@ -145,7 +143,6 @@ const ProductPage = () => {
     });
   }
 
-  // Hàm fetch sản phẩm
   const fetchProducts = async ({
     search = "",
     page = 0,
@@ -170,7 +167,7 @@ const ProductPage = () => {
         search: searchParam,
         sort,
         filter: filterCriteria, // truyền filter theo danh mục (hoặc các tiêu chí khác nếu cần)
-        pageNumber: page, // BE đòi dạng 0-index hoặc chỉnh lại nếu cần
+        pageNumber: page, // BE đòi dạng 0-index
         pageSize: size,
       };
       const response = await getProductsWithVariants(params);
@@ -192,12 +189,10 @@ const ProductPage = () => {
     }
   };
 
-  // Khi component mount, fetch dữ liệu trang đầu tiên
   useEffect(() => {
     handleRefresh();
   }, []);
 
-  // Kiểm tra kích thước màn hình
   useLayoutEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -224,15 +219,14 @@ const ProductPage = () => {
     });
   };
 
-  // Hàm tìm kiếm riêng
   const handleSearch = (searchTerm) => {
     setSearchText(searchTerm);
     fetchProducts({
       search: searchTerm,
       page: 0,
       size: pagination.pageSize,
-      category: selectedCategory, // Lấy giá trị categoryID
-      status: selectedStatus, // Lấy giá trị status
+      category: selectedCategory,
+      status: selectedStatus,
       sort: "lastModifiedDate,desc",
     });
   };
@@ -254,7 +248,6 @@ const ProductPage = () => {
     onSearch: handleSearch,
   };
 
-  // Các hàm dummy cho hành động modal (thêm, sửa, xóa, import)
   const handleAddProduct = async (payload) => {
     try {
       // Tạo một promise timeout 10 giây
@@ -269,7 +262,7 @@ const ProductPage = () => {
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
-      // Refresh product list after adding
+
       handleRefresh();
       message.success("Thêm sản phẩm thành công");
       setAddProductModalVisible(false);
@@ -292,7 +285,7 @@ const ProductPage = () => {
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
-      // Refresh product list after editing
+
       handleRefresh();
       setEditProductModalVisible(false);
       message.success("Cập nhật sản phẩm thành công");
@@ -330,7 +323,7 @@ const ProductPage = () => {
       if (!response || response.error) {
         throw new Error(response?.error || "API error");
       }
-      // Refresh product list after editing
+
       handleRefresh();
       message.success("Cập nhật trạng thái sản phẩm thành công");
       setEditProductModalVisible(false);
@@ -356,7 +349,6 @@ const ProductPage = () => {
       if (!response || response?.data?.error) {
         throw new Error(response?.data?.error || "API error");
       } else {
-        // Refresh product list after editing
         handleRefresh();
         message.success("Cập nhật biến thể sản phẩm thành công");
         setEditVariantModalVisible(false);
@@ -369,7 +361,6 @@ const ProductPage = () => {
     }
   };
 
-  // Định nghĩa hàm reloadCategories để tải lại danh mục từ API
   const reloadCategories = async () => {
     try {
       const categoryResponse = await getCategories();
@@ -503,20 +494,20 @@ const ProductPage = () => {
       {/* Modal Manager */}
       <ModalManager
         addProductModalVisible={addProductModalVisible}
-        editProductModalVisible={editProductModalVisible} // truyền modal product
+        editProductModalVisible={editProductModalVisible}
         viewProductModalVisible={viewProductModalVisible}
         addVariantModalVisible={addVariantModalVisible}
         importModalVisible={importModalVisible}
         setAddProductModalVisible={setAddProductModalVisible}
-        setEditProductModalVisible={setEditProductModalVisible} // truyền setter cho product
+        setEditProductModalVisible={setEditProductModalVisible}
         setViewProductModalVisible={setViewProductModalVisible}
         setAddVariantModalVisible={setAddVariantModalVisible}
         setImportModalVisible={setImportModalVisible}
         selectedProductId={selectedProductId}
-        selectedVariantId={selectedVariantId} // truyền variant được chọn
+        selectedVariantId={selectedVariantId}
         handleAddProduct={handleAddProduct}
         handleEditProduct={handleEditProduct}
-        handleAddVariant={handleAddVariant} // Giả sử bạn dùng hàm này để thêm variant
+        handleAddVariant={handleAddVariant}
         handleUpdateProductStatus={handleUpdateProductStatus}
         handleImportProducts={handleImportProducts}
         categories={categories}
@@ -526,14 +517,13 @@ const ProductPage = () => {
         units={units}
         reloadUnits={reloadUnits}
         isMobile={isMobile}
-        viewVariantModalVisible={viewVariantModalVisible} // truyền modal variant
+        viewVariantModalVisible={viewVariantModalVisible}
         setViewVariantModalVisible={setViewVariantModalVisible}
-        editVariantModalVisible={editVariantModalVisible} // truyền modal variant
+        editVariantModalVisible={editVariantModalVisible}
         setEditVariantModalVisible={setEditVariantModalVisible}
-        handleEditProductVariant={handleEditProductVariant} // Giả sử bạn dùng hàm này để sửa variant
+        handleEditProductVariant={handleEditProductVariant}
       />
 
-      {/* Floating action button cho mobile */}
       <FloatingActionButton
         setAddProductModalVisible={setAddProductModalVisible}
         isMobile={isMobile}

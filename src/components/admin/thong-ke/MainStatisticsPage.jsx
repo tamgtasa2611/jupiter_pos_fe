@@ -22,16 +22,16 @@ const MainStatisticsPage = () => {
       content = <SalesReport />;
       break;
     case "/admin/thong-ke/hang-hoa":
-      content = <AdminDashboard />; // Product statistics
+      content = <AdminDashboard />;
       break;
     case "/admin/thong-ke/khach-hang":
-      content = <AdminDashboard />; // Customer statistics
+      content = <AdminDashboard />;
       break;
     case "/admin/thong-ke/don-hang":
-      content = <AdminDashboard />; // Order statistics
+      content = <AdminDashboard />;
       break;
     default:
-      content = <AdminDashboard />; // Default content
+      content = <AdminDashboard />;
   }
 
   return (

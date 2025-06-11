@@ -7,7 +7,6 @@ const AddCustomerModal = ({ visible, onCancel, onAdd }) => {
 
   const handleFinish = async (values) => {
     try {
-      // Gọi API tạo customer với payload gồm: name, phone, email, address
       const response = await createCustomer(values);
       message.success("Thêm khách hàng thành công");
       form.resetFields();

@@ -78,7 +78,6 @@ const AddProductModal = ({
         status: values.productStatus ? DANG_BAN : NGUNG_BAN,
       };
 
-      // Thu thập dữ liệu biến thể (nhiều biến thể)
       const variantData = (values.variants || []).map((variant, idx) => ({
         costPrice: variant.costPrice,
         price: variant.price,
@@ -103,7 +102,7 @@ const AddProductModal = ({
       await onAdd(payload).then(() => {
         form.resetFields();
         setVariantImages([]);
-      }); // Đảm bảo chờ onAdd hoàn thành trước khi reset loading
+      });
     } catch (error) {
       console.error("Validation failed:", error);
     } finally {
@@ -116,13 +115,13 @@ const AddProductModal = ({
       <Modal
         title="Thêm sản phẩm mới"
         open={visible}
-        width="90vw" // Giao diện ngang gần full màn hình
+        width="90vw"
         centered={!isMobile}
         maskClosable={false}
         onCancel={() => {
           form.resetFields();
           setVariantImages([]);
-          setLoading(false); // Reset loading khi modal tắt
+          setLoading(false);
           onCancel();
         }}
         footer={
@@ -133,7 +132,7 @@ const AddProductModal = ({
               onClick={() => {
                 form.resetFields();
                 setVariantImages([]);
-                setLoading(false); // Reset loading khi bấm Hủy
+                setLoading(false);
                 onCancel();
               }}
               style={isMobile ? mobileButtonStyle : {}}

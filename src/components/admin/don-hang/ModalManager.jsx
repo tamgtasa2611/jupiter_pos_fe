@@ -13,7 +13,6 @@ const ModalManager = () => {
 
   const handleExport = useCallback((type) => {
     console.log(`Exporting as ${type}`);
-    // Implement export logic
   }, []);
 
   return {

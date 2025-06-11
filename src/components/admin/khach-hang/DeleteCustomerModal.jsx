@@ -13,7 +13,9 @@ const DeleteCustomerModal = ({ visible, onCancel, customer }) => {
       }
       message.success("Xóa khách hàng thành công!");
     } catch (error) {
-      message.error(error?.response?.data?.message || "Xóa khách hàng thất bại!");
+      message.error(
+        error?.response?.data?.message || "Xóa khách hàng thất bại!",
+      );
     }
   };
 

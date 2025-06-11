@@ -153,7 +153,6 @@ const EditProductModal = ({
                     type="link"
                     block
                     onClick={() => {
-                      // Gọi hàm mở modal thêm danh mục ở đây
                       handleAddCategory();
                     }}
                   >

@@ -48,4 +48,4 @@ export const deleteCustomer = async (customerId) => {
     console.error(error);
     throw error;
   }
-}
+};

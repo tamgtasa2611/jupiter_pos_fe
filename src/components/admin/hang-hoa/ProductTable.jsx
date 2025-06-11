@@ -7,21 +7,20 @@ import {
   PlusOutlined,
   StopOutlined,
 } from "@ant-design/icons";
-import { updateProduct } from "@/requests/product"; // ensure correct import
-import { PRODUCT_STATUS } from "@/constants/product"; // ensure correct import
+import { PRODUCT_STATUS } from "@/constants/product";
 const ProductTable = ({
   products,
   loading,
   pagination,
   handleTableChange,
   setSelectedProductId,
-  setSelectedVariantId, // for editing a variant if needed
+  setSelectedVariantId,
   setViewProductModalVisible,
   setEditProductModalVisible,
-  setAddVariantModalVisible, // for adding a new variant
+  setAddVariantModalVisible,
   setViewVariantModalVisible,
-  setEditVariantModalVisible, // for editing a variant if needed
-  fetchProducts, // callback to refresh products list
+  setEditVariantModalVisible,
+  fetchProducts,
   handleUpdateProductStatus,
 }) => {
   const columns = [
@@ -88,7 +87,7 @@ const ProductTable = ({
       width: 100,
       render: (_, record) => (
         <Dropdown
-        trigger={["click"]}
+          trigger={["click"]}
           menu={{
             items: [
               {
@@ -96,8 +95,7 @@ const ProductTable = ({
                 label: "Xem chi tiết",
                 icon: <EyeOutlined />,
                 onClick: () => {
-                  setSelectedProductId(record.productId); // đảm bảo record có dữ liệu
-                  // Logic to view product details
+                  setSelectedProductId(record.productId);
                   setViewProductModalVisible(true);
                 },
               },
@@ -106,7 +104,7 @@ const ProductTable = ({
                 label: "Chỉnh sửa",
                 icon: <EditOutlined />,
                 onClick: () => {
-                  setSelectedProductId(record.productId); // đảm bảo record có dữ liệu
+                  setSelectedProductId(record.productId);
                   setEditProductModalVisible(true);
                 },
               },
@@ -115,7 +113,7 @@ const ProductTable = ({
                 label: "Thêm biến thể",
                 icon: <PlusOutlined />,
                 onClick: () => {
-                  setSelectedProductId(record.productId); // đảm bảo record có dữ liệu
+                  setSelectedProductId(record.productId);
                   setAddVariantModalVisible(true);
                 },
               },
@@ -126,7 +124,6 @@ const ProductTable = ({
         </Dropdown>
       ),
     },
-    // ...các cột khác...
   ];
 
   return (
@@ -237,7 +234,7 @@ const ProductTable = ({
                 width: 100,
                 render: (_, variant) => (
                   <Dropdown
-                  trigger={["click"]}
+                    trigger={["click"]}
                     menu={{
                       items: [
                         {
@@ -245,8 +242,8 @@ const ProductTable = ({
                           label: "Xem chi tiết",
                           icon: <EyeOutlined />,
                           onClick: () => {
-                            setSelectedVariantId(variant.id); // Lưu variant đang chọn
-                            setViewVariantModalVisible(true); // Mở modal xem chi tiết
+                            setSelectedVariantId(variant.id);
+                            setViewVariantModalVisible(true);
                           },
                         },
                         {
@@ -254,8 +251,8 @@ const ProductTable = ({
                           label: "Chỉnh sửa",
                           icon: <EditOutlined />,
                           onClick: () => {
-                            setSelectedVariantId(variant.id); // Lưu variant đang chọn
-                            setEditVariantModalVisible(true); // Mở modal sửa variant
+                            setSelectedVariantId(variant.id);
+                            setEditVariantModalVisible(true);
                           },
                         },
                       ],
@@ -265,7 +262,6 @@ const ProductTable = ({
                   </Dropdown>
                 ),
               },
-              // ...các cột khác...
             ]}
             dataSource={record.variants}
             rowKey="id"

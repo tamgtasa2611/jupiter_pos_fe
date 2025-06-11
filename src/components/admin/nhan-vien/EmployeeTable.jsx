@@ -21,8 +21,7 @@ const EmployeeTable = ({
   onDeleteUser,
 }) => {
   const [selectedEmployee, setSelectedEmployeeState] = useState(null);
-  const [localDeleteModalVisible, setLocalDeleteModalVisible] = useState(false); // renamed
-
+  const [localDeleteModalVisible, setLocalDeleteModalVisible] = useState(false);
   const handleDeleteEmployee = async () => {
     if (!selectedEmployee) return;
     try {
@@ -36,7 +35,9 @@ const EmployeeTable = ({
       if (onDeleteUser) onDeleteUser();
     } catch (error) {
       console.log(res);
-      message.error(error?.response?.data?.message || "Xóa nhân viên thất bại!");
+      message.error(
+        error?.response?.data?.message || "Xóa nhân viên thất bại!",
+      );
     }
   };
 
@@ -112,7 +113,7 @@ const EmployeeTable = ({
                   icon: <DeleteOutlined />,
                   onClick: () => {
                     setSelectedEmployeeState(record);
-                    setLocalDeleteModalVisible(true); // use the renamed setter
+                    setLocalDeleteModalVisible(true);
                   },
                 },
               ],

@@ -13,7 +13,7 @@ const DesktopActionPanel = ({
   onExport,
   onReload,
   setSearchText,
-  loading
+  loading,
 }) => {
   return (
     <Flex gap={8} justify="space-between" align="center">

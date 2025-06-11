@@ -21,12 +21,10 @@ export default function MobileNavBar({ onLogout }) {
   const router = useRouter();
   const [visible, setVisible] = useState(false);
 
-  // Helper function to check if a menu item is active
   const isActive = (itemKey) => {
     return pathname === itemKey || pathname.startsWith(itemKey);
   };
 
-  // Handle logout with proper navigation
   const handleLogout = () => {
     setVisible(false);
     if (onLogout) {
@@ -134,7 +132,6 @@ export default function MobileNavBar({ onLogout }) {
     },
   ];
 
-  // Check if any "more menu" item is active
   const isAnyMoreItemActive = moreMenuItems.some((item) => isActive(item.key));
 
   return (

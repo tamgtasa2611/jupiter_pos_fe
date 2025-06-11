@@ -8,7 +8,7 @@ const AddUnitModal = ({ visible, onCancel, onOk }) => {
   useEffect(() => {
     if (visible) {
       form.resetFields();
-      setLoading(false); // reset loading khi mở modal
+      setLoading(false);
     }
   }, [visible, form]);
 

@@ -10,14 +10,11 @@ const Top10Customers = () => {
   const [timeRange, setTimeRange] = useState("today");
   const [customerData, setCustomerData] = useState([]);
 
-  // Format currency to Vietnamese format
   const formatVND = (value) => {
     return value / 1000000 + " tr";
   };
 
-  // Generate dummy data for top selling customers
   useEffect(() => {
-    // In a real implementation, you would fetch this data from your API
     const customers = [
       {
         name: "Nguyen Van A",
@@ -61,10 +58,8 @@ const Top10Customers = () => {
       },
     ];
 
-    // Sort by selected criteria
     customers.sort((a, b) => b.buyingAmount - a.buyingAmount);
 
-    // Take top 10 and prepare data for visualization
     const top10 = customers.slice(0, 10).map((customer, index) => ({
       ...customer,
       buyingAmountFormatted: formatVND(customer.buyingAmount),
@@ -74,7 +69,6 @@ const Top10Customers = () => {
     setCustomerData(top10);
   }, [timeRange]);
 
-  // Bar chart configuration
   const config = {
     data: customerData,
     yField: "buyingAmount",
@@ -83,7 +77,7 @@ const Top10Customers = () => {
     isGroup: false,
     legend: { position: "left" },
     barStyle: {
-      radius: [0, 4, 4, 0], // Rounded corners on right side
+      radius: [0, 4, 4, 0],
     },
     label: {
       text: "name",

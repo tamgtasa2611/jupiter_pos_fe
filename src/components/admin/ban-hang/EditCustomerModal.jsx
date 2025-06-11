@@ -22,7 +22,7 @@ const EditCustomerModal = ({ visible, onCancel, onCreated, customer }) => {
     try {
       const payload = {
         customerName: values.customerName,
-        gender: values.gender || true, // true (Male) hoặc false (Female)
+        gender: values.gender || true,
         address: values.address,
         phone: values.phone,
       };

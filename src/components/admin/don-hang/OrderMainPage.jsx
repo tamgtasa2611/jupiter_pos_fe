@@ -5,7 +5,6 @@ import { Card, Flex, message } from "antd";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
-// Components
 import OrderHeader from "./OrderHeader";
 import DesktopActionPanel from "./DesktopActionPanel";
 import OrderContent from "./OrderContent";
@@ -16,7 +15,6 @@ import ModalManager from "./ModalManager";
 import OrderDetailsModal from "./OrderDetailsModal";
 import { getOrders } from "@requests/order";
 
-// Configure dayjs
 dayjs.extend(isBetween);
 
 const OrderMainPage = () => {
@@ -28,11 +26,9 @@ const OrderMainPage = () => {
   const [selectedStatus, setSelectedStatus] = useState([]);
   const [dateRange, setDateRange] = useState(null);
 
-  // Sorting
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
 
-  // Pagination
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
@@ -40,7 +36,6 @@ const OrderMainPage = () => {
     showSizeChanger: true,
   });
 
-  // Memo hóa các tham số truyền vào API
   const apiParams = useMemo(() => {
     return {
       pageSize: pagination.pageSize,
@@ -97,7 +92,6 @@ const OrderMainPage = () => {
     }
   };
 
-  // Tương tự như trang khách hàng, khi search thay đổi gọi lại fetchOrders
   const handleSearch = (value) => {
     const trimmed = value.trim();
     setSearchText(trimmed);

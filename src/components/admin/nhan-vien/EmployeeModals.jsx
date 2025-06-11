@@ -19,7 +19,6 @@ export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
 
   const handleFinish = async (values) => {
     try {
-      // Gọi API tạo nhân viên với các trường: username, fullName, email, password, phone, gender, role, is_active
       const res = await onAdd(values);
 
       if (res.response?.data?.error) {
@@ -142,7 +141,6 @@ export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
 
 export default AddEmployeeModal;
 
-// Edit Employee Modal
 export const EditEmployeeModal = ({
   visible,
   onCancel,
@@ -162,7 +160,7 @@ export const EditEmployeeModal = ({
             fullName: res.fullName,
             phone: res.phone,
             email: res.email,
-            gender: res.gender, // boolean: true (Nam), false (Nữ)
+            gender: res.gender,
             active: res.active,
             // Không map password để bảo mật, nếu muốn cập nhật mật khẩu thì người dùng nhập mới.
           });
@@ -295,7 +293,6 @@ export const EditEmployeeModal = ({
   );
 };
 
-// Delete Employee Modal
 export const DeleteEmployeeModal = ({
   visible,
   onCancel,
@@ -319,7 +316,6 @@ export const DeleteEmployeeModal = ({
   );
 };
 
-// View Employee Modal
 export const ViewEmployeeModal = ({ visible, onCancel, employeeId }) => {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(false);

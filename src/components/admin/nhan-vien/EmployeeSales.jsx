@@ -20,7 +20,6 @@ const EmployeeSales = () => {
   const [searchText, setSearchText] = useState("");
   const [dateRange, setDateRange] = useState(null);
 
-  // Mock data for sales
   const generateMockSalesData = () => {
     const startDate = dayjs("2024-01-01");
     const endDate = dayjs("2024-03-15");
@@ -37,8 +36,8 @@ const EmployeeSales = () => {
         "day",
       );
       const salesAmount =
-        Math.floor(Math.random() * (20000000 - 10000000 + 1)) + 10000000; // Random amount between 10M and 20M
-      const productsSold = Math.floor(Math.random() * (60 - 30 + 1)) + 30; // Random quantity between 30 and 60
+        Math.floor(Math.random() * (20000000 - 10000000 + 1)) + 10000000;
+      const productsSold = Math.floor(Math.random() * (60 - 30 + 1)) + 30;
 
       salesRecords.push({
         id: i,
@@ -59,7 +58,7 @@ const EmployeeSales = () => {
 
   const fetchSalesData = () => {
     setLoading(true);
-    // Simulate API call
+
     setTimeout(() => {
       setSalesData(generateMockSalesData());
       setLoading(false);

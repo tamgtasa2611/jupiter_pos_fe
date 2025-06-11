@@ -8,7 +8,7 @@ const AddAttributeModal = ({ visible, onCancel, onOk }) => {
   useEffect(() => {
     if (visible) {
       form.resetFields();
-      setLoading(false); // reset loading khi mở modal
+      setLoading(false);
     }
   }, [visible, form]);
 
@@ -16,7 +16,7 @@ const AddAttributeModal = ({ visible, onCancel, onOk }) => {
     try {
       setLoading(true);
       const values = await form.validateFields();
-      await onOk(values); // gọi hàm API từ component cha
+      await onOk(values);
       setLoading(false);
     } catch (error) {
       console.error("Validation error:", error);
@@ -38,7 +38,7 @@ const AddAttributeModal = ({ visible, onCancel, onOk }) => {
       cancelText="Hủy"
       width={400}
       zIndex={1151}
-      confirmLoading={loading} // hiển thị loading trên nút Thêm
+      confirmLoading={loading}
     >
       <Form form={form} layout="vertical">
         <Form.Item

@@ -36,7 +36,6 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 
-// Import your API function to fetch product details
 import { getProductVariantById } from "@/requests/product";
 
 const { Title, Text } = Typography;
@@ -52,7 +51,6 @@ const ProductDetailPage = () => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        // Call your real API to get product details
         const data = await getProductVariantById(productId);
         setProduct(data);
       } catch (error) {
@@ -90,7 +88,6 @@ const ProductDetailPage = () => {
     );
   }
 
-  // Calculate stock percentage based on quantity and maxStock
   const stockPercent = Math.min(
     100,
     Math.round((product.quantity / (product.maxStock || 500)) * 100),

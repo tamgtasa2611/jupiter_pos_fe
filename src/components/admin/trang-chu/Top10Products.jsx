@@ -15,14 +15,11 @@ const Top10Products = () => {
   const [sortBy, setSortBy] = useState("revenue");
   const [productData, setProductData] = useState([]);
 
-  // Format currency to Vietnamese format
   const formatVND = (value) => {
     return (value / 1000000).toFixed(2) + " tr";
   };
 
-  // Generate dummy data for top selling products
   useEffect(() => {
-    // In a real implementation, you would fetch this data from your API
     const products = [
       {
         name: "Bia 333 thùng 24 lon",
@@ -86,14 +83,12 @@ const Top10Products = () => {
       },
     ];
 
-    // Sort by selected criteria
     if (sortBy === "revenue") {
       products.sort((a, b) => b.revenue - a.revenue);
     } else {
       products.sort((a, b) => b.quantity - a.quantity);
     }
 
-    // Take top 10 and prepare data for visualization
     const top10 = products.slice(0, 10).map((product, index) => ({
       ...product,
       revenueFormatted: formatVND(product.revenue),
@@ -102,7 +97,6 @@ const Top10Products = () => {
     setProductData(top10);
   }, [timeRange, sortBy]);
 
-  // Bar chart configuration
   const config = {
     data: productData,
     yField: sortBy === "revenue" ? "revenue" : "quantity",
@@ -111,7 +105,7 @@ const Top10Products = () => {
     isGroup: false,
     legend: { position: "left" },
     barStyle: {
-      radius: [0, 4, 4, 0], // Rounded corners on right side
+      radius: [0, 4, 4, 0],
     },
     label: {
       text: "name",

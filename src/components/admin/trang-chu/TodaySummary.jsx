@@ -10,17 +10,15 @@ import {
 const { Title, Text } = Typography;
 
 const TodaySummary = () => {
-  // Example data - replace with your actual data
   const todayData = {
     revenue: 63027000,
     invoiceCount: 20,
     returns: 0,
     comparedToYesterday: 39.88,
     comparedToLastMonth: -4.58,
-    netRevenue: 63027000, // Same as revenue since returns are 0
+    netRevenue: 63027000,
   };
 
-  // Format currency to Vietnamese format
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN").format(value);
   };

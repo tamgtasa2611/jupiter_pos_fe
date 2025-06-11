@@ -11,7 +11,6 @@ const SearchBar = memo(
         prefix={<SearchOutlined />}
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
-        // Chỉ gọi API khi bấm Enter hoặc click nút tìm kiếm
         onSearch={onSearch}
         enterButton={
           loading ? (

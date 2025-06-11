@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Upload, Button, message } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
-import { uploadToCloudinary } from "@utils/utils"; // Giả sử bạn đã định nghĩa hàm uploadToCloudinary trong utils.js
+import { uploadToCloudinary } from "@utils/utils";
 
-// Thay bằng giá trị thực tế của bạn
 const CLOUDINARY_UPLOAD_PRESET = "my_preset";
 const CLOUDINARY_CLOUD_NAME = "dydv1jwq2";
 const CLOUDINARY_API_KEY = "937698538284846";

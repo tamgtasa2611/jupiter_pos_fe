@@ -3,28 +3,27 @@ import { Card, Typography, Space, Divider } from "antd";
 
 const { Text } = Typography;
 
-// Giảm thiểu render với memo
 const OrderSummary = memo(({ cart, totalAmount }) => {
-  // Calculate total number of products
   const totalProducts = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <Card
       title="Tổng đơn hàng"
       className="h-full"
-    styles={{ body: { 
-        height: "calc(100% - 46px)", // Account for header height
-        padding: "16px",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden", // Prevent the card body from expanding
-     } 
-    }}>
-      {/* Scrollable product list */}
+      styles={{
+        body: {
+          height: "calc(100% - 46px)",
+          padding: "16px",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        },
+      }}
+    >
       <div
         style={{
-          flex: "1 1 0%", // Important: 0% base size forces scrolling
-          minHeight: 0, // Critical for Firefox
+          flex: "1 1 0%",
+          minHeight: 0,
           overflowY: "auto",
           overflowX: "hidden",
         }}
@@ -42,7 +41,6 @@ const OrderSummary = memo(({ cart, totalAmount }) => {
         ))}
       </div>
 
-      {/* Fixed footer area */}
       <div style={{ flexShrink: 0 }} className="p-2">
         <Divider style={{ margin: "8px 0" }} />
 

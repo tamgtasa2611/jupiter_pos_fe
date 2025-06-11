@@ -9,7 +9,6 @@ const MobileLoginPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    // Check if token exists
     const token = localStorage.getItem("token");
     if (token) {
       console.log("Token found, redirecting to dashboard");

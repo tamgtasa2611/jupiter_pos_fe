@@ -36,7 +36,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
   const [customers, setCustomers] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize] = useState(5); // Điều chỉnh số mục mỗi trang nếu cần
+  const [pageSize] = useState(5);
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [loading, setLoading] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -44,25 +44,22 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
   const fetchCustomers = async (page = 0, search = "") => {
     setLoading(true);
     try {
-      // Backend giả sử yêu cầu page bắt đầu từ 0
       const params = {
-        page: page > 0 ? page - 1 : page, // Chuyển đổi sang 0-based index nếu cần
+        page: page > 0 ? page - 1 : page,
         size: pageSize,
         search: search ? search : undefined,
       };
       const response = await getCustomers(params);
-      // Giả sử API trả về dữ liệu dạng: { content: [...], totalElements: number }
+
       setCustomers(response.content || []);
       setTotalCustomers(response.totalElements || 0);
     } catch (error) {
-      // Xử lý lỗi (có thể hiển thị message.error)
       console.error("Lỗi khi tải khách hàng:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch lại danh sách khách hàng khi Modal mở, hoặc khi currentPage/search thay đổi
   useEffect(() => {
     if (isModalVisible) {
       fetchCustomers(currentPage, searchValue);
@@ -139,8 +136,8 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
           open={isModalVisible}
           onCancel={() => {
             setIsModalVisible(false);
-            setSearchValue(""); // Reset search value khi đóng modal
-            setCurrentPage(0); // Reset về trang đầu tiên
+            setSearchValue("");
+            setCurrentPage(0);
           }}
           footer={null}
           centered
@@ -151,12 +148,11 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
               placeholder="Tìm khách hàng theo tên hoặc SĐT"
               allowClear
               enterButton
-              // Khi người dùng nhập, cập nhật giá trị tìm kiếm
               value={searchValue}
               onChange={(e) => {
                 const value = e.target.value;
                 setSearchValue(value);
-                // Nếu cleared (rỗng) thì search lại
+
                 if (value === "") {
                   handleSearch("");
                 }
@@ -223,7 +219,7 @@ const CustomerInfo = memo(({ customer, onSelectCustomer }) => {
                           type="text"
                           size="small"
                           onClick={(e) => {
-                            e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền
+                            e.stopPropagation();
                             setSelectedCustomer(item);
                             setEditCustomerModalVisible(true);
                           }}

@@ -82,12 +82,14 @@ const ProductCard = memo(
         }
       >
         {/* Header: tên sản phẩm */}
-        <div style={{
-          minHeight: 40,
-          maxHeight: 40,
-          overflow: "hidden",
-          marginBottom: 4,
-        }}>
+        <div
+          style={{
+            minHeight: 40,
+            maxHeight: 40,
+            overflow: "hidden",
+            marginBottom: 4,
+          }}
+        >
           <Paragraph
             level={6}
             style={{ margin: 0, fontWeight: "bold" }}
@@ -101,12 +103,14 @@ const ProductCard = memo(
         </div>
 
         {/* Thuộc tính sản phẩm */}
-        <div style={{
-          minHeight: 32,
-          maxHeight: 32,
-          overflow: "hidden",
-          marginBottom: 4,
-        }}>
+        <div
+          style={{
+            minHeight: 32,
+            maxHeight: 32,
+            overflow: "hidden",
+            marginBottom: 4,
+          }}
+        >
           <Paragraph
             style={{ fontSize: 10, marginTop: 0, marginBottom: 0 }}
             ellipsis={{ rows: 2 }}
@@ -116,12 +120,14 @@ const ProductCard = memo(
         </div>
 
         {/* Danh mục sản phẩm */}
-        <div style={{
-          minHeight: 18,
-          maxHeight: 18,
-          overflow: "hidden",
-          marginBottom: 4,
-        }}>
+        <div
+          style={{
+            minHeight: 18,
+            maxHeight: 18,
+            overflow: "hidden",
+            marginBottom: 4,
+          }}
+        >
           <Text
             style={{
               fontSize: 10,
@@ -138,12 +144,14 @@ const ProductCard = memo(
         </div>
 
         {/* Giá sản phẩm */}
-        <div style={{
-          minHeight: 24,
-          maxHeight: 24,
-          overflow: "hidden",
-          marginBottom: 4,
-        }}>
+        <div
+          style={{
+            minHeight: 24,
+            maxHeight: 24,
+            overflow: "hidden",
+            marginBottom: 4,
+          }}
+        >
           <Title level={5} style={{ color: "#1890ff", margin: 0 }} ellipsis>
             {product.price != null
               ? product.price.toLocaleString() + " đ"
@@ -152,7 +160,11 @@ const ProductCard = memo(
         </div>
 
         {/* Thông tin tồn kho và tooltip SKU / Mã vạch */}
-        <Flex justify="space-between" align="center" style={{ fontSize: 12, minHeight: 20, maxHeight: 20 }}>
+        <Flex
+          justify="space-between"
+          align="center"
+          style={{ fontSize: 12, minHeight: 20, maxHeight: 20 }}
+        >
           <div>
             <span
               className={`font-semibold ${

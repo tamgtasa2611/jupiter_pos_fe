@@ -36,10 +36,9 @@ const { Title } = Typography;
 
 export default function NavBar({ onLogout }) {
   const [scrolled, setScrolled] = useState(false);
-  const [showAllNotifications, setShowAllNotifications] = useState(false); 
+  const [showAllNotifications, setShowAllNotifications] = useState(false);
   const pathname = usePathname();
 
-  // Track scroll position to add shadow when scrolled
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -48,7 +47,6 @@ export default function NavBar({ onLogout }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Format menu items to use with items prop
   const menuItems = [
     {
       key: "/admin/ban-hang",
@@ -151,7 +149,7 @@ export default function NavBar({ onLogout }) {
       </div>
 
       {/* Right side - Actions */}
-      <Flex gap={8} justify="end" align="center" >
+      <Flex gap={8} justify="end" align="center">
         {/* Notifications */}
         <Dropdown
           menu={{
@@ -186,7 +184,7 @@ export default function NavBar({ onLogout }) {
                   </div>
                 ),
                 icon: <BellOutlined />,
-              }
+              },
             ],
           }}
           placement="bottomRight"

@@ -15,7 +15,6 @@ const LoginPage = () => {
   const { currentUser, setCurrentUser } = useCurrentUser();
 
   useEffect(() => {
-    // Check if token exists
     const token = getToken();
     if (token) {
       console.log("Token found, redirecting to dashboard");
@@ -54,7 +53,6 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-row bg-white overflow-hidden">
-      {/* Left section - POS system image */}
       <div className="flex w-3/5 relative overflow-hidden">
         <div className="absolute inset-0">
           <img

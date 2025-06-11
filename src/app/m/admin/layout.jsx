@@ -14,10 +14,8 @@ export default function AdminLayout({ children }) {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Use the custom hook to detect mobile directly
   const isMobile = useIsMobile();
 
-  // Check authentication on component mount
   useEffect(() => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem("token");
@@ -36,15 +34,11 @@ export default function AdminLayout({ children }) {
     }
   }, [isAuthenticated]);
 
-  // Logout function
   const handleLogout = useCallback(() => {
-    // Remove token from localStorage
     localStorage.removeItem("token");
 
-    // Show success message using App.useApp()'s message API
     message.success("Đăng xuất thành công");
 
-    // Redirect to login page
     router.replace("/dang-nhap");
   }, [router, message]);
 

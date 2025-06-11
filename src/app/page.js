@@ -12,12 +12,11 @@ export default function CustomerLandingPage() {
   const [appReady, setAppReady] = useState(false);
 
   useEffect(() => {
-    // Check if running in a Capacitor/Cordova context
+    // android Capacitor/Cordova context
     const isNative =
       typeof window !== "undefined" && (window.Capacitor || window.cordova);
     console.log("Running in native context:", isNative);
 
-    // Log if localStorage is accessible
     try {
       if (typeof window === "undefined") return;
       const testKey = "test_storage_access";
@@ -26,7 +25,6 @@ export default function CustomerLandingPage() {
       localStorage.removeItem(testKey);
       console.log("LocalStorage access:", result === "works" ? "OK" : "FAILED");
 
-      // Check if token exists
       const token = localStorage.getItem("token");
       if (token) {
         console.log("Token found, redirecting to dashboard");
@@ -38,7 +36,6 @@ export default function CustomerLandingPage() {
     } catch (e) {
       console.error("LocalStorage error:", e);
     } finally {
-      // Set loading to false regardless of outcome
       setLoading(false);
       setAppReady(true);
     }
@@ -61,7 +58,6 @@ export default function CustomerLandingPage() {
     );
   }
 
-  // This should never be reached since we're redirecting in useEffect
   return (
     <Layout
       className="landing-page App"

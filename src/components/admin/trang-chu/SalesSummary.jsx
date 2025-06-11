@@ -6,25 +6,20 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const SalesSummary = () => {
-  // States for controlling data views
   const [timeRange, setTimeRange] = useState("today");
   const [viewType, setViewType] = useState("hour");
   const [chartData, setChartData] = useState([]);
 
-  // Dummy total net revenue
   const totalNetRevenue = 551280000;
 
-  // Format currency to Vietnamese format
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN").format(value);
   };
 
-  // Generate dummy data based on selected time range and view type
   useEffect(() => {
     let data = [];
 
     if (timeRange === "today" || timeRange === "yesterday") {
-      // Hourly data for today or yesterday
       if (viewType === "hour") {
         for (let i = 8; i <= 21; i++) {
           const hour = `${i}:00`;
@@ -34,7 +29,6 @@ const SalesSummary = () => {
           });
         }
       } else {
-        // Single day can't show daily or weekly view
         data = [
           { time: "8:00", revenue: 12000000 },
           { time: "10:00", revenue: 25000000 },
@@ -46,7 +40,6 @@ const SalesSummary = () => {
         ];
       }
     } else if (timeRange === "week") {
-      // Data for last 7 days
       if (viewType === "day") {
         const days = [
           "Thứ 2",
@@ -64,7 +57,6 @@ const SalesSummary = () => {
           });
         }
       } else if (viewType === "hour") {
-        // By hour for the week (average by hour)
         for (let i = 8; i <= 21; i++) {
           const hour = `${i}:00`;
           data.push({
@@ -73,7 +65,6 @@ const SalesSummary = () => {
           });
         }
       } else {
-        // By weekday (aggregated)
         data = [
           { time: "Thứ 2", revenue: 75000000 },
           { time: "Thứ 3", revenue: 62000000 },
@@ -85,9 +76,7 @@ const SalesSummary = () => {
         ];
       }
     } else {
-      // This month or last month
       if (viewType === "day") {
-        // Daily data for the month
         for (let i = 1; i <= 30; i++) {
           data.push({
             time: `${i}/3`,
@@ -95,7 +84,6 @@ const SalesSummary = () => {
           });
         }
       } else if (viewType === "weekday") {
-        // By weekday for the month
         data = [
           { time: "Thứ 2", revenue: 285000000 },
           { time: "Thứ 3", revenue: 262000000 },
@@ -106,7 +94,6 @@ const SalesSummary = () => {
           { time: "Chủ nhật", revenue: 298000000 },
         ];
       } else {
-        // By hour for the month (average)
         for (let i = 8; i <= 21; i++) {
           const hour = `${i}:00`;
           data.push({
@@ -125,7 +112,6 @@ const SalesSummary = () => {
     setChartData(data);
   }, [timeRange, viewType]);
 
-  // Configure the bar chart
   const config = {
     data: chartData,
     xField: "time",
@@ -168,14 +154,13 @@ const SalesSummary = () => {
         easing: "easeQuadIn",
       },
     },
-    // Add gradient fill to the columns
+
     columnStyle: {
       fill: "l(90) 0:#1677ff 1:#58a9ff",
-      radius: [4, 4, 0, 0], // Rounded top corners
+      radius: [4, 4, 0, 0],
     },
   };
 
-  // Disable day view for today/yesterday since it doesn't make sense
   const getViewOptions = () => {
     if (timeRange === "today" || timeRange === "yesterday") {
       return [{ label: "Theo giờ", value: "hour" }];
@@ -207,7 +192,7 @@ const SalesSummary = () => {
               className="w-full md:w-40"
               onChange={(value) => {
                 setTimeRange(value);
-                // Reset view type if necessary
+
                 if (
                   (value === "today" || value === "yesterday") &&
                   viewType !== "hour"

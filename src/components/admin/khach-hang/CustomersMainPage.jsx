@@ -13,18 +13,15 @@ import SearchBar from "./SearchBar";
 import CustomerTable from "./CustomerTable";
 
 const CustomersMainPage = () => {
-  // State quản lý danh sách khách hàng và loading
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // State cho các modal
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [viewModalVisible, setViewModalVisible] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
-  // State cho tìm kiếm, lọc, sắp xếp và phân trang
   const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
@@ -71,13 +68,10 @@ const CustomersMainPage = () => {
     }
   };
 
-  // Gọi API 1 lần khi component mount
   useEffect(() => {
     fetchCustomers();
-    // Nếu đang chạy trong StrictMode (React 18 dev mode), có thể thấy gọi 2 lần – tuy nhiên ở production chỉ gọi 1 lần.
   }, []);
 
-  // Handler khi tìm kiếm
   const handleSearch = (value) => {
     const trimmedValue = value.trim();
     setSearchText(trimmedValue);
@@ -85,9 +79,8 @@ const CustomersMainPage = () => {
     fetchCustomers(0, pagination.pageSize, trimmedValue);
   };
 
-  // Handler thay đổi bảng: sắp xếp, phân trang
   const handleTableChange = (tablePagination, filters, sorter) => {
-    const currentPage = tablePagination.current - 1; // nếu backend dùng 0-index
+    const currentPage = tablePagination.current - 1;
     setPagination((prev) => ({
       ...prev,
       current: currentPage,

@@ -18,9 +18,8 @@ const CustomerTable = ({
   setViewModalVisible,
   setEditModalVisible,
   setDeleteModalVisible,
-  paginationConfig
+  paginationConfig,
 }) => {
-  // Các cột của bảng khách hàng
   const columns = useMemo(
     () => [
       {
@@ -97,7 +96,7 @@ const CustomerTable = ({
         width: 100,
         render: (_, record) => (
           <Dropdown
-          trigger={["click"]}
+            trigger={["click"]}
             menu={{
               items: [
                 {
@@ -148,7 +147,7 @@ const CustomerTable = ({
         scroll={{ x: 1000, y: "calc(100vh - 352px)" }}
         style={{ height: "100%" }}
         sticky
-        pagination={paginationConfig} // sử dụng cấu hình được truyền vào
+        pagination={paginationConfig}
         onChange={handleTableChange}
         size="middle"
         locale={{ emptyText: "Không có dữ liệu" }}

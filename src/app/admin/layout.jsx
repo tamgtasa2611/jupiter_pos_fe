@@ -21,7 +21,7 @@ export default function AdminLayout({ children }) {
   // const isMobile = false;
   // Lấy token ngay cách đồng bộ (localStorage là sync)
   const token = typeof window !== "undefined" ? getToken() : null;
-  // Check authentication on component mount
+
   useEffect(() => {
     if (!token) {
       router.replace("/dang-nhap");
@@ -36,7 +36,6 @@ export default function AdminLayout({ children }) {
     }
   }, [isAuthenticated]);
 
-  // Logout function
   const handleLogout = useCallback(() => {
     localStorage.removeItem("token");
     message.success("Đăng xuất thành công");

@@ -7,13 +7,11 @@ const EditCustomerModal = ({ visible, onCancel, onEdit, customerId }) => {
   const [loading, setLoading] = useState(false);
   const [oldValues, setOldValues] = useState({});
 
-  // Khi modal mở và có customerId, gọi API lấy thông tin khách hàng
   useEffect(() => {
     if (visible && customerId) {
       setLoading(true);
       getCustomerById(customerId)
         .then((res) => {
-          // Set các trường của form: customerName, phone, gender, address
           form.setFieldsValue({
             customerName: res.customerName,
             phone: res.phone,
@@ -41,7 +39,6 @@ const EditCustomerModal = ({ visible, onCancel, onEdit, customerId }) => {
     try {
       // Kiểm tra nếu không có thay đổi gì thì không cần cập nhật
       if (JSON.stringify(oldValues) !== JSON.stringify(values)) {
-        // Gọi API cập nhật khách hàng, truyền customerId và payload values
         const res = await updateCustomer(customerId, values);
         if (onEdit) onEdit(res.data);
       }

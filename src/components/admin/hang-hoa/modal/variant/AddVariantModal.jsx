@@ -24,7 +24,7 @@ const { Option } = Select;
 const AddVariantModal = ({
   visible,
   onCancel,
-  onAdd, // Hàm nhận: (productId, variantData)
+  onAdd,
   productId,
   units = [],
   handleAddUnit,

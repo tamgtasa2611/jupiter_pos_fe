@@ -30,7 +30,6 @@ import Draggable from "react-draggable";
 
 const { Title, Text } = Typography;
 
-// Tối ưu: chỉ truyền totalAmount và tổng số items thay vì toàn bộ giỏ hàng
 const PaymentModal = memo(
   ({ visible, onCancel, onCheckout, totalAmount, cartSummary }) => {
     const [form] = Form.useForm();
@@ -51,7 +50,6 @@ const PaymentModal = memo(
     });
     const draggleRef = useRef(null);
 
-    // Khởi tạo giá trị received khi totalAmount thay đổi
     useEffect(() => {
       form.setFieldsValue({ paid: received });
     }, [paymentMethod, received, form]);
@@ -164,16 +162,14 @@ const PaymentModal = memo(
       }
       if (amount !== received) {
         setReceived(amount);
-        setQrCodeUrl(""); // Reset QR code when changing amount
+        setQrCodeUrl(""); // Reset QR code
       }
     };
 
     const changeAmount = received - totalAmount;
 
-    // Chỉ render modal khi nó được mở
     if (!visible) return null;
 
-    // Tách hẳn phần render form để giảm re-render
     const renderPaymentForm = () => {
       return (
         <div className="payment-details">
@@ -450,7 +446,7 @@ const PaymentModal = memo(
           }}
           modalRender={(modal) => (
             <Draggable
-              nodeRef={draggleRef} // sử dụng nodeRef thay vì findDOMNode
+              nodeRef={draggleRef}
               disabled={false}
               bounds={bounds}
               onStart={(event, uiData) => {

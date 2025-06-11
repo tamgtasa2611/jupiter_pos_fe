@@ -21,7 +21,7 @@ const MainSellingPage = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isPaymentModalVisible, setIsPaymentModalVisible] = useState(false);
-  const [customerInfo, setCustomerInfo] = useState(KHACH_LE); // Khách lẻ mặc định
+  const [customerInfo, setCustomerInfo] = useState(KHACH_LE);
   const [outOfProducts, setOutOfProducts] = useState(false);
   const [showNumericKeypad, setShowNumericKeypad] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -84,7 +84,7 @@ const MainSellingPage = () => {
         seenIds.add(item.id);
         return true;
       });
-      // Nếu page = 0, thay thế danh sách sản phẩm, còn nếu > 0 thì cộng thêm sản phẩm mới vào danh sách cũ
+
       if (page === 0) {
         setProducts(uniqueProducts);
       } else {
@@ -106,16 +106,15 @@ const MainSellingPage = () => {
   };
 
   useEffect(() => {
-    // Fetch products when the component mounts
     fetchProducts();
   }, []);
 
   const handleSearch = async ({ search, page, size }) => {
     setInitLoading(true);
     setLoading(true);
-    // Fetch products with search query
+
     await fetchProducts({ search, page, size });
-    // Reset pagination to the first page
+
     setSelectedCategory("all");
     setLoading(false);
   };
@@ -126,14 +125,12 @@ const MainSellingPage = () => {
     setLoading(false);
   };
 
-  // Tính toán tổng đơn hàng
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalAmount = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
 
-  // Tối ưu: tạo cartSummary để truyền vào PaymentModal thay vì toàn bộ cart
   const cartSummary = {
     items: totalItems,
     totalAmount: totalAmount,
@@ -177,14 +174,13 @@ const MainSellingPage = () => {
   };
 
   const handleCheckout = async (data) => {
-    // Build your order payload based on the provided DTO structure
     const orderPayload = {
-      customerId: customerInfo.id || null, // e.g., 0 for "Khách lẻ"
+      customerId: customerInfo.id || null,
       receiverName: customerInfo.customerName || "Khách lẻ",
-      receiverPhone: customerInfo.phone || "", // Optional, can be empty for "Khách lẻ"
-      receiverAddress: "", // You can gather this from a form
-      note: data.note, // Optional
-      paymentMethod: data.paymentMethod, // For example
+      receiverPhone: customerInfo.phone || "",
+      receiverAddress: "",
+      note: data.note,
+      paymentMethod: data.paymentMethod,
       paid: data.paid || 0,
       orderItems: cart.map((item) => ({
         productVariantId: item.id,
@@ -192,7 +188,7 @@ const MainSellingPage = () => {
         soldQuantity: item.quantity,
         soldPrice: item.price,
       })),
-      orderStatus: ORDER_STATUS.CHO_XAC_NHAN, // Default status as per DTO
+      orderStatus: ORDER_STATUS.CHO_XAC_NHAN,
     };
 
     try {
@@ -294,7 +290,7 @@ const MainSellingPage = () => {
           onCancel={() => setIsPaymentModalVisible(false)}
           onCheckout={handleCheckout}
           totalAmount={totalAmount}
-          cartSummary={cartSummary} // Chỉ truyền thông tin cần thiết
+          cartSummary={cartSummary}
         />
       )}
 

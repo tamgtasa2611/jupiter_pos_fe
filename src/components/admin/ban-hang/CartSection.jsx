@@ -5,7 +5,6 @@ import CartItem from "./CartItem";
 
 const { Text } = Typography;
 
-// Memoize CartSection
 const CartSection = memo(
   ({ cart, totalItems, onRemove, onUpdateQuantity, onOpenKeypad, theme }) => {
     return (
@@ -23,7 +22,7 @@ const CartSection = memo(
         styles={{
           body: {
             padding: 0,
-            height: "calc(100% - 56px)", // Account for card header height
+            height: "calc(100% - 56px)",
             display: "flex",
             flexDirection: "column",
           },

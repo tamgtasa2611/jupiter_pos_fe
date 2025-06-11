@@ -11,7 +11,7 @@ const ProductsSection = memo(
     selectedCategory,
     onSelectCategory,
     onProductClick,
-    onSearch, // onSearch callback receives { page, size, search }
+    onSearch,
     onLoadMore,
     loading,
     setLoading,
@@ -26,7 +26,7 @@ const ProductsSection = memo(
     const handleSearch = async (searchValue) => {
       const trimmedValue = searchValue.trim();
       setSearchQuery(trimmedValue);
-      // Reset trang về 0
+
       setCurrentPage(0);
       await onSearch({ search: trimmedValue, page: 0, size: 30 });
     };
@@ -47,13 +47,13 @@ const ProductsSection = memo(
     return (
       <Card
         className="h-full w-full"
-        styles={{ 
-          body:{
+        styles={{
+          body: {
             height: "100%",
             padding: 16,
             display: "flex",
             flexDirection: "column",
-          }
+          },
         }}
       >
         <Flex vertical gap={16} className="h-full">
