@@ -84,7 +84,7 @@ const EmployeePage = () => {
         !(
           selectedEmployee.username === values.username &&
           selectedEmployee.email === values.email &&
-          selectedEmployee.fullname === values.fullname &&
+          selectedEmployee.fullName === values.fullName &&
           selectedEmployee.phoneNumber === values.phoneNumber &&
           selectedEmployee.gender === values.gender &&
           selectedEmployee.active === values.active

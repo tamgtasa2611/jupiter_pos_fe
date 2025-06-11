@@ -19,7 +19,7 @@ export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
 
   const handleFinish = async (values) => {
     try {
-      // Gọi API tạo nhân viên với các trường: username, fullname, email, password, phone, gender, role, is_active
+      // Gọi API tạo nhân viên với các trường: username, fullName, email, password, phone, gender, role, is_active
       const res = await onAdd(values);
 
       if (res.response?.data?.error) {
@@ -60,7 +60,7 @@ export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
           >
             <Input placeholder="Nhập tên đăng nhập" />
           </Form.Item>
-          <Form.Item name="fullname" label="Họ và tên" style={{ flex: 1 }}>
+          <Form.Item name="fullName" label="Họ và tên" style={{ flex: 1 }}>
             <Input placeholder="Nhập họ và tên" />
           </Form.Item>
         </Flex>
@@ -159,7 +159,7 @@ export const EditEmployeeModal = ({
         .then((res) => {
           form.setFieldsValue({
             username: res.username,
-            fullname: res.fullname,
+            fullName: res.fullName,
             phone: res.phone,
             email: res.email,
             gender: res.gender, // boolean: true (Nam), false (Nữ)
@@ -225,7 +225,7 @@ export const EditEmployeeModal = ({
             >
               <Input placeholder="Nhập tên đăng nhập" />
             </Form.Item>
-            <Form.Item name="fullname" label="Họ và tên" style={{ flex: 1 }}>
+            <Form.Item name="fullName" label="Họ và tên" style={{ flex: 1 }}>
               <Input placeholder="Nhập họ và tên" />
             </Form.Item>
           </Flex>
