@@ -105,23 +105,30 @@ const PaymentModal = memo(
 
     const handleFinish = async (values) => {
       const valid = await validateReceivedAmount();
-      if (!valid) return;
-      if (paymentMethod === ORDER_PAYMENT_METHOD.BANKING) {
-        if (!qrCodeUrl) {
-          message.error("Vui lòng tạo mã QR trước khi thanh toán");
-          return;
-        } else {
-          Modal.confirm({
-            title: "Xác nhận thanh toán bằng mã QR",
-            content: `Bạn có chắc chắn khách đã thanh toán (${totalAmount.toLocaleString()}đ)?`,
-            onOk: () => {
-              // Nếu xác nhận thành công thì mới tiến hành thanh toán
-              console.log(values);
-              onCheckout({ ...values, paid: received });
-              form.resetFields();
-            },
-            onCancel: () => {},
-          });
+      if (!valid) {
+        return;
+      } else {
+        if (paymentMethod === ORDER_PAYMENT_METHOD.BANKING) {
+          if (!qrCodeUrl) {
+            message.error("Vui lòng tạo mã QR trước khi thanh toán");
+            return;
+          } else {
+            Modal.confirm({
+              title: "Xác nhận thanh toán bằng mã QR",
+              content: `Bạn có chắc chắn khách đã thanh toán (${totalAmount.toLocaleString()}đ)?`,
+              onOk: () => {
+                // Nếu xác nhận thành công thì mới tiến hành thanh toán
+                console.log(values);
+                onCheckout({ ...values, paid: received });
+                form.resetFields();
+              },
+              onCancel: () => {},
+            });
+          }
+        } else if (paymentMethod === ORDER_PAYMENT_METHOD.TIEN_MAT) {
+          console.log(values);
+          onCheckout({ ...values, paid: received });
+          form.resetFields();
         }
       }
     };

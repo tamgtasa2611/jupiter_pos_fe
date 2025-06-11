@@ -17,7 +17,7 @@ export const createAttribute = async (data) => {
     const res = await api.post("/attributes/create", data);
     return res;
   } catch (error) {
-    console.error("Lỗi khi tạo thuộc tính:", error);
-    return [];
+    console.error("Lỗi khi tạo thuộc tính:", error?.response?.data);
+    return error?.response?.data;
   }
 };

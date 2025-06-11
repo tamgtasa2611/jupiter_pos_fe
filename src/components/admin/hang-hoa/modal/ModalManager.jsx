@@ -72,7 +72,11 @@ const ModalManager = ({
   const handleCategorySubmit = async (values) => {
     try {
       const res = await createCategory({ name: values.categoryName });
-      if (res) {
+      if (!res || res?.error) {
+        // Nếu có lỗi từ API, hiển thị thông báo lỗi
+        message.error(res?.message || "Thêm danh mục thất bại!");
+        return;
+      } else {
         // Gọi API thêm danh mục mới với values.categoryName ở đây
         message.success("Danh mục mới được thêm thành công!");
         // Sau khi thêm mới thành công, bạn có thể cập nhật lại danh sách categories
@@ -80,8 +84,8 @@ const ModalManager = ({
         setCategoryModalVisible(false);
       }
     } catch (error) {
-      console.error("Failed to add category", error);
-      message.error("Thêm danh mục thất bại!");
+      console.error("Failed to add category", error?.message);
+      message.error(error?.message || "Thêm danh mục thất bại!");
     }
   };
 
@@ -92,14 +96,18 @@ const ModalManager = ({
   const handleAttributeSubmit = async (values) => {
     try {
       const res = await createAttribute({ name: values.attributeName });
-      if (res) {
+      if (!res || res?.error) {
+        // Nếu có lỗi từ API, hiển thị thông báo lỗi
+        message.error(res?.message || "Thêm thuộc tính thất bại!");
+        return;
+      } else {
         message.success("Thuộc tính mới được thêm thành công!");
         reloadAttributes();
         setAttributeModalVisible(false);
       }
     } catch (error) {
-      console.error("Failed to add attribute", error);
-      message.error("Thêm thuộc tính thất bại!");
+      console.error("Failed to add attribute", error?.message);
+      message.error(error?.message || "Thêm thuộc tính thất bại!");
     }
   };
 
@@ -110,14 +118,18 @@ const ModalManager = ({
   const handleUnitSubmit = async (values) => {
     try {
       const res = await createUnit({ name: values.unitName });
-      if (res) {
+      if (!res || res?.error) {
+        // Nếu có lỗi từ API, hiển thị thông báo lỗi
+        message.error(res?.message || "Thêm đơn vị thất bại!");
+        return;
+      } else {
         message.success("Đơn vị mới được thêm thành công!");
         reloadUnits(); // Cập nhật lại danh sách đơn vị
         setUnitModalVisible(false);
       }
     } catch (error) {
-      console.error("Failed to add unit", error);
-      message.error("Thêm đơn vị thất bại!");
+      console.error("Failed to add unit", error?.message);
+      message.error(error?.message || "Thêm đơn vị thất bại!");
     }
   };
 

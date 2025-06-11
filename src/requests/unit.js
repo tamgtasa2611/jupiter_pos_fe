@@ -17,7 +17,7 @@ export const createUnit = async (data) => {
     const res = await api.post("/units/create", data);
     return res;
   } catch (error) {
-    console.error("Lỗi khi tạo đơn vị:", error);
-    return [];
+    console.error("Lỗi khi tạo đơn vị:", error?.response?.data);
+    return error?.response?.data;
   }
 };

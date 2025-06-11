@@ -15,7 +15,7 @@ export const createCategory = async (data) => {
     const categories = await api.post(`/categories/add`, data);
     return categories;
   } catch (error) {
-    console.error("Lỗi khi thêm danh mục:", error);
-    return [];
+    console.error("Lỗi khi tạo danh mục:", error?.response?.data);
+    return error?.response?.data;
   }
 };
