@@ -22,7 +22,7 @@ import {
   PAYMENT_METHOD_MAP,
 } from "@constants/order";
 import { FALLBACK_IMAGE } from "@constants/product";
-import UpdatePaymentForm from "./UpdatePaymentModal"; 
+import UpdatePaymentForm from "./UpdatePaymentModal";
 
 const { Paragraph } = Typography;
 
@@ -44,6 +44,7 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [activeTab, setActiveTab] = useState("order");
 
   useEffect(() => {
     if (visible && orderId) {
@@ -111,7 +112,7 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
   const renderProductInfo = () => (
     <div
       style={{
-        maxHeight: "calc(100vh - 300px)",
+        maxHeight: "calc(100vh - 240px)",
         overflowY: "auto",
         borderRadius: 8,
       }}
@@ -193,7 +194,7 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
   const renderPaymentInfo = () => (
     <div
       style={{
-        maxHeight: "calc(100vh - 300px)",
+        maxHeight: "calc(100vh - 240px)",
         overflowY: "auto",
         borderRadius: 8,
       }}
@@ -202,12 +203,16 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
         itemLayout="vertical"
         dataSource={order.payments}
         renderItem={(payment, index) => (
-          <Card 
-          key={index}>
+          <Card
+            key={index}
+            style={{
+              marginBottom: 16,
+            }}
+          >
             <Descriptions
               title={`Thanh toán ${index + 1}`}
-              column={1}
-              size="middle"
+              column={2}
+              size="small"
             >
               <Descriptions.Item label="Phương thức thanh toán">
                 {
@@ -228,10 +233,21 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
                   ? new Intl.NumberFormat("vi-VN").format(payment.paid) + " đ"
                   : "-"}
               </Descriptions.Item>
-              <Descriptions.Item label="Còn nợ">
+              <Descriptions.Item
+                label={
+                  payment.remaining != null && payment.remaining >= 0
+                    ? "Còn nợ"
+                    : "Tiền thừa"
+                }
+              >
+                {/*
+                remaining >= 0thì là còn nợ
+                remaining < 0 thì là tiền thừa
+                 */}
                 {payment.remaining != null
-                  ? new Intl.NumberFormat("vi-VN").format(payment.remaining) +
-                    " đ"
+                  ? new Intl.NumberFormat("vi-VN").format(
+                      Math.abs(payment.remaining),
+                    ) + " đ"
                   : "-"}
               </Descriptions.Item>
               <Descriptions.Item label="Ngày thanh toán">
@@ -243,91 +259,125 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
           </Card>
         )}
       />
-      <Flex justify="flex-end" style={{ marginTop: 8 }}>
-          <Button
-            type="primary"
-            onClick={() => setShowPaymentForm(true)}
-          >
-              Cập nhật thanh toán
-          </Button>
-      </Flex>
     </div>
   );
 
-  return (
-    <Modal
-      title={`Chi tiết đơn hàng: ${order ? order.id : ""}`}
-      open={visible}
-      onCancel={onCancel}
-      footer={null}
-      centered={true}
-      width={800}
-    >
-      {loading ? (
-        <div style={{ textAlign: "center", padding: 60 }}>
-          <Spin size="large" />
-        </div>
-      ) : order ? (
-        <Tabs
-          defaultActiveKey="1"
-          tabBarStyle={{
-            backgroundColor: "#fff",
-            borderRadius: 8,
-            marginBottom: 16,
-          }}
-          items={[
-            {
-              key: "1",
-              label: "Thông tin chung",
-              children: renderGeneralInfo(),
-            },
-            {
-              key: "2",
-              label: "Thông tin sản phẩm",
-              children:
-                order.orderDetails && order.orderDetails.length > 0
-                  ? renderProductInfo()
-                  : "Không có dữ liệu sản phẩm",
-            },
-            {
-              key: "3",
-              label: "Thông tin thanh toán",
-              children:
-                order.payments && order.payments.length > 0
-                  ? renderPaymentInfo()
-                  : "Không có dữ liệu thanh toán",
-            },
-          ]}
-        />
-      ) : (
-        <div style={{ textAlign: "center", padding: 60 }}>Không có dữ liệu</div>
+  const renderHistoryInfo = () => {
+    <List
+      itemLayout="vertical"
+      dataSource={order.history}
+      renderItem={(item, index) => (
+        <Card key={index} style={{ marginBottom: 16 }}>
+          <Descriptions title={`Lịch sử ${index + 1}`} column={2} size="small">
+            <Descriptions.Item label="Thời gian">
+              {item.time ? dayjs(item.time).format("DD/MM/YYYY HH:mm") : "-"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Hành động">
+              {item.action || "-"}
+            </Descriptions.Item>
+          </Descriptions>
+        </Card>
       )}
+    />;
+  };
 
-      {/* Sửa đoạn này: dùng Modal cho form cập nhật thanh toán */}
+  const handleUpdatePayment = async () => {
+    setShowPaymentForm(false);
+    setLoading(true);
+    const updatedOrder = await getOrderById(orderId);
+    setOrder(updatedOrder);
+    setLoading(false);
+    setActiveTab("payment");
+  };
+
+  return (
+    <>
+      <Modal
+        title={`Chi tiết đơn hàng: ${order ? order.id : ""}`}
+        open={visible}
+        maskClosable={false}
+        onCancel={onCancel}
+        footer={
+          activeTab == "payment" ? (
+            <Flex justify="flex-end" style={{ marginTop: 8 }}>
+              <Button type="primary" onClick={() => setShowPaymentForm(true)}>
+                Thêm thanh toán
+              </Button>
+            </Flex>
+          ) : null
+        }
+        centered={true}
+        width={800}
+      >
+        {loading ? (
+          <div style={{ textAlign: "center", padding: 60 }}>
+            <Spin size="large" />
+          </div>
+        ) : order ? (
+          <Tabs
+            defaultActiveKey={activeTab}
+            tabBarStyle={{
+              backgroundColor: "#fff",
+              borderRadius: 8,
+              marginBottom: 16,
+            }}
+            onChange={(key) => setActiveTab(key)}
+            items={[
+              {
+                key: "order",
+                label: "Thông tin chung",
+                children: renderGeneralInfo(),
+              },
+              {
+                key: "product",
+                label: "Thông tin sản phẩm",
+                children:
+                  order.orderDetails && order.orderDetails.length > 0
+                    ? renderProductInfo()
+                    : "Không có dữ liệu sản phẩm",
+              },
+              {
+                key: "payment",
+                label: "Thông tin thanh toán",
+                children:
+                  order.payments && order.payments.length > 0
+                    ? renderPaymentInfo()
+                    : "Không có dữ liệu thanh toán",
+              },
+              {
+                key: "history",
+                label: "Lịch sử đơn hàng",
+                children:
+                  order.history && order.history.length > 0
+                    ? renderHistoryInfo()
+                    : "Không có dữ liệu lịch sử",
+              },
+            ]}
+          />
+        ) : (
+          <div style={{ textAlign: "center", padding: 60 }}>
+            Không có dữ liệu
+          </div>
+        )}
+      </Modal>
       <Modal
         open={showPaymentForm}
         onCancel={() => setShowPaymentForm(false)}
         footer={null}
         centered
-        title="Cập nhật thanh toán"
-        destroyOnHidden
+        title="Thêm thanh toán cho đơn hàng"
+        maskClosable={false}
         width={480}
       >
         <UpdatePaymentForm
           order={order}
           paymentMethodOptions={paymentMethodOptions}
           paymentStatusOptions={paymentStatusOptions}
-          onSuccess={async () => {
-            setShowPaymentForm(false);
-            setLoading(true);
-            const updatedOrder = await getOrderById(orderId);
-            setOrder(updatedOrder);
-            setLoading(false);
-          }}
+          onSuccess={handleUpdatePayment}
           onCancel={() => setShowPaymentForm(false)}
         />
       </Modal>
-    </Modal>
+    </>
   );
 };
 

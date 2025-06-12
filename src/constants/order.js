@@ -63,7 +63,6 @@ export const PAYMENT_STATUS = {
   CHUA_THANH_TOAN: "CHUA_THANH_TOAN",
   THANH_TOAN_THANH_CONG: "THANH_TOAN_THANH_CONG",
   THANH_TOAN_THAT_BAI: "THANH_TOAN_THAT_BAI",
-  THANH_TOAN_CO_THE_BI_GIA_MAO: "THANH_TOAN_CO_THE_BI_GIA_MAO",
 };
 
 export const PAYMENT_STATUS_MAP = {
@@ -81,10 +80,5 @@ export const PAYMENT_STATUS_MAP = {
     label: "Thanh toán thất bại",
     value: PAYMENT_STATUS.THANH_TOAN_THAT_BAI,
     color: "orange",
-  },
-  THANH_TOAN_CO_THE_BI_GIA_MAO: {
-    label: "Thanh toán có thể bị giả mạo",
-    value: PAYMENT_STATUS.THANH_TOAN_CO_THE_BI_GIA_MAO,
-    color: "purple",
   },
 };

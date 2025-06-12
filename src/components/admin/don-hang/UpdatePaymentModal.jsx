@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Form, InputNumber, Select, Button, Flex, message as antdMessage } from "antd";
 import { UpdatePayment } from "@/requests/payment";
+import { PAYMENT_METHOD, PAYMENT_STATUS } from "@/constants/order";
 
 const { Option } = Select;
 
@@ -45,8 +46,8 @@ const UpdatePaymentForm = ({
         layout="vertical"
         initialValues={{
           paid: order?.totalAmount || 0,
-          paymentMethod: "TIEN_MAT",
-          paymentStatus: "CHUA_THANH_TOAN",
+          paymentMethod: PAYMENT_METHOD.TIEN_MAT,
+          paymentStatus: PAYMENT_STATUS.THANH_TOAN_THANH_CONG,
         }}
         onFinish={handleFinish}
       >
