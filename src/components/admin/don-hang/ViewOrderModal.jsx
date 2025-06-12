@@ -11,6 +11,8 @@ import {
   Tag,
   Flex,
   Typography,
+  Button,
+  Form,
 } from "antd";
 import dayjs from "dayjs";
 import { getOrderById } from "@/requests/order";
@@ -20,12 +22,29 @@ import {
   PAYMENT_METHOD_MAP,
 } from "@constants/order";
 import { FALLBACK_IMAGE } from "@constants/product";
+import UpdatePaymentForm from "./UpdatePaymentModal"; 
 
 const { Paragraph } = Typography;
+
+const paymentMethodOptions = Object.entries(PAYMENT_METHOD_MAP).map(
+  ([key, value]) => ({
+    value: key,
+    label: value.label,
+  }),
+);
+
+const paymentStatusOptions = Object.entries(PAYMENT_STATUS_MAP).map(
+  ([key, value]) => ({
+    value: key,
+    label: value.label,
+  }),
+);
 
 const ViewOrderModal = ({ visible, onCancel, orderId }) => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+
   useEffect(() => {
     if (visible && orderId) {
       setLoading(true);
@@ -65,7 +84,6 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
               : order.orderStatus}
           </Tag>
         </Descriptions.Item>
-
         <Descriptions.Item label="Số điện thoại">
           {order.receiverPhone ||
             (order.customer && order.customer.phone) ||
@@ -90,7 +108,6 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
     </Card>
   );
 
-  // Replace your existing renderProductInfo with this updated version:
   const renderProductInfo = () => (
     <div
       style={{
@@ -174,50 +191,67 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
   );
 
   const renderPaymentInfo = () => (
-    <List
-      itemLayout="vertical"
-      dataSource={order.payments}
-      renderItem={(payment, index) => (
-        <Card key={index}>
-          <Descriptions
-            title={`Thanh toán ${index + 1}`}
-            column={1}
-            size="middle"
+    <div
+      style={{
+        maxHeight: "calc(100vh - 300px)",
+        overflowY: "auto",
+        borderRadius: 8,
+      }}
+    >
+      <List
+        itemLayout="vertical"
+        dataSource={order.payments}
+        renderItem={(payment, index) => (
+          <Card 
+          key={index}>
+            <Descriptions
+              title={`Thanh toán ${index + 1}`}
+              column={1}
+              size="middle"
+            >
+              <Descriptions.Item label="Phương thức thanh toán">
+                {
+                  <Tag color={PAYMENT_METHOD_MAP[payment.paymentMethod]?.color}>
+                    {PAYMENT_METHOD_MAP[payment.paymentMethod]?.label}
+                  </Tag>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Trạng thái">
+                {
+                  <Tag color={PAYMENT_STATUS_MAP[payment.status]?.color}>
+                    {PAYMENT_STATUS_MAP[payment.status]?.label}
+                  </Tag>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Đã thanh toán">
+                {payment.paid != null
+                  ? new Intl.NumberFormat("vi-VN").format(payment.paid) + " đ"
+                  : "-"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Còn nợ">
+                {payment.remaining != null
+                  ? new Intl.NumberFormat("vi-VN").format(payment.remaining) +
+                    " đ"
+                  : "-"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Ngày thanh toán">
+                {payment.date
+                  ? dayjs(payment.date).format("DD/MM/YYYY HH:mm")
+                  : "-"}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        )}
+      />
+      <Flex justify="flex-end" style={{ marginTop: 8 }}>
+          <Button
+            type="primary"
+            onClick={() => setShowPaymentForm(true)}
           >
-            <Descriptions.Item label="Phương thức thanh toán">
-              {
-                <Tag color={PAYMENT_METHOD_MAP[payment.paymentMethod]?.color}>
-                  {PAYMENT_METHOD_MAP[payment.paymentMethod]?.label}
-                </Tag>
-              }
-            </Descriptions.Item>
-            <Descriptions.Item label="Trạng thái">
-              {
-                <Tag color={PAYMENT_STATUS_MAP[payment.status]?.color}>
-                  {PAYMENT_STATUS_MAP[payment.status]?.label}
-                </Tag>
-              }
-            </Descriptions.Item>
-            <Descriptions.Item label="Đã thanh toán">
-              {payment.paid != null
-                ? new Intl.NumberFormat("vi-VN").format(payment.paid) + " đ"
-                : "-"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Còn nợ">
-              {payment.remaining != null
-                ? new Intl.NumberFormat("vi-VN").format(payment.remaining) +
-                  " đ"
-                : "-"}
-            </Descriptions.Item>
-            <Descriptions.Item label="Ngày thanh toán">
-              {payment.date
-                ? dayjs(payment.date).format("DD/MM/YYYY HH:mm")
-                : "-"}
-            </Descriptions.Item>
-          </Descriptions>
-        </Card>
-      )}
-    />
+              Cập nhật thanh toán
+          </Button>
+      </Flex>
+    </div>
   );
 
   return (
@@ -226,7 +260,7 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
       open={visible}
       onCancel={onCancel}
       footer={null}
-      centered
+      centered={true}
       width={800}
     >
       {loading ? (
@@ -268,6 +302,31 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
       ) : (
         <div style={{ textAlign: "center", padding: 60 }}>Không có dữ liệu</div>
       )}
+
+      {/* Sửa đoạn này: dùng Modal cho form cập nhật thanh toán */}
+      <Modal
+        open={showPaymentForm}
+        onCancel={() => setShowPaymentForm(false)}
+        footer={null}
+        centered
+        title="Cập nhật thanh toán"
+        destroyOnHidden
+        width={480}
+      >
+        <UpdatePaymentForm
+          order={order}
+          paymentMethodOptions={paymentMethodOptions}
+          paymentStatusOptions={paymentStatusOptions}
+          onSuccess={async () => {
+            setShowPaymentForm(false);
+            setLoading(true);
+            const updatedOrder = await getOrderById(orderId);
+            setOrder(updatedOrder);
+            setLoading(false);
+          }}
+          onCancel={() => setShowPaymentForm(false)}
+        />
+      </Modal>
     </Modal>
   );
 };

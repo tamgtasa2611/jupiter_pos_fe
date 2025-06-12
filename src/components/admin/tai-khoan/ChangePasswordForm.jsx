@@ -6,8 +6,6 @@ import { generateOtp, verifyOtpAndChangePws } from "@/requests/user";
 
 const ChangePasswordForm = () => {
   const [loginInfo, setLoginInfo] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [loadingOtp, setLoadingOtp] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
