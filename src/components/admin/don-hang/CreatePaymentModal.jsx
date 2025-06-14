@@ -7,14 +7,13 @@ import {
   Select,
   Button,
   Flex,
+  Tag,
   message as antdMessage,
 } from "antd";
 import { createPayment } from "@/requests/payment";
 import { PAYMENT_METHOD } from "@/constants/order";
 
-const { Option } = Select;
-
-const UpdatePaymentForm = ({
+const CreatePaymentModal = ({
   order,
   paymentMethodOptions,
   onSuccess,
@@ -34,7 +33,7 @@ const UpdatePaymentForm = ({
       await createPayment(payload);
       messageApi.success("Cập nhật thanh toán thành công");
       if (onSuccess) onSuccess();
-      if (onCancel) onCancel();
+      else if (onCancel) onCancel();
     } catch (error) {
       messageApi.error(
         error?.response?.data?.message || "Cập nhật thanh toán thất bại",
@@ -75,13 +74,18 @@ const UpdatePaymentForm = ({
           label="Phương thức thanh toán"
           rules={[{ required: true, message: "Chọn phương thức thanh toán" }]}
         >
-          <Select>
-            {paymentMethodOptions.map((opt) => (
-              <Option key={opt.value} value={opt.value}>
-                {opt.label}
-              </Option>
-            ))}
-          </Select>
+          <Select
+            options={paymentMethodOptions}
+            // Nếu paymentMethodOptions là [{value, label}]
+          />
+        </Form.Item>
+        <Form.Item>
+          <Flex align="center" gap={8}>
+            <span style={{ fontWeight: 500 }}>Trạng thái:</span>
+            <Tag color="green" style={{ fontSize: 14, marginLeft: 4 }}>
+              Thanh toán thành công
+            </Tag>
+          </Flex>
         </Form.Item>
         <Flex justify="flex-end" gap={8}>
           <Button onClick={onCancel}>Hủy</Button>
@@ -94,4 +98,4 @@ const UpdatePaymentForm = ({
   );
 };
 
-export default UpdatePaymentForm;
+export default CreatePaymentModal;

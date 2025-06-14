@@ -54,7 +54,7 @@ export const PAYMENT_METHOD_MAP = {
     color: "blue",
   },
   BANKING: {
-    label: "Ngân hàng",
+    label: "Chuyển khoản",
     value: PAYMENT_METHOD.BANKING,
     color: "orange",
   },

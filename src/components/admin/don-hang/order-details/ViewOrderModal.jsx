@@ -25,7 +25,7 @@ import {
   PAYMENT_METHOD_MAP,
 } from "@constants/order";
 import { FALLBACK_IMAGE } from "@constants/product";
-import UpdatePaymentForm from "../UpdatePaymentModal";
+import CreatePaymentForm from "../CreatePaymentModal";
 import { VALID_TRANSITIONS } from "@constants/order";
 import OrderInfo from "./OrderInfo";
 import ProductInfo from "./ProductInfo";
@@ -53,6 +53,10 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
   const [loading, setLoading] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [activeTab, setActiveTab] = useState("order");
+  const reloadOrder = async () => {
+    const updatedOrder = await getOrderById(orderId);
+    setOrder(updatedOrder); 
+  };
 
   useEffect(() => {
     if (visible && orderId) {
@@ -69,7 +73,7 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
     }
   }, [visible, orderId]);
 
-  const handleUpdatePayment = async () => {
+  const handleCreatePayment = async () => {
     setShowPaymentForm(false);
     setLoading(true);
     const updatedOrder = await getOrderById(orderId);
@@ -191,7 +195,11 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
                 label: "Thông tin thanh toán",
                 children:
                   order.payments && order.payments.length > 0 ? (
-                    <PaymentInfo order={order} />
+                    <PaymentInfo 
+                    order={order} 
+                    paymentMethodOptions={paymentMethodOptions}
+                    reloadOrder={reloadOrder}
+                    />
                   ) : (
                     "Không có dữ liệu thanh toán"
                   ),
@@ -223,11 +231,11 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
         maskClosable={false}
         width={480}
       >
-        <UpdatePaymentForm
+        <CreatePaymentForm
           order={order}
           paymentMethodOptions={paymentMethodOptions}
           paymentStatusOptions={paymentStatusOptions}
-          onSuccess={handleUpdatePayment}
+          onSuccess={handleCreatePayment}
           onCancel={() => setShowPaymentForm(false)}
         />
       </Modal>

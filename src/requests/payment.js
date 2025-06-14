@@ -21,3 +21,13 @@ export const createPayment = async (data) => {
     throw error;
   }
 };
+
+export const updatePayment = async (data) => {
+  try {
+    const res = await api.put("/payments/update-for-order", data);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

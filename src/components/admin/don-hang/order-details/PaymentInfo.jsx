@@ -1,9 +1,29 @@
-import React from "react";
-import { Card, Descriptions, Tag, List } from "antd";
+import React, { useState } from "react";
+import { Card, Descriptions, Select, Tag, List, message } from "antd";
 import { PAYMENT_METHOD_MAP, PAYMENT_STATUS_MAP } from "@constants/order";
 import dayjs from "dayjs";
+import { updatePayment } from "@/requests/payment";
 
-const PaymentInfo = ({ order }) => {
+const PaymentInfo = ({ order, paymentMethodOptions, reloadOrder}) => {
+  const [editingPaymentId, setEditingPaymentId] = useState(null);
+  const [updating, setUpdating] = useState(false);
+  
+  const handleChangeMethod = async (paymentId, newMethod) => {
+    setUpdating(true);
+    try {
+      await updatePayment({paymentId, paymentMethod: newMethod});
+      if (reloadOrder) await reloadOrder();
+      message.success("Cập nhật phương thức thanh toán thành công");
+      setEditingPaymentId(null);
+    } catch (e) {
+      message.error("Cập nhật thất bại");
+      setEditingPaymentId(null);
+    } finally {
+      setEditingPaymentId(null);
+      setUpdating(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -27,12 +47,28 @@ const PaymentInfo = ({ order }) => {
               column={2}
               size="small"
             >
-              <Descriptions.Item label="Phương thức thanh toán">
-                {
-                  <Tag color={PAYMENT_METHOD_MAP[payment.paymentMethod]?.color}>
+            <Descriptions.Item label="Phương thức thanh toán">
+                {editingPaymentId === payment.id ? (
+                  <Select
+                    style={{ minWidth: 150 }}
+                    loading={updating}
+                    defaultValue={payment.paymentMethod}
+                    options={paymentMethodOptions}
+                    onChange={(value) =>
+                      handleChangeMethod(payment.id, value)
+                    }
+                    onBlur={() => setEditingPaymentId(null)}
+                    autoFocus
+                  />
+                ) : (
+                  <Tag
+                    color={PAYMENT_METHOD_MAP[payment.paymentMethod]?.color}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setEditingPaymentId(payment.id)}
+                  >
                     {PAYMENT_METHOD_MAP[payment.paymentMethod]?.label}
                   </Tag>
-                }
+                )}
               </Descriptions.Item>
               <Descriptions.Item label="Trạng thái">
                 {
