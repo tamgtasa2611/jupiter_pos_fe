@@ -1,16 +1,22 @@
 "use client";
 
 import React, { useState } from "react";
-import { Form, InputNumber, Select, Button, Flex, message as antdMessage } from "antd";
-import { UpdatePayment } from "@/requests/payment";
-import { PAYMENT_METHOD, PAYMENT_STATUS } from "@/constants/order";
+import {
+  Form,
+  InputNumber,
+  Select,
+  Button,
+  Flex,
+  message as antdMessage,
+} from "antd";
+import { createPayment } from "@/requests/payment";
+import { PAYMENT_METHOD } from "@/constants/order";
 
 const { Option } = Select;
 
 const UpdatePaymentForm = ({
   order,
   paymentMethodOptions,
-  paymentStatusOptions,
   onSuccess,
   onCancel,
 }) => {
@@ -24,9 +30,8 @@ const UpdatePaymentForm = ({
         orderId: order.id,
         paid: values.paid,
         paymentMethod: values.paymentMethod,
-        paymentStatus: values.paymentStatus,
       };
-      await UpdatePayment(payload);
+      await createPayment(payload);
       messageApi.success("Cập nhật thanh toán thành công");
       if (onSuccess) onSuccess();
       if (onCancel) onCancel();
@@ -47,7 +52,6 @@ const UpdatePaymentForm = ({
         initialValues={{
           paid: order?.totalAmount || 0,
           paymentMethod: PAYMENT_METHOD.TIEN_MAT,
-          paymentStatus: PAYMENT_STATUS.THANH_TOAN_THANH_CONG,
         }}
         onFinish={handleFinish}
       >
@@ -73,19 +77,6 @@ const UpdatePaymentForm = ({
         >
           <Select>
             {paymentMethodOptions.map((opt) => (
-              <Option key={opt.value} value={opt.value}>
-                {opt.label}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="paymentStatus"
-          label="Trạng thái thanh toán"
-          rules={[{ required: true, message: "Chọn trạng thái thanh toán" }]}
-        >
-          <Select>
-            {paymentStatusOptions.map((opt) => (
               <Option key={opt.value} value={opt.value}>
                 {opt.label}
               </Option>

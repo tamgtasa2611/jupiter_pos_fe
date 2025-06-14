@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button, Tag, Space, Dropdown } from "antd";
+import { Table, Button, Tag, Space, Dropdown, Flex } from "antd";
 import { EyeOutlined, EditOutlined, MoreOutlined } from "@ant-design/icons";
 import { ORDER_STATUS_MAP } from "@constants/order";
 
@@ -76,7 +76,11 @@ const OrderTable = ({
           label: status,
           color: "grey",
         };
-        return <Tag color={currentStatus.color}>{currentStatus.label}</Tag>;
+        return (
+          <Flex align="center" justify="center">
+            <Tag color={currentStatus.color}>{currentStatus.label}</Tag>
+          </Flex>
+        );
       },
     },
     {

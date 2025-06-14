@@ -38,6 +38,7 @@ export const ORDER_STATUS_MAP = {
     label: "Đã hủy",
     value: ORDER_STATUS.DA_HUY,
     color: "red",
+    danger: true,
   },
 };
 
@@ -82,3 +83,21 @@ export const PAYMENT_STATUS_MAP = {
     color: "orange",
   },
 };
+
+export const VALID_TRANSITIONS = new Map([
+  [
+    ORDER_STATUS.DON_NHAP,
+    new Set([ORDER_STATUS.DA_HUY, ORDER_STATUS.CHO_XAC_NHAN]),
+  ],
+  [
+    ORDER_STATUS.CHO_XAC_NHAN,
+    new Set([ORDER_STATUS.DA_HUY, ORDER_STATUS.DA_XAC_NHAN]),
+  ],
+  [
+    ORDER_STATUS.DA_XAC_NHAN,
+    new Set([ORDER_STATUS.DA_HUY, ORDER_STATUS.DANG_VAN_CHUYEN]),
+  ],
+  [ORDER_STATUS.DANG_VAN_CHUYEN, new Set([ORDER_STATUS.DA_GIAO])],
+  [ORDER_STATUS.DA_GIAO, new Set()], // Không thể thay đổi nữa
+  [ORDER_STATUS.DA_HUY, new Set()], // Không thể phục hồi
+]);

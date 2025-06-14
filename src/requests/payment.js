@@ -12,9 +12,9 @@ export const getQRCode = async (amount = 0) => {
   }
 };
 
-export const UpdatePayment = async (data) => {
+export const createPayment = async (data) => {
   try {
-    const res = await api.post("/payments/update-for-order", data);
+    const res = await api.post("/payments/create-for-order", data);
     return res;
   } catch (error) {
     console.error(error);

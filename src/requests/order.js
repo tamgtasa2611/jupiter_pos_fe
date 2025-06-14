@@ -29,3 +29,13 @@ export const getOrderById = async (id) => {
     throw error;
   }
 };
+
+export const updateOrderStatus = async (id, data) => {
+  try {
+    const res = await api.put(`/orders/${id}/status`, data);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error?.response?.data?.message;
+  }
+};

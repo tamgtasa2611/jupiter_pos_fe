@@ -8,7 +8,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import OrderHeader from "./OrderHeader";
 import DesktopActionPanel from "./DesktopActionPanel";
 import OrderContent from "./OrderContent";
-import ViewOrderModal from "./ViewOrderModal";
+import ViewOrderModal from "./order-details/ViewOrderModal";
 import { getOrders } from "@requests/order";
 
 dayjs.extend(isBetween);
@@ -181,7 +181,10 @@ const OrderMainPage = () => {
       {/* Order Details Modal */}
       <ViewOrderModal
         visible={viewModalVisible}
-        onCancel={() => setViewModalVisible(false)}
+        onCancel={() => {
+          setViewModalVisible(false);
+          fetchOrders(false);
+        }}
         orderId={selectedOrderId}
       />
     </>

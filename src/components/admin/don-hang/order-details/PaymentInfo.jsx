@@ -1,0 +1,79 @@
+import React from "react";
+import { Card, Descriptions, Tag, List } from "antd";
+import { PAYMENT_METHOD_MAP, PAYMENT_STATUS_MAP } from "@constants/order";
+import dayjs from "dayjs";
+
+const PaymentInfo = ({ order }) => {
+  return (
+    <div
+      style={{
+        maxHeight: "calc(100vh - 240px)",
+        overflowY: "auto",
+        borderRadius: 8,
+      }}
+    >
+      <List
+        itemLayout="vertical"
+        dataSource={order.payments}
+        renderItem={(payment, index) => (
+          <Card
+            key={index}
+            style={{
+              marginBottom: 16,
+            }}
+          >
+            <Descriptions
+              title={`Thanh toán ${index + 1}`}
+              column={2}
+              size="small"
+            >
+              <Descriptions.Item label="Phương thức thanh toán">
+                {
+                  <Tag color={PAYMENT_METHOD_MAP[payment.paymentMethod]?.color}>
+                    {PAYMENT_METHOD_MAP[payment.paymentMethod]?.label}
+                  </Tag>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Trạng thái">
+                {
+                  <Tag color={PAYMENT_STATUS_MAP[payment.status]?.color}>
+                    {PAYMENT_STATUS_MAP[payment.status]?.label}
+                  </Tag>
+                }
+              </Descriptions.Item>
+              <Descriptions.Item label="Đã thanh toán">
+                {payment.paid != null
+                  ? new Intl.NumberFormat("vi-VN").format(payment.paid) + " đ"
+                  : "-"}
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  payment.remaining != null && payment.remaining >= 0
+                    ? "Còn nợ"
+                    : "Tiền thừa"
+                }
+              >
+                {/*
+                remaining >= 0thì là còn nợ
+                remaining < 0 thì là tiền thừa
+                 */}
+                {payment.remaining != null
+                  ? new Intl.NumberFormat("vi-VN").format(
+                      Math.abs(payment.remaining),
+                    ) + " đ"
+                  : "-"}
+              </Descriptions.Item>
+              <Descriptions.Item label="Ngày thanh toán">
+                {payment.date
+                  ? dayjs(payment.date).format("DD/MM/YYYY HH:mm")
+                  : "-"}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        )}
+      />
+    </div>
+  );
+};
+
+export default PaymentInfo;
