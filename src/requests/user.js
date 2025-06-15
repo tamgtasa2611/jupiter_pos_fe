@@ -26,7 +26,7 @@ export async function generateOtp(loginInfo = {}) {
     return otp;
   } catch (error) {
     console.error(`Lỗi khi lấy OTP!`, error);
-    return null;
+    return error;
   }
 }
 

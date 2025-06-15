@@ -71,9 +71,7 @@ export default function NotificationList({ onClose }) {
               </div>
               <div className="text-sm text-gray-600">{notification.body}</div>
               <div className="text-xs text-gray-400 mt-1">
-                {new Date(
-                  new Date(notification.date).getTime() + 7 * 60 * 60 * 1000,
-                ).toLocaleString()}
+                {new Date(notification.date).toLocaleString()}
               </div>
             </div>
           ))}

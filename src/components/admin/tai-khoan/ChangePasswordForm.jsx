@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Alert, message as antdMessage } from "antd";
 import { generateOtp, verifyOtpAndChangePws } from "@/requests/user";
+import { useRouter } from "next/navigation";
 
 const ChangePasswordForm = () => {
   const [loginInfo, setLoginInfo] = useState("");
@@ -10,6 +11,7 @@ const ChangePasswordForm = () => {
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [messageType, setMessageType] = useState("info");
+  const router = useRouter();
 
   const validateLoginInfo = (info) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,13 +31,15 @@ const ChangePasswordForm = () => {
 
     try {
       await generateOtp({ loginInfo });
-      antdMessage.success("Đã gửi OTP đến email hoặc số điện thoại của bạn.");
       setAlertMessage("Đã gửi OTP đến email hoặc số điện thoại của bạn.");
       setMessageType("success");
     } catch (error) {
-      const errorMessage =
-        error?.response?.data?.message || "Gửi OTP thất bại.";
-      antdMessage.error(errorMessage);
+      let errorMessage = "Gửi mã OTP thất bại.";
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      }
       setAlertMessage(errorMessage);
       setMessageType("error");
     }
@@ -46,13 +50,19 @@ const ChangePasswordForm = () => {
     setLoadingSubmit(true);
     setAlertMessage("");
     try {
-      await verifyOtpAndChangePws({
+      const res = await verifyOtpAndChangePws({
         otp: values.otp,
         newPassword: values.newPassword,
       });
-      antdMessage.success("Đổi mật khẩu thành công.");
+      if (res) {
+        message.error(res || "Đổi mật khẩu thất bại!");
+        return;
+      }
       setAlertMessage("Đổi mật khẩu thành công.");
       setMessageType("success");
+      setTimeout(() => {
+        router.push("/dang-nhap"); // Chuyển về trang đăng nhập sau khi thành công
+      }, 1000);
     } catch (err) {
       const errorMessage =
         err?.response?.data?.message || "Đổi mật khẩu thất bại.";
