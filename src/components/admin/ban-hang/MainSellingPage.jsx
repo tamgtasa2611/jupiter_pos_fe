@@ -7,11 +7,10 @@ import OrderSummary from "./OrderSummary";
 import CustomerInfo from "./CustomerInfo";
 import PaymentModal from "./PaymentModal";
 import NumericKeypad from "./NumericKeypad";
-import { getProducts, getProductsVariants } from "@requests/product";
+import { getProductsVariants } from "@requests/product";
 import { createOrder } from "@requests/order";
-import { getCustomers } from "@requests/customer";
+import PriceEditModal from "./PriceEditModal";
 import { ORDER_STATUS, PAYMENT_METHOD } from "@constants/order";
-const { Text } = Typography;
 import { KHACH_LE } from "@constants/customer";
 
 const MainSellingPage = () => {
@@ -27,6 +26,8 @@ const MainSellingPage = () => {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
+  const [showPriceModal, setShowPriceModal] = useState(false);
+  const [selectedItemForPrice, setSelectedItemForPrice] = useState(null);
 
   const fetchProducts = async ({
     search = "",
@@ -127,7 +128,7 @@ const MainSellingPage = () => {
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalAmount = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + (item.soldPrice || item.price) * item.quantity,
     0,
   );
 
@@ -185,7 +186,7 @@ const MainSellingPage = () => {
         productVariantId: item.id,
         price: item.price,
         soldQuantity: item.quantity,
-        soldPrice: item.price,
+        soldPrice: item.soldPrice || item.price,
       })),
       orderStatus: ORDER_STATUS.CHO_XAC_NHAN,
       paymentMethod: data?.paymentMethod || PAYMENT_METHOD.TIEN_MAT,
@@ -204,6 +205,28 @@ const MainSellingPage = () => {
     setCustomerInfo(KHACH_LE);
     setCart([]);
     setIsPaymentModalVisible(false);
+  };
+
+  const openPriceModal = (itemId, soldPrice) => {
+    const item = cart.find((cartItem) => cartItem.id === itemId);
+    setSelectedItemForPrice({
+      id: itemId,
+      soldPrice: soldPrice,
+      name: item?.name,
+    });
+    setShowPriceModal(true);
+  };
+
+  const handlePriceUpdate = (newPrice) => {
+    if (selectedItemForPrice) {
+      setCart((prevCart) =>
+        prevCart.map((item) =>
+          item.id === selectedItemForPrice.id
+            ? { ...item, soldPrice: newPrice }
+            : item,
+        ),
+      );
+    }
   };
 
   return (
@@ -238,6 +261,7 @@ const MainSellingPage = () => {
             onRemove={removeFromCart}
             onUpdateQuantity={updateQuantity}
             onOpenKeypad={openKeypad}
+            onOpenPriceModal={openPriceModal}
             theme={{ token }}
           />
         </Col>
@@ -300,6 +324,18 @@ const MainSellingPage = () => {
           onCancel={() => setShowNumericKeypad(false)}
           onConfirm={handleKeypadInput}
           title="Nhập số lượng"
+        />
+      )}
+
+      {showPriceModal && (
+        <PriceEditModal
+          visible={showPriceModal}
+          onCancel={() => setShowPriceModal(false)}
+          onConfirm={handlePriceUpdate}
+          currentPrice={
+            selectedItemForPrice?.soldPrice || selectedItemForPrice?.price
+          }
+          productName={selectedItemForPrice?.name}
         />
       )}
     </>

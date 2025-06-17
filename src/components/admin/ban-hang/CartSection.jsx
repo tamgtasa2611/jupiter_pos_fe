@@ -6,7 +6,15 @@ import CartItem from "./CartItem";
 const { Text } = Typography;
 
 const CartSection = memo(
-  ({ cart, totalItems, onRemove, onUpdateQuantity, onOpenKeypad, theme }) => {
+  ({
+    cart,
+    totalItems,
+    onRemove,
+    onUpdateQuantity,
+    onOpenKeypad,
+    onOpenPriceModal,
+    theme,
+  }) => {
     return (
       <Card
         title={
@@ -47,6 +55,7 @@ const CartSection = memo(
                 onRemove={onRemove}
                 onUpdateQuantity={onUpdateQuantity}
                 onOpenKeypad={onOpenKeypad}
+                onOpenPriceModal={onOpenPriceModal}
               />
             ))
           )}

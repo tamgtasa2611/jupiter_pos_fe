@@ -1,7 +1,7 @@
 import React, { memo } from "react";
-import { Card, Typography, Space, Divider } from "antd";
+import { Card, Typography, Space, Divider, Flex } from "antd";
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 const OrderSummary = memo(({ cart, totalAmount }) => {
   const totalProducts = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -30,14 +30,32 @@ const OrderSummary = memo(({ cart, totalAmount }) => {
         className="p-2"
       >
         {cart.map((item) => (
-          <div key={item.id} style={{ marginBottom: 8 }}>
-            <Space style={{ width: "100%", justifyContent: "space-between" }}>
-              <Text>
-                {item.name} x {item.quantity}
+          <>
+            <Flex
+              key={item.id}
+              justify="space-between"
+              align="start"
+              style={{ marginBottom: 8 }}
+            >
+              <Paragraph
+                ellipsis={{
+                  rows: 1,
+                  tooltip: {
+                    title: `${item.name} ${item.attrValues !== null && item.attrValues !== undefined ? "-" : ""} ${item.attrValues?.map((attr) => `${attr.attrName}: ${attr.attrValue}`).join(", ") || ""}`,
+                  },
+                }}
+                style={{ marginBottom: 0, flex: "2" }}
+              >
+                {item.quantity} x {item.name}
+              </Paragraph>
+              <Text style={{ flex: "1", textAlign: "right" }}>
+                {(
+                  (item.soldPrice || item.price) * item.quantity
+                ).toLocaleString()}{" "}
+                đ
               </Text>
-              <Text>{(item.price * item.quantity).toLocaleString()} đ</Text>
-            </Space>
-          </div>
+            </Flex>
+          </>
         ))}
       </div>
 
