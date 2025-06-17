@@ -10,6 +10,7 @@ const OrderTable = ({
   onTableChange,
   setSelectedOrderId,
   setViewModalVisible,
+  setEditModalVisible,
 }) => {
   const columns = [
     {
@@ -106,8 +107,8 @@ const OrderTable = ({
                 label: "Chỉnh sửa",
                 icon: <EditOutlined />,
                 onClick: () => {
-                  // setSelectedCustomer(record);
-                  // setEditModalVisible(true);
+                  setSelectedOrderId(record.id);
+                  setEditModalVisible(true);
                 },
               },
             ],

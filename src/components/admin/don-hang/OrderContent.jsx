@@ -12,6 +12,7 @@ const OrderContent = ({
   onLoadMore,
   setSelectedOrderId,
   setViewModalVisible,
+  setEditModalVisible,
 }) => {
   return isMobile ? (
     <MobileOrderList
@@ -29,6 +30,7 @@ const OrderContent = ({
       onTableChange={onTableChange}
       setSelectedOrderId={setSelectedOrderId}
       setViewModalVisible={setViewModalVisible}
+      setEditModalVisible={setEditModalVisible}
     />
   );
 };

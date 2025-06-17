@@ -9,6 +9,7 @@ import OrderHeader from "./OrderHeader";
 import DesktopActionPanel from "./DesktopActionPanel";
 import OrderContent from "./OrderContent";
 import ViewOrderModal from "./order-details/ViewOrderModal";
+import EditOrderModal from "./order-details/EditOrderModal";
 import { getOrders } from "@requests/order";
 
 dayjs.extend(isBetween);
@@ -34,6 +35,7 @@ const OrderMainPage = () => {
 
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [viewModalVisible, setViewModalVisible] = useState(false);
+  const [editModalVisible, setEditModalVisible] = useState(false);
 
   const apiParams = useMemo(() => {
     return {
@@ -174,6 +176,7 @@ const OrderMainPage = () => {
             onLoadMore={handleLoadMore}
             setSelectedOrderId={setSelectedOrderId}
             setViewModalVisible={setViewModalVisible}
+            setEditModalVisible={setEditModalVisible}
           />
         </Flex>
       </Card>
@@ -183,6 +186,20 @@ const OrderMainPage = () => {
         visible={viewModalVisible}
         onCancel={() => {
           setViewModalVisible(false);
+          fetchOrders(false);
+        }}
+        orderId={selectedOrderId}
+        onEdit={() => {
+          setViewModalVisible(false);
+          setEditModalVisible(true);
+        }}
+      />
+
+      {/* Edit Order Modal */}
+      <EditOrderModal
+        visible={editModalVisible}
+        onCancel={() => {
+          setEditModalVisible(false);
           fetchOrders(false);
         }}
         orderId={selectedOrderId}

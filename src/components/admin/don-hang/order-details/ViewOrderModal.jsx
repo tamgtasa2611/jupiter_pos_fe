@@ -1,38 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Modal,
-  Tabs,
-  Descriptions,
-  Spin,
-  message,
-  List,
-  Image,
-  Card,
-  Tag,
-  Flex,
-  Typography,
-  Button,
-  Form,
-  Timeline,
-  Avatar,
-} from "antd";
-import { UserOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
-import { getOrderById, updateOrderStatus } from "@/requests/order";
-import {
-  ORDER_STATUS_MAP,
-  PAYMENT_STATUS_MAP,
-  PAYMENT_METHOD_MAP,
-} from "@constants/order";
-import { FALLBACK_IMAGE } from "@constants/product";
-import CreatePaymentForm from "../CreatePaymentModal";
-import { VALID_TRANSITIONS } from "@constants/order";
+import { Modal, Tabs, Spin, message, Button } from "antd";
+import { getOrderById } from "@/requests/order";
+import { PAYMENT_METHOD_MAP } from "@constants/order";
 import OrderInfo from "./OrderInfo";
 import ProductInfo from "./ProductInfo";
 import PaymentInfo from "./PaymentInfo";
 import HistoryInfo from "./HistoryInfo";
-
-const { Paragraph } = Typography;
 
 const paymentMethodOptions = Object.entries(PAYMENT_METHOD_MAP).map(
   ([key, value]) => ({
@@ -41,21 +14,13 @@ const paymentMethodOptions = Object.entries(PAYMENT_METHOD_MAP).map(
   }),
 );
 
-const paymentStatusOptions = Object.entries(PAYMENT_STATUS_MAP).map(
-  ([key, value]) => ({
-    value: key,
-    label: value.label,
-  }),
-);
-
-const ViewOrderModal = ({ visible, onCancel, orderId }) => {
+const ViewOrderModal = ({ visible, onCancel, orderId, onEdit }) => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [activeTab, setActiveTab] = useState("order");
   const reloadOrder = async () => {
     const updatedOrder = await getOrderById(orderId);
-    setOrder(updatedOrder); 
+    setOrder(updatedOrder);
   };
 
   useEffect(() => {
@@ -73,91 +38,21 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
     }
   }, [visible, orderId]);
 
-  const handleCreatePayment = async () => {
-    setShowPaymentForm(false);
-    setLoading(true);
-    const updatedOrder = await getOrderById(orderId);
-    setOrder(updatedOrder);
-    setLoading(false);
-    setActiveTab("payment");
-  };
-
-  const handleUpdateOrderStatus = async (status) => {
-    const payload = {
-      oldOrderStatus: order?.orderStatus || null,
-      newOrderStatus: status,
-    };
-    try {
-      setLoading(true);
-      const res = await updateOrderStatus(orderId, payload);
-
-      message.success("Cập nhật trạng thái đơn hàng thành công");
-      const updatedOrder = await getOrderById(orderId);
-      setOrder(updatedOrder);
-      setActiveTab("order");
-    } catch (error) {
-      message.error(error || "Cập nhật trạng thái đơn hàng thất bại");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const renderFooter = () => {
-    switch (activeTab) {
-      case "payment":
-        return (
-          <Flex justify="flex-end" style={{ marginTop: 8 }}>
-            <Button type="primary" onClick={() => setShowPaymentForm(true)}>
-              Thêm thanh toán
-            </Button>
-          </Flex>
-        );
-      case "order":
-        const orderStatus = order?.orderStatus;
-        if (orderStatus !== null && orderStatus !== undefined) {
-          const validTransitions = VALID_TRANSITIONS.get(orderStatus) || [];
-          if (validTransitions.size > 0) {
-            return (
-              <Flex justify="space-between" style={{ marginTop: 8 }} gap={8}>
-                {Array.from(validTransitions).map((status) => (
-                  <Button
-                    key={status}
-                    danger={ORDER_STATUS_MAP[status]?.danger || false}
-                    type="primary"
-                    onClick={() => {
-                      Modal.confirm({
-                        title: `Xác nhận cập nhật trạng thái`,
-                        content: `Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng sang "${ORDER_STATUS_MAP[status].label}"?`,
-                        onOk: () => handleUpdateOrderStatus(status),
-                        onCancel: () => {},
-                      });
-                    }}
-                  >
-                    {ORDER_STATUS_MAP[status].label}
-                  </Button>
-                ))}
-              </Flex>
-            );
-          }
-        }
-        return null;
-      default:
-        return null;
-    }
-  };
-
   return (
     <>
       <Modal
         title={`Chi tiết đơn hàng: ${order ? order.id : ""}`}
         open={visible}
-        maskClosable={false}
         onCancel={() => {
           setOrder(null);
           setActiveTab("order");
           onCancel();
         }}
-        footer={renderFooter()}
+        footer={
+          <Button type="primary" onClick={onEdit}>
+            Chỉnh sửa
+          </Button>
+        }
         centered={true}
         width={800}
       >
@@ -195,10 +90,10 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
                 label: "Thông tin thanh toán",
                 children:
                   order.payments && order.payments.length > 0 ? (
-                    <PaymentInfo 
-                    order={order} 
-                    paymentMethodOptions={paymentMethodOptions}
-                    reloadOrder={reloadOrder}
+                    <PaymentInfo
+                      order={order}
+                      paymentMethodOptions={paymentMethodOptions}
+                      reloadOrder={reloadOrder}
                     />
                   ) : (
                     "Không có dữ liệu thanh toán"
@@ -221,23 +116,6 @@ const ViewOrderModal = ({ visible, onCancel, orderId }) => {
             Không có dữ liệu
           </div>
         )}
-      </Modal>
-      <Modal
-        open={showPaymentForm}
-        onCancel={() => setShowPaymentForm(false)}
-        footer={null}
-        centered
-        title="Thêm thanh toán cho đơn hàng"
-        maskClosable={false}
-        width={480}
-      >
-        <CreatePaymentForm
-          order={order}
-          paymentMethodOptions={paymentMethodOptions}
-          paymentStatusOptions={paymentStatusOptions}
-          onSuccess={handleCreatePayment}
-          onCancel={() => setShowPaymentForm(false)}
-        />
       </Modal>
     </>
   );
