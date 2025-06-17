@@ -4,6 +4,7 @@ export const ORDER_STATUS = {
   DA_XAC_NHAN: "DA_XAC_NHAN",
   DANG_VAN_CHUYEN: "DANG_VAN_CHUYEN",
   DA_GIAO: "DA_GIAO",
+  HOAN_THANH: "HOAN_THANH",
   DA_HUY: "DA_HUY",
 };
 
@@ -33,6 +34,11 @@ export const ORDER_STATUS_MAP = {
     label: "Đã giao",
     value: ORDER_STATUS.DA_GIAO,
     color: "green",
+  },
+  HOAN_THANH: {
+    label: "Hoàn thành",
+    value: ORDER_STATUS.HOAN_THANH,
+    color: "teal",
   },
   DA_HUY: {
     label: "Đã hủy",
@@ -87,17 +93,51 @@ export const PAYMENT_STATUS_MAP = {
 export const VALID_TRANSITIONS = new Map([
   [
     ORDER_STATUS.DON_NHAP,
-    new Set([ORDER_STATUS.DA_HUY, ORDER_STATUS.CHO_XAC_NHAN]),
+    new Set([
+      ORDER_STATUS.DA_HUY,
+      ORDER_STATUS.CHO_XAC_NHAN,
+      ORDER_STATUS.HOAN_THANH,
+    ]),
   ],
   [
     ORDER_STATUS.CHO_XAC_NHAN,
-    new Set([ORDER_STATUS.DA_HUY, ORDER_STATUS.DA_XAC_NHAN]),
+    new Set([
+      ORDER_STATUS.DA_HUY,
+      ORDER_STATUS.DA_XAC_NHAN,
+      ORDER_STATUS.HOAN_THANH,
+    ]),
   ],
   [
     ORDER_STATUS.DA_XAC_NHAN,
-    new Set([ORDER_STATUS.DA_HUY, ORDER_STATUS.DANG_VAN_CHUYEN]),
+    new Set([
+      ORDER_STATUS.DA_HUY,
+      ORDER_STATUS.DANG_VAN_CHUYEN,
+      ORDER_STATUS.HOAN_THANH,
+    ]),
   ],
-  [ORDER_STATUS.DANG_VAN_CHUYEN, new Set([ORDER_STATUS.DA_GIAO])],
-  [ORDER_STATUS.DA_GIAO, new Set()], // Không thể thay đổi nữa
+  [
+    ORDER_STATUS.DANG_VAN_CHUYEN,
+    new Set([ORDER_STATUS.DA_GIAO, ORDER_STATUS.HOAN_THANH]),
+  ],
+  [ORDER_STATUS.DA_GIAO, new Set([ORDER_STATUS.HOAN_THANH])],
+  [ORDER_STATUS.HOAN_THANH, new Set()], // Không thể thay đổi nữa
   [ORDER_STATUS.DA_HUY, new Set()], // Không thể phục hồi
 ]);
+
+export const ORDER_TYPE = {
+  MUA_TRUC_TIEP: "MUA_TRUC_TIEP",
+  MUA_ONLINE: "MUA_ONLINE",
+};
+
+export const ORDER_TYPE_MAP = {
+  MUA_TRUC_TIEP: {
+    label: "Mua trực tiếp",
+    value: ORDER_TYPE.MUA_TRUC_TIEP,
+    color: "blue",
+  },
+  MUA_ONLINE: {
+    label: "Mua online",
+    value: ORDER_TYPE.MUA_ONLINE,
+    color: "green",
+  },
+};

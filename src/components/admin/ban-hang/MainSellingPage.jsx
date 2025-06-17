@@ -190,6 +190,7 @@ const MainSellingPage = () => {
       })),
       orderStatus: ORDER_STATUS.CHO_XAC_NHAN,
       paymentMethod: data?.paymentMethod || PAYMENT_METHOD.TIEN_MAT,
+      orderType: data?.orderType || ORDER_TYPE.MUA_TRUC_TIEP,
     };
 
     try {

@@ -26,6 +26,7 @@ import {
 import { PAYMENT_METHOD } from "@constants/order";
 import TextArea from "antd/es/input/TextArea";
 import { getQRCode } from "../../../requests/payment";
+import { ORDER_TYPE, ORDER_TYPE_MAP } from "@constants/order";
 import Draggable from "react-draggable";
 
 const { Title, Text } = Typography;
@@ -34,6 +35,7 @@ const PaymentModal = memo(
   ({ visible, onCancel, onCheckout, totalAmount, cartSummary }) => {
     const [form] = Form.useForm();
     const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHOD.TIEN_MAT);
+    const [orderType, setOrderType] = useState(ORDER_TYPE.MUA_TRUC_TIEP);
     const [received, setReceived] = useState(0);
     const [isProcessing, setIsProcessing] = useState(false);
     const [qrCodeUrl, setQrCodeUrl] = useState("");
@@ -103,9 +105,12 @@ const PaymentModal = memo(
       if (!valid) {
         return;
       } else {
+        setIsProcessing(true);
         if (paymentMethod === PAYMENT_METHOD.BANKING) {
           if (!qrCodeUrl) {
             message.error("Vui lòng tạo mã QR trước khi thanh toán");
+            setIsProcessing(false);
+
             return;
           } else {
             Modal.confirm({
@@ -118,8 +123,10 @@ const PaymentModal = memo(
                   ...values,
                   paid: received,
                   paymentMethod: paymentMethod,
+                  orderType: orderType,
                 });
                 form.resetFields();
+                setIsProcessing(false);
               },
               onCancel: () => {},
             });
@@ -130,11 +137,26 @@ const PaymentModal = memo(
             ...values,
             paid: received,
             paymentMethod: paymentMethod,
+            orderType: orderType,
           });
           form.resetFields();
+          setIsProcessing(false);
         }
       }
     };
+
+    const orderTypeOptions = [
+      {
+        key: ORDER_TYPE.MUA_TRUC_TIEP,
+        label: ORDER_TYPE_MAP.MUA_TRUC_TIEP.label,
+        icon: <DollarCircleOutlined />,
+      },
+      {
+        key: ORDER_TYPE.MUA_ONLINE,
+        label: ORDER_TYPE_MAP.MUA_ONLINE.label,
+        icon: <CreditCardOutlined />,
+      },
+    ];
 
     const paymentOptions = [
       {
@@ -152,12 +174,14 @@ const PaymentModal = memo(
     const quickAmounts = [
       { value: totalAmount, label: "Đủ" },
       { value: Math.round(totalAmount / 1000) * 1000, label: "Làm tròn" },
+      { value: 5000, label: "5,000đ" },
       { value: 10000, label: "10,000đ" },
       { value: 20000, label: "20,000đ" },
       { value: 50000, label: "50,000đ" },
       { value: 100000, label: "100,000đ" },
       { value: 200000, label: "200,000đ" },
       { value: 500000, label: "500,000đ" },
+      { value: 1000000, label: "1,000,000đ" },
     ];
 
     const handleQuickAmount = (amount) => {
@@ -178,57 +202,73 @@ const PaymentModal = memo(
     const renderPaymentForm = () => {
       return (
         <div className="payment-details">
-          <Card
-            className="payment-summary-card"
-            style={{ background: "#f9f9f9", marginBottom: 16 }}
-          >
-            <Row gutter={[16, 20]} align="middle">
-              <Col span={12}>
-                <Text type="secondary">Tổng tiền:</Text>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                <Text strong style={{ fontSize: "16px" }}>
-                  {totalAmount.toLocaleString()}đ
-                </Text>
-              </Col>
+          <Flex justify="space-between" align="center" gap={16}>
+            <Card
+              className="payment-summary-card"
+              style={{ background: "#f9f9f9", marginBottom: 16, flex: 1 }}
+            >
+              <Row gutter={[16, 20]} align="middle">
+                <Col span={12}>
+                  <Text type="secondary">Tổng tiền:</Text>
+                </Col>
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <Text strong style={{ fontSize: "16px" }}>
+                    {totalAmount.toLocaleString()}đ
+                  </Text>
+                </Col>
 
-              <Col span={12}>
-                <Text type="secondary">
-                  {paymentMethod === PAYMENT_METHOD.TIEN_MAT
-                    ? "Khách trả:"
-                    : "Khách chuyển:"}
-                </Text>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                <InputNumber
-                  style={{ width: "100%" }}
-                  size="large"
-                  value={received}
-                  onChange={(value) => handleQuickAmount(value)}
-                  formatter={(value) =>
-                    `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
-                  parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
-                  min={0}
-                />
-              </Col>
+                <Col span={12}>
+                  <Text type="secondary">
+                    {paymentMethod === PAYMENT_METHOD.TIEN_MAT
+                      ? "Khách trả:"
+                      : "Khách chuyển:"}
+                  </Text>
+                </Col>
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    size="large"
+                    value={received}
+                    onChange={(value) => handleQuickAmount(value)}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => value.replace(/\$\s?|(,*)/g, "")}
+                    min={0}
+                  />
+                </Col>
 
-              <Col span={12}>
-                <Text type="secondary">Tiền thừa:</Text>
-              </Col>
-              <Col span={12} style={{ textAlign: "right" }}>
-                <Text
-                  strong
-                  style={{
-                    fontSize: "18px",
-                    color: received - totalAmount < 0 ? "#ff4d4f" : "#52c41a",
-                  }}
-                >
-                  {(received - totalAmount).toLocaleString()}đ
-                </Text>
-              </Col>
-            </Row>
-          </Card>
+                <Col span={12}>
+                  <Text type="secondary">Tiền thừa:</Text>
+                </Col>
+                <Col span={12} style={{ textAlign: "right" }}>
+                  <Text
+                    strong
+                    style={{
+                      fontSize: "18px",
+                      color: received - totalAmount < 0 ? "#ff4d4f" : "#52c41a",
+                    }}
+                  >
+                    {(received - totalAmount).toLocaleString()}đ
+                  </Text>
+                </Col>
+              </Row>
+            </Card>
+            {/* QR cho BANKING */}
+            {paymentMethod === PAYMENT_METHOD.BANKING && (
+              <Button
+                type="primary"
+                loading={qrLoading}
+                onClick={() => {
+                  handleGenerateQRCode();
+                }}
+                disabled={received <= 0}
+              >
+                Tạo mã QR
+              </Button>
+            )}
+          </Flex>
+
           {/* Quick amount: luôn hiển thị */}
           <Flex>
             <div className="w-full">
@@ -240,7 +280,7 @@ const PaymentModal = memo(
               </Text>
               <Flex
                 wrap
-                gap={16}
+                gap={8}
                 justify="space-between"
                 align="center"
                 style={{ margin: "0" }}
@@ -249,7 +289,7 @@ const PaymentModal = memo(
                   <Button
                     key={option.value}
                     onClick={() => handleQuickAmount(option.value)}
-                    style={{ minWidth: 100 }}
+                    style={{ minWidth: 100, flex: 1 }}
                   >
                     {option.label}
                   </Button>
@@ -257,42 +297,6 @@ const PaymentModal = memo(
               </Flex>
             </div>
           </Flex>
-          {/* QR cho BANKING */}
-          {paymentMethod === PAYMENT_METHOD.BANKING && (
-            <Card
-              variant="borderless"
-              style={{
-                background: "#f9f9f9",
-                textAlign: "center",
-                marginTop: 24,
-              }}
-            >
-              <Flex
-                gap={80}
-                justify="center"
-                align="center"
-                style={{ width: "100%" }}
-              >
-                <Button
-                  type="primary"
-                  loading={qrLoading}
-                  onClick={() => {
-                    handleGenerateQRCode();
-                  }}
-                  disabled={received <= 0}
-                >
-                  Tạo mã QR
-                </Button>
-
-                <Flex vertical align="center" gap={8}>
-                  <Text strong style={{ fontSize: 20, marginTop: 12 }}>
-                    {received.toLocaleString()}đ
-                  </Text>
-                  <Text type="secondary">Quét mã để thanh toán</Text>
-                </Flex>
-              </Flex>
-            </Card>
-          )}
         </div>
       );
     };
@@ -304,7 +308,7 @@ const PaymentModal = memo(
           open={visible}
           onCancel={onCancel}
           centered
-          width={1024}
+          width="90%"
           maskClosable={false}
           footer={null}
           styles={{
@@ -336,8 +340,13 @@ const PaymentModal = memo(
           >
             <div style={{ padding: "24px" }}>
               <Row gutter={[24, 24]}>
-                <Col span={24}>
-                  <div style={{ padding: "16px" }}>
+                <Col span={16}>
+                  <div style={{ padding: "0px" }}>
+                    <div style={{ marginBottom: "16px" }}>
+                      <Text strong style={{ fontSize: "16px" }}>
+                        Chọn phương thức thanh toán
+                      </Text>
+                    </div>
                     <Form.Item
                       name="paymentMethod"
                       initialValue={PAYMENT_METHOD.TIEN_MAT}
@@ -357,6 +366,56 @@ const PaymentModal = memo(
                       >
                         <Row gutter={[12, 12]}>
                           {paymentOptions.map((option) => (
+                            <Col span={12} key={option.key}>
+                              <Radio.Button
+                                value={option.key}
+                                style={{
+                                  width: "100%",
+                                  height: "40px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                }}
+                              >
+                                <Flex align="center" justify="center" gap={8}>
+                                  {option.icon}
+                                  {option.label}
+                                </Flex>
+                              </Radio.Button>
+                            </Col>
+                          ))}
+                        </Row>
+                      </Radio.Group>
+                    </Form.Item>
+                  </div>
+                </Col>
+
+                <Col span={8}>
+                  <div style={{ padding: "0px" }}>
+                    <div style={{ marginBottom: "16px" }}>
+                      <Text strong style={{ fontSize: "16px" }}>
+                        Chọn hình thức mua hàng
+                      </Text>
+                    </div>
+                    <Form.Item
+                      name="orderType"
+                      initialValue={ORDER_TYPE.MUA_TRUC_TIEP}
+                      style={{ margin: 0 }}
+                    >
+                      <Radio.Group
+                        onChange={(e) => {
+                          const selectedValue = e.target.value;
+
+                          setOrderType(selectedValue);
+                          form.setFieldsValue({ orderType: selectedValue });
+                        }}
+                        initialValue={ORDER_TYPE.MUA_TRUC_TIEP}
+                        buttonStyle="solid"
+                        size="large"
+                        style={{ width: "100%" }}
+                      >
+                        <Row gutter={[12, 12]}>
+                          {orderTypeOptions.map((option) => (
                             <Col span={12} key={option.key}>
                               <Radio.Button
                                 value={option.key}
