@@ -6,101 +6,81 @@ import {
   NumberOutlined,
 } from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
+import { getProductData } from "@requests/statistic";
+import dayjs from "dayjs";
 
-const { Title } = Typography;
-const { Option } = Select;
+const TIME_OPTIONS = [
+  {
+    label: "7 ngày gần nhất",
+    value: "7days",
+    getRange: () => ({
+      startTime: dayjs().subtract(6, "day").startOf("day").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "Tháng này",
+    value: "thisMonth",
+    getRange: () => ({
+      startTime: dayjs().startOf("month").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  ...Array.from({ length: 12 }).map((_, i) => {
+    const month = dayjs().subtract(i, "month");
+    return {
+      label: month.format("MM/YYYY"),
+      value: `month-${month.format("YYYY-MM")}`,
+      getRange: () => ({
+        startTime: month.startOf("month").toISOString(),
+        endTime: month.endOf("month").toISOString(),
+      }),
+    };
+  }),
+];
 
 const Top10Products = () => {
-  const [timeRange, setTimeRange] = useState("today");
+  const [timeRange, setTimeRange] = useState(TIME_OPTIONS[0].value);
   const [sortBy, setSortBy] = useState("revenue");
+  const [loading, setLoading] = useState(true);
   const [productData, setProductData] = useState([]);
 
   const formatVND = (value) => {
     return (value / 1000000).toFixed(2) + " tr";
   };
+  const fetchProductData = async (range) => {
+    setLoading(true);
+    try {
+      const { startTime, endTime } = range;
+      const product = await getProductData({ startTime, endTime });
+      const sortField = sortBy === "revenue" ? "revenue" : "totalQuantity";
+      const top10 = (product || [])
+        .sort((a, b) => (b[sortField] || 0) - (a[sortField] || 0))
+        .slice(0, 10)
+        .map((product, index) => ({
+          ...product,
+          revenueFormatted: formatVND(product.revenue),
+          index: index + 1,
+        }));
+      setProductData(top10);
+      
+    } catch (error) {
+      setProductData([]);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const products = [
-      {
-        name: "Bia 333 thùng 24 lon",
-        category: "Đồ uống",
-        quantity: 10,
-        revenue: 15000000,
-      },
-      {
-        name: "Coca Cola 24 lon",
-        category: "Đồ uống",
-        quantity: 20,
-        revenue: 5000000,
-      },
-      {
-        name: "Sữa Vinamilk 48 hộp",
-        category: "Thực phẩm",
-        quantity: 30,
-        revenue: 10000000,
-      },
-      {
-        name: "Mì Hảo Hảo thùng 30 gói",
-        category: "Thực phẩm",
-        quantity: 40,
-        revenue: 8432000,
-      },
-      {
-        name: "Dầu ăn Tường An 5L",
-        category: "Gia vị",
-        quantity: 45,
-        revenue: 6000000,
-      },
-      {
-        name: "Gạo ST25 túi 5kg",
-        category: "Thực phẩm",
-        quantity: 32,
-        revenue: 7550000,
-      },
-      {
-        name: "Nước giặt Omo 3.7kg",
-        category: "Hóa phẩm",
-        quantity: 20,
-        revenue: 9000000,
-      },
-      {
-        name: "Bánh Oreo gói 137g",
-        category: "Bánh kẹo",
-        quantity: 26,
-        revenue: 4500000,
-      },
-      {
-        name: "Dầu gội Head & Shoulders 625ml",
-        category: "Hóa phẩm",
-        quantity: 51,
-        revenue: 11000000,
-      },
-      {
-        name: "Kem đánh răng Colgate 230g",
-        category: "Hóa phẩm",
-        quantity: 42,
-        revenue: 3800000,
-      },
-    ];
-
-    if (sortBy === "revenue") {
-      products.sort((a, b) => b.revenue - a.revenue);
-    } else {
-      products.sort((a, b) => b.quantity - a.quantity);
+    const option = TIME_OPTIONS.find((opt) => opt.value === timeRange);
+    if (option) {
+      fetchProductData(option.getRange());
     }
-
-    const top10 = products.slice(0, 10).map((product, index) => ({
-      ...product,
-      revenueFormatted: formatVND(product.revenue),
-    }));
-
-    setProductData(top10);
   }, [timeRange, sortBy]);
 
   const config = {
     data: productData,
-    yField: sortBy === "revenue" ? "revenue" : "quantity",
-    xField: sortBy === "revenue" ? "revenueFormatted" : "quantity",
+    yField: sortBy === "revenue" ? "revenue" : "totalQuantity",
+    xField: sortBy === "revenue" ? "revenue" : "totalQuantity",
     isStack: false,
     isGroup: false,
     legend: { position: "left" },
@@ -108,13 +88,10 @@ const Top10Products = () => {
       radius: [0, 4, 4, 0],
     },
     label: {
-      text: "name",
+      text: "productName",
       position: "left",
-      style: {
-        fill: "#000",
-        textAlign: "left",
-        dx: 5,
-      },
+      textAlign: "left",
+      dx: 5,
     },
     interactions: [{ type: "element-active" }],
     animation: {
@@ -123,7 +100,7 @@ const Top10Products = () => {
         duration: 800,
       },
     },
-    padding: [20, 100, 30, 120], // top, right, bottom, left
+    padding: [20, 20, 20, 20], // top, right, bottom, left
   };
 
   return (
@@ -132,7 +109,7 @@ const Top10Products = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 my-4 md:my-0">
           <Space>
             <ShoppingOutlined />
-            <span>Top 10 hàng bán chạy</span>
+            <span>Top 10 hàng bán chạy theo doanh thu</span>
           </Space>
           <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center w-full gap-2">
             <Select
@@ -161,17 +138,20 @@ const Top10Products = () => {
               ]}
             />
 
-            <Select value={timeRange} onChange={setTimeRange} className="w-32">
-              <Option value="today">Hôm nay</Option>
-              <Option value="yesterday">Hôm qua</Option>
-              <Option value="week">7 ngày qua</Option>
-              <Option value="thisMonth">Tháng này</Option>
-              <Option value="lastMonth">Tháng trước</Option>
-            </Select>
+            <Select 
+              className="w-32"
+              value={timeRange}
+              onChange={setTimeRange}
+              popupMatchSelectWidth={false}
+              options={TIME_OPTIONS.map((opt) => ({
+                value: opt.value,
+                label: opt.label,
+              }))}
+            />
           </div>
         </div>
       }
-      className="      transition-shadow w-full"
+      className="transition-shadow w-full"
     >
       <div className="h-96">
         <Bar {...config} />

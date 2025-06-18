@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { Button, Spin, Empty } from "antd";
-import { getNotifications } from "../../../requests/notification";
+import { getNotifications } from "@requests/notification";
 
 export default function NotificationList({ onClose }) {
   const [notifications, setNotifications] = useState([]);
