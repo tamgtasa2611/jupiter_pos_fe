@@ -41,6 +41,7 @@ const PaymentModal = memo(
     const [qrCodeUrl, setQrCodeUrl] = useState("");
     const [qrLoading, setQrLoading] = useState(false);
     const [qrModalVisible, setQrModalVisible] = useState(false);
+    const [finishLoading, setFinishLoading] = useState(false);
     const [bounds, setBounds] = useState({
       left: 0,
       top: 0,
@@ -70,7 +71,11 @@ const PaymentModal = memo(
 
     const validateReceivedAmount = (fromGenQrButton) => {
       return new Promise((resolve) => {
-        if (paymentMethod === PAYMENT_METHOD.BANKING && !qrCodeUrl && !fromGenQrButton) {
+        if (
+          paymentMethod === PAYMENT_METHOD.BANKING &&
+          !qrCodeUrl &&
+          !fromGenQrButton
+        ) {
           message.error("Vui lòng tạo mã QR trước khi thanh toán");
           return resolve(false);
         }
@@ -122,6 +127,7 @@ const PaymentModal = memo(
               title: "Xác nhận thanh toán bằng mã QR",
               content: `Bạn có chắc chắn khách đã thanh toán (${received.toLocaleString()}đ)?`,
               onOk: () => {
+                setFinishLoading(true);
                 // Nếu xác nhận thành công thì mới tiến hành thanh toán
                 console.log(values);
                 onCheckout({
@@ -132,6 +138,7 @@ const PaymentModal = memo(
                 });
                 form.resetFields();
                 setIsProcessing(false);
+                setFinishLoading(false);
               },
               onCancel: () => {
                 setIsProcessing(false);
@@ -139,6 +146,7 @@ const PaymentModal = memo(
             });
           }
         } else if (paymentMethod === PAYMENT_METHOD.TIEN_MAT) {
+          setFinishLoading(true);
           console.log(values);
           onCheckout({
             ...values,
@@ -148,6 +156,7 @@ const PaymentModal = memo(
           });
           form.resetFields();
           setIsProcessing(false);
+          setFinishLoading(false);
         }
       }
     };
@@ -322,6 +331,8 @@ const PaymentModal = memo(
             body: { padding: "0" },
           }}
           className="payment-modal"
+          loading={finishLoading}
+          destroyOnHidden={true}
         >
           <div
             style={{
