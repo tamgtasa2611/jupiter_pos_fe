@@ -86,7 +86,7 @@ const ProductCard = memo(
           style={{
             minHeight: 40,
             maxHeight: 40,
-            overflow: "hidden",
+
             marginBottom: 4,
           }}
         >
@@ -107,13 +107,15 @@ const ProductCard = memo(
           style={{
             minHeight: 32,
             maxHeight: 32,
-            overflow: "hidden",
             marginBottom: 4,
           }}
         >
           <Paragraph
-            style={{ fontSize: 10, marginTop: 0, marginBottom: 0 }}
-            ellipsis={{ rows: 2 }}
+            style={{ fontSize: 11, marginTop: 0, marginBottom: 0 }}
+            ellipsis={{
+              rows: 2,
+              tooltip: { title: attrValues, placement: "right" },
+            }}
           >
             {attrValues}
           </Paragraph>
@@ -124,7 +126,6 @@ const ProductCard = memo(
           style={{
             minHeight: 18,
             maxHeight: 18,
-            overflow: "hidden",
             marginBottom: 4,
           }}
         >
@@ -133,7 +134,7 @@ const ProductCard = memo(
               fontSize: 10,
               color: "#888",
               whiteSpace: "nowrap",
-              overflow: "hidden",
+
               textOverflow: "ellipsis",
               display: "block",
             }}
@@ -148,7 +149,6 @@ const ProductCard = memo(
           style={{
             minHeight: 24,
             maxHeight: 24,
-            overflow: "hidden",
             marginBottom: 4,
           }}
         >
