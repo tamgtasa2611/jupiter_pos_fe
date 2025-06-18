@@ -115,7 +115,7 @@ const PaymentModal = memo(
           } else {
             Modal.confirm({
               title: "Xác nhận thanh toán bằng mã QR",
-              content: `Bạn có chắc chắn khách đã thanh toán (${totalAmount.toLocaleString()}đ)?`,
+              content: `Bạn có chắc chắn khách đã thanh toán (${received.toLocaleString()}đ)?`,
               onOk: () => {
                 // Nếu xác nhận thành công thì mới tiến hành thanh toán
                 console.log(values);
