@@ -14,7 +14,7 @@ import {
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import ChangePasswordForm from "./ChangePasswordForm";
 import { getUserFromToken } from "@/utils/utils";
-
+import { USER_ROLES_MAP } from "@/constants/user";
 const { Title, Text } = Typography;
 
 const AccountMainPage = () => {
@@ -23,7 +23,7 @@ const AccountMainPage = () => {
   const fullName = user?.fullName || "-";
   const email = user?.email || "-";
   const phone = user?.phone || "-";
-  const role = user?.role || "Người dùng";
+  const role = user?.role ? USER_ROLES_MAP[user.role] : "Người dùng";
 
   return (
     <>

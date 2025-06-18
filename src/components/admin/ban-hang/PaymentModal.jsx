@@ -68,8 +68,12 @@ const PaymentModal = memo(
       }
     };
 
-    const validateReceivedAmount = () => {
+    const validateReceivedAmount = (fromGenQrButton) => {
       return new Promise((resolve) => {
+        if (paymentMethod === PAYMENT_METHOD.BANKING && !qrCodeUrl && !fromGenQrButton) {
+          message.error("Vui lòng tạo mã QR trước khi thanh toán");
+          return resolve(false);
+        }
         if (received < 0) {
           message.error("Số tiền nhận không hợp lệ");
           return resolve(false);
@@ -95,17 +99,18 @@ const PaymentModal = memo(
     };
 
     const handleGenerateQRCode = async () => {
-      const valid = await validateReceivedAmount();
+      const valid = await validateReceivedAmount(true);
       if (!valid) return;
       handleGetQR();
     };
 
     const handleFinish = async (values) => {
-      const valid = await validateReceivedAmount();
+      setIsProcessing(true);
+      const valid = await validateReceivedAmount(false);
       if (!valid) {
+        setIsProcessing(false);
         return;
       } else {
-        setIsProcessing(true);
         if (paymentMethod === PAYMENT_METHOD.BANKING) {
           if (!qrCodeUrl) {
             message.error("Vui lòng tạo mã QR trước khi thanh toán");
@@ -128,7 +133,9 @@ const PaymentModal = memo(
                 form.resetFields();
                 setIsProcessing(false);
               },
-              onCancel: () => {},
+              onCancel: () => {
+                setIsProcessing(false);
+              },
             });
           }
         } else if (paymentMethod === PAYMENT_METHOD.TIEN_MAT) {
