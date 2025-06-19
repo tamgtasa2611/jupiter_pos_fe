@@ -19,11 +19,6 @@ const TodaySummary = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const todayStaticData = {
-    invoiceCount: 20,
-    returns: 0,
-  };
-
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN").format(value);
   };
@@ -36,9 +31,10 @@ const TodaySummary = () => {
         setTodayData({
           todayRevenue: data.todayRevenue ?? 0,
           todayProfit: data.todayProfit ?? 0,
-          netRevenue: data.thisMonthRevenue ?? 0, // hoặc bạn muốn hiển thị gì
+          netRevenue: data.thisMonthRevenue ?? 0,
           comparedToYesterday: data.todayChangePercent ?? 0,
           comparedToLastMonth: data.thisMonthChangePercent ?? 0,
+          todayOrderCount : data.totalOrders?? 0,
         });
       } catch (error) {
         setTodayData({
@@ -47,6 +43,7 @@ const TodaySummary = () => {
           netRevenue: 0,
           comparedToYesterday: 0,
           comparedToLastMonth: 0,
+          todayOrderCount: 0,
         });
       }
       setLoading(false);
@@ -77,7 +74,7 @@ const TodaySummary = () => {
             valueStyle={{ color: "#3f8600", fontSize: "18px" }}
           />
           <Text type="secondary" className="block">
-            {todayStaticData.invoiceCount} hóa đơn
+            {todayData.todayOrderCount} hóa đơn
           </Text>
         </Col>
 
@@ -90,16 +87,7 @@ const TodaySummary = () => {
           />
         </Col>
 
-        <Col xs={12} sm={6} lg={4}>
-          <Statistic
-            title={<Title level={5}>Trả hàng</Title>}
-            value={formatCurrency(todayStaticData.returns)}
-            prefix="₫"
-            valueStyle={{ fontSize: "18px" }}
-          />
-        </Col>
-
-        <Col xs={12} sm={6} lg={4}>
+        <Col xs={14} sm={8} lg={6}>
           <Statistic
             title={<Title level={5}>Doanh thu tháng này </Title>}
             value={loading ? "..." : formatCurrency(todayData.netRevenue)}

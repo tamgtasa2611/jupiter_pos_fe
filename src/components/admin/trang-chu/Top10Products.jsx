@@ -3,7 +3,7 @@ import { Card, Space, Typography, Select } from "antd";
 import {
   ShoppingOutlined,
   DollarOutlined,
-  NumberOutlined,
+  FileDoneOutlined,
 } from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
 import { getProductData } from "@requests/statistic";
@@ -80,7 +80,7 @@ const Top10Products = () => {
   const config = {
     data: productData,
     yField: sortBy === "revenue" ? "revenue" : "totalQuantity",
-    xField: sortBy === "revenue" ? "revenue" : "totalQuantity",
+    xField: sortBy === "revenue" ? "revenueFormatted" : "totalQuantity",
     isStack: false,
     isGroup: false,
     legend: { position: "left" },
@@ -115,7 +115,7 @@ const Top10Products = () => {
             <Select
               value={sortBy}
               onChange={setSortBy}
-              className="w-52"
+              className="w-55"
               options={[
                 {
                   value: "revenue",
@@ -130,7 +130,7 @@ const Top10Products = () => {
                   value: "quantity",
                   label: (
                     <Space>
-                      <NumberOutlined />
+                      <FileDoneOutlined />
                       <span>Theo số lượng</span>
                     </Space>
                   ),
@@ -139,7 +139,7 @@ const Top10Products = () => {
             />
 
             <Select 
-              className="w-32"
+              className="w-39"
               value={timeRange}
               onChange={setTimeRange}
               popupMatchSelectWidth={false}

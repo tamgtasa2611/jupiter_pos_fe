@@ -1,77 +1,82 @@
 import React, { useState, useEffect } from "react";
 import { Card, Space, Typography, Select } from "antd";
-import { ShoppingOutlined } from "@ant-design/icons";
+import { 
+  ShoppingOutlined,
+  DollarOutlined,
+  FileDoneOutlined, 
+} from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
+import { getCustomerData} from "@requests/statistic";
+import dayjs from "dayjs";
 
-const { Title } = Typography;
+
 const { Option } = Select;
 
+const TIME_OPTIONS = [
+  {
+    label: "7 ngày gần nhất",
+    value: "7days",
+    getRange: () => ({
+      startTime: dayjs().subtract(6, "day").startOf("day").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "Tháng này",
+    value: "thisMonth",
+    getRange: () => ({
+      startTime: dayjs().startOf("month").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  ...Array.from({ length: 12 }).map((_, i) => {
+    const month = dayjs().subtract(i, "month");
+    return {
+      label: month.format("MM/YYYY"),
+      value: `month-${month.format("YYYY-MM")}`,
+      getRange: () => ({
+        startTime: month.startOf("month").toISOString(),
+        endTime: month.endOf("month").toISOString(),
+      }),
+    };
+  }),
+];
+
 const Top10Customers = () => {
-  const [timeRange, setTimeRange] = useState("today");
+  const [timeRange, setTimeRange] = useState(TIME_OPTIONS[0].value);
   const [customerData, setCustomerData] = useState([]);
+  const [sortBy, setSortBy] = useState("totalSpent");
+  const [loading, setLoading] = useState(true);
 
   const formatVND = (value) => {
     return value / 1000000 + " tr";
   };
 
-  useEffect(() => {
-    const customers = [
-      {
-        name: "Nguyen Van A",
-        buyingAmount: 15000000,
-      },
-      {
-        name: "Nguyen Van B",
-        buyingAmount: 5000000,
-      },
-      {
-        name: "Nguyen Van C",
-        buyingAmount: 10000000,
-      },
-      {
-        name: "Nguyen Van D",
-        buyingAmount: 8432000,
-      },
-      {
-        name: "Nguyen Van E",
-        buyingAmount: 6000000,
-      },
-      {
-        name: "Nguyen Van F",
-        buyingAmount: 7550000,
-      },
-      {
-        name: "Nguyen Van G",
-        buyingAmount: 9000000,
-      },
-      {
-        name: "Nguyen Van H",
-        buyingAmount: 4500000,
-      },
-      {
-        name: "Nguyen Van I",
-        buyingAmount: 11000000,
-      },
-      {
-        name: "Nguyen Van K",
-        buyingAmount: 3800000,
-      },
-    ];
+  const fetchCustomerData = async (range) => {
+    setLoading(true);
+    try {
+      const { startTime, endTime } = range;
+      const customer = await getCustomerData({ startTime, endTime });
+      const sortField = sortBy === "totalSpent" ? "totalSpent" : "totalOrders";
+      const top10 = (customer || [])
+        .sort((a, b) => (b[sortField] || 0) - (a[sortField] || 0))
+        .slice(0, 10)
+        .map((customer, index) => ({
+          ...customer,
+          totalSpentFormatted: formatVND(customer.totalSpent),
+          index: index + 1,
+        }));
+      setCustomerData(top10);
+      
+    } catch (error) {
+      setCustomerData([]);
+    }
+    setLoading(false);
+  };  
 
-    customers.sort((a, b) => b.buyingAmount - a.buyingAmount);
-
-    const top10 = customers.slice(0, 10).map((customer, index) => ({
-      ...customer,
-      buyingAmountFormatted: formatVND(customer.buyingAmount),
-      index: index + 1,
-    }));
-
-    setCustomerData(top10);
-  }, [timeRange]);
-
-  const config = {
+    const config = {
     data: customerData,
-    yField: "buyingAmount",
+    yField: sortBy === "totalSpent" ? "totalSpent" : "totalOrders",
     xField: "index",
     isStack: false,
     isGroup: false,
@@ -80,7 +85,7 @@ const Top10Customers = () => {
       radius: [0, 4, 4, 0],
     },
     label: {
-      text: "name",
+      text: "customerName",
       position: "left",
       textAlign: "left",
       dx: 5,
@@ -95,6 +100,13 @@ const Top10Customers = () => {
     padding: [20, 20, 20, 20], // top, right, bottom, left
   };
 
+  useEffect(() => {
+    const option = TIME_OPTIONS.find((opt) => opt.value === timeRange);
+    if (option) {
+      fetchCustomerData(option.getRange());
+    }
+  }, [timeRange, sortBy]);
+
   return (
     <Card
       title={
@@ -103,21 +115,48 @@ const Top10Customers = () => {
             <ShoppingOutlined />
             <span>Top 10 khách mua nhiều nhất</span>
           </div>
-          <Select
-            value={timeRange}
-            onChange={setTimeRange}
-            className="w-full sm:w-32"
-            popupMatchSelectWidth={false}
-          >
-            <Option value="today">Hôm nay</Option>
-            <Option value="yesterday">Hôm qua</Option>
-            <Option value="week">7 ngày qua</Option>
-            <Option value="thisMonth">Tháng này</Option>
-            <Option value="lastMonth">Tháng trước</Option>
-          </Select>
+
+          <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center w-full gap-2">
+            <Select
+              value={sortBy}
+              onChange={setSortBy}
+              className="w-55"
+              options={[
+                {
+                  value: "totalSpent",
+                  label: (
+                    <Space>
+                      <DollarOutlined />
+                      <span>Theo tổng chi</span>
+                    </Space>
+                  ),
+                },
+                {
+                  value: "totalOrders",
+                  label: (
+                    <Space>
+                      <FileDoneOutlined />
+                      <span>Theo số lượng đơn hàng </span>
+                    </Space>
+                  ),
+                },
+              ]}
+            />
+
+            <Select 
+              className="w-39"
+              value={timeRange}
+              onChange={setTimeRange}
+              popupMatchSelectWidth={false}
+              options={TIME_OPTIONS.map((opt) => ({
+                value: opt.value,
+                label: opt.label,
+              }))}
+            />
+          </div>
         </div>
       }
-      className="      transition-shadow w-full"
+      className="transition-shadow w-full"
       style={{
         head: {
           padding: "16px",

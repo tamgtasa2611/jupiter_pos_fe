@@ -14,9 +14,9 @@ export default function AdminDashboard() {
         justify="space-between"
         className="flex flex-col md:flex-row"
       >
-        <Top10Products />
-        <Top10Customers />
       </Flex>
+      <Top10Products />
+      <Top10Customers />
     </Flex>
   );
 }
