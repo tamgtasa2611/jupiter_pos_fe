@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Table, Dropdown, Button, Space, message } from "antd";
+import { Table, Dropdown, Button, Space, message, Tag, Flex } from "antd";
 import {
   MoreOutlined,
   EditOutlined,
@@ -78,7 +78,17 @@ const EmployeeTable = ({
         dataIndex: "active",
         key: "active",
         width: 120,
-        render: (active) => (active ? "Hoạt động" : "Ngưng hoạt động"),
+        render: (active) => {
+          return (
+            <Flex justify="center" align="center">
+              {active ? (
+                <Tag color="green">Đang hoạt động</Tag>
+              ) : (
+                <Tag color="red">Ngừng hoạt động</Tag>
+              )}
+            </Flex>
+          );
+        },
       },
       {
         title: "Thao tác",

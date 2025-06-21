@@ -47,6 +47,10 @@ body {
   height: calc(100vh - 108px) !important;
 }
 
+.mh-fit-screen {
+  min-height: calc(100vh - 108px) !important;
+}
+
 /* ===== TYPOGRAPHY UTILITIES ===== */
 .text-primary {
   color: var(--primary-color);

@@ -139,7 +139,7 @@ const OrderMainPage = () => {
 
   return (
     <>
-      <Card className="transition-shadow h-fit-screen">
+      <Card className="transition-shadow mh-fit-screen">
         <OrderHeader
           isMobile={isMobile}
           setMenuDrawerOpen={() => {}}

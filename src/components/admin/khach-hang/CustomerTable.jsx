@@ -23,6 +23,12 @@ const CustomerTable = ({
   const columns = useMemo(
     () => [
       {
+        title: "ID",
+        dataIndex: "id",
+        key: "id",
+        width: 60,
+      },
+      {
         title: "Tên khách hàng",
         dataIndex: "customerName",
         key: "customerName",

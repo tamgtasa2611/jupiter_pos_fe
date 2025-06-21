@@ -1,5 +1,5 @@
 import React from "react";
-import { Table, Button, Dropdown, Space, message, Tag } from "antd";
+import { Table, Button, Dropdown, Space, message, Tag, Flex } from "antd";
 import {
   EditOutlined,
   EyeOutlined,
@@ -25,6 +25,12 @@ const ProductTable = ({
 }) => {
   const columns = [
     {
+      title: "ID",
+      dataIndex: "productId",
+      key: "productId",
+      width: 80,
+    },
+    {
       title: "Tên sản phẩm",
       dataIndex: "productName",
       key: "productName",
@@ -36,6 +42,7 @@ const ProductTable = ({
       key: "description",
       ellipsis: true,
       width: 280,
+      render: (text) => text || "-",
     },
     {
       title: "Danh mục",
@@ -43,6 +50,7 @@ const ProductTable = ({
       key: "categoryList",
       ellipsis: true,
       width: 280,
+      render: (text) => text || "-",
     },
     {
       title: "Trạng thái",
@@ -52,9 +60,11 @@ const ProductTable = ({
       render: (status) => {
         const statusInfo = PRODUCT_STATUS[status];
         return statusInfo != null && statusInfo != undefined ? (
-          <Tag color={statusInfo?.color || "default"}>
-            {statusInfo?.label || "Không xác định"}
-          </Tag>
+          <Flex justify="center" align="center">
+            <Tag color={statusInfo?.color || "default"}>
+              {statusInfo?.label || "Không xác định"}
+            </Tag>
+          </Flex>
         ) : (
           "-"
         );
@@ -143,6 +153,12 @@ const ProductTable = ({
           <Table
             bordered
             columns={[
+              {
+                title: "ID",
+                dataIndex: "id",
+                key: "id",
+                width: 80,
+              },
               {
                 title: "Thuộc tính biến thể",
                 dataIndex: "name",
