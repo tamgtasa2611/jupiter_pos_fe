@@ -1,14 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Typography, Select, Statistic, Segmented } from "antd";
 import { Column } from "@ant-design/plots";
+import dayjs from "dayjs";
+import { getNetReveneues } from "@requests/statistic";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
+const TIME_OPTIONS = [
+  {
+    label: "7 ngày gần nhất",
+    value: "7days",
+    getRange: () => ({
+      startTime: dayjs().subtract(6, "day").startOf("day").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  ...Array.from({ length: 12 }).map((_, i) => {
+    const month = dayjs().subtract(i, "month");
+    return {
+      label: month.format("MM/YYYY"),
+      value: `month-${month.format("YYYY-MM")}`,
+      getRange: () => ({
+        startTime: month.startOf("month").toISOString(),
+        endTime: month.endOf("month").toISOString(),
+      }),
+    };
+  }),
+];
+
 const SalesSummary = () => {
-  const [timeRange, setTimeRange] = useState("today");
+  const [timeRange, setTimeRange] = useState(TIME_OPTIONS[0].value);
   const [viewType, setViewType] = useState("hour");
   const [chartData, setChartData] = useState([]);
+  const [sortBy, setSortBy] = useState("day");
+  const [loading, setLoading] = useState(true);
 
   const totalNetRevenue = 551280000;
 
@@ -16,101 +42,27 @@ const SalesSummary = () => {
     return new Intl.NumberFormat("vi-VN").format(value);
   };
 
-  useEffect(() => {
-    let data = [];
-
-    if (timeRange === "today" || timeRange === "yesterday") {
-      if (viewType === "hour") {
-        for (let i = 8; i <= 21; i++) {
-          const hour = `${i}:00`;
-          data.push({
-            time: hour,
-            revenue: Math.floor(Math.random() * 50000000) + 10000000,
-          });
-        }
-      } else {
-        data = [
-          { time: "8:00", revenue: 12000000 },
-          { time: "10:00", revenue: 25000000 },
-          { time: "12:00", revenue: 31000000 },
-          { time: "14:00", revenue: 18000000 },
-          { time: "16:00", revenue: 26000000 },
-          { time: "18:00", revenue: 32000000 },
-          { time: "20:00", revenue: 21000000 },
-        ];
-      }
-    } else if (timeRange === "week") {
-      if (viewType === "day") {
-        const days = [
-          "Thứ 2",
-          "Thứ 3",
-          "Thứ 4",
-          "Thứ 5",
-          "Thứ 6",
-          "Thứ 7",
-          "Chủ nhật",
-        ];
-        for (let i = 0; i < 7; i++) {
-          data.push({
-            time: days[i],
-            revenue: Math.floor(Math.random() * 80000000) + 20000000,
-          });
-        }
-      } else if (viewType === "hour") {
-        for (let i = 8; i <= 21; i++) {
-          const hour = `${i}:00`;
-          data.push({
-            time: hour,
-            revenue: Math.floor(Math.random() * 60000000) + 15000000,
-          });
-        }
-      } else {
-        data = [
-          { time: "Thứ 2", revenue: 75000000 },
-          { time: "Thứ 3", revenue: 62000000 },
-          { time: "Thứ 4", revenue: 81000000 },
-          { time: "Thứ 5", revenue: 92000000 },
-          { time: "Thứ 6", revenue: 105000000 },
-          { time: "Thứ 7", revenue: 114000000 },
-          { time: "Chủ nhật", revenue: 78000000 },
-        ];
-      }
-    } else {
-      if (viewType === "day") {
-        for (let i = 1; i <= 30; i++) {
-          data.push({
-            time: `${i}/3`,
-            revenue: Math.floor(Math.random() * 90000000) + 10000000,
-          });
-        }
-      } else if (viewType === "weekday") {
-        data = [
-          { time: "Thứ 2", revenue: 285000000 },
-          { time: "Thứ 3", revenue: 262000000 },
-          { time: "Thứ 4", revenue: 291000000 },
-          { time: "Thứ 5", revenue: 302000000 },
-          { time: "Thứ 6", revenue: 345000000 },
-          { time: "Thứ 7", revenue: 384000000 },
-          { time: "Chủ nhật", revenue: 298000000 },
-        ];
-      } else {
-        for (let i = 8; i <= 21; i++) {
-          const hour = `${i}:00`;
-          data.push({
-            time: hour,
-            revenue: Math.floor(Math.random() * 180000000) + 70000000,
-          });
-        }
-      }
+  const fetchCustomerData = async (range) => {
+    setLoading(true);
+    try {
+      const { startTime, endTime } = range;
+      const customer = await getNetReveneues({ startTime, endTime });
+      const sortField = sortBy === "totalSpent" ? "totalSpent" : "totalOrders";
+      const top10 = (customer || [])
+        .sort((a, b) => (b[sortField] || 0) - (a[sortField] || 0))
+        .slice(0, 10)
+        .map((customer, index) => ({
+          ...customer,
+          totalSpentFormatted: formatVND(customer.totalSpent),
+          index: index + 1,
+        }));
+      setCustomerData(top10);
+      
+    } catch (error) {
+      setCustomerData([]);
     }
-
-    data = data.map((item) => ({
-      ...item,
-      revenueFormatted: (item.revenue / 1000000).toFixed(2) + " tr",
-    }));
-
-    setChartData(data);
-  }, [timeRange, viewType]);
+    setLoading(false);
+  }; 
 
   const config = {
     data: chartData,
@@ -174,7 +126,7 @@ const SalesSummary = () => {
   };
 
   return (
-    <Card className="     transition-shadow">
+    <Card className="transition-shadow">
       <Row gutter={[16, 16]} className="w-full">
         <Col xs={24} md={12}>
           <Title level={4}>Doanh thu thuần</Title>
@@ -184,7 +136,6 @@ const SalesSummary = () => {
             valueStyle={{ color: "#3f8600", fontSize: "28px" }}
           />
         </Col>
-
         <Col xs={24} md={12}>
           <div className="flex flex-col md:flex-row md:items-end md:justify-end gap-2">
             <Select
@@ -215,7 +166,6 @@ const SalesSummary = () => {
             />
           </div>
         </Col>
-
         <Col xs={24} className="h-80">
           <Column {...config} />
         </Col>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Card, Space, Typography, Select } from "antd";
+import { Card, Space, Select } from "antd";
 import { 
   ShoppingOutlined,
   DollarOutlined,
   FileDoneOutlined, 
 } from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
-import { getCustomerData} from "@requests/statistic";
+import { getCustomerData } from "@requests/statistic";
 import dayjs from "dayjs";
 
 
@@ -18,14 +18,6 @@ const TIME_OPTIONS = [
     value: "7days",
     getRange: () => ({
       startTime: dayjs().subtract(6, "day").startOf("day").toISOString(),
-      endTime: dayjs().endOf("day").toISOString(),
-    }),
-  },
-  {
-    label: "Tháng này",
-    value: "thisMonth",
-    getRange: () => ({
-      startTime: dayjs().startOf("month").toISOString(),
       endTime: dayjs().endOf("day").toISOString(),
     }),
   },
