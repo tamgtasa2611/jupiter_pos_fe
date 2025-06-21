@@ -80,39 +80,39 @@ const ProductPage = () => {
     total: 0,
   });
 
-  useEffect(() => {
-    async function loadCategories() {
-      try {
-        const categoryResponse = await getCategories();
-        setCategories(categoryResponse);
-      } catch (error) {
-        console.error("Lỗi khi lấy danh mục:", error);
-      }
+  async function loadCategories() {
+    try {
+      const categoryResponse = await getCategories();
+      setCategories(categoryResponse);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh mục:", error);
     }
+  }
+  useEffect(() => {
     loadCategories();
   }, []);
 
-  useEffect(() => {
-    async function loadAttributes() {
-      try {
-        const attributeResponse = await getAttributes();
-        setAttributes(attributeResponse);
-      } catch (error) {
-        console.error("Lỗi khi lấy thuộc tính:", error);
-      }
+  async function loadAttributes() {
+    try {
+      const attributeResponse = await getAttributes();
+      setAttributes(attributeResponse);
+    } catch (error) {
+      console.error("Lỗi khi lấy thuộc tính:", error);
     }
+  }
+  useEffect(() => {
     loadAttributes();
   }, []);
 
-  useEffect(() => {
-    async function loadUnits() {
-      try {
-        const unitResponse = await getUnits();
-        setUnits(unitResponse);
-      } catch (error) {
-        console.error("Lỗi khi lấy đơn vị:", error);
-      }
+  async function loadUnits() {
+    try {
+      const unitResponse = await getUnits();
+      setUnits(unitResponse);
+    } catch (error) {
+      console.error("Lỗi khi lấy đơn vị:", error);
     }
+  }
+  useEffect(() => {
     loadUnits();
   }, []);
 
@@ -194,6 +194,9 @@ const ProductPage = () => {
         pageSize: size,
         total: response.totalElements,
       });
+      loadCategories();
+      loadAttributes();
+      loadUnits();
     } catch (e) {
       console.log("Lỗi khi tìm kiếm sản phẩm:", e);
     } finally {

@@ -99,8 +99,10 @@ const ModalManager = ({
   const handleCategorySubmit = async (values) => {
     try {
       const res = await createCategory({ categoryName: values.categoryName });
-      if (!res || res?.error) {
-        message.error(res?.message || "Thêm danh mục thất bại!");
+      if (!res || res?.response?.data?.message) {
+        message.error(
+          res?.response?.data?.message || "Thêm danh mục thất bại!",
+        );
         return;
       } else {
         message.success("Danh mục mới được thêm thành công!");
@@ -108,8 +110,10 @@ const ModalManager = ({
         setCategoryModalVisible(false);
       }
     } catch (error) {
-      console.error("Failed to add category", error?.message);
-      message.error(error?.message || "Thêm danh mục thất bại!");
+      console.error("Failed to add category", error?.response?.data?.message);
+      message.error(
+        error?.response?.data?.message || "Thêm danh mục thất bại!",
+      );
     }
   };
 
@@ -119,9 +123,13 @@ const ModalManager = ({
 
   const handleAttributeSubmit = async (values) => {
     try {
-      const res = await createAttribute({ name: values.attributeName });
-      if (!res || res?.error) {
-        message.error(res?.message || "Thêm thuộc tính thất bại!");
+      const res = await createAttribute({
+        attributeName: values.attributeName,
+      });
+      if (!res || res?.response?.data?.message) {
+        message.error(
+          res?.response?.data?.message || "Thêm thuộc tính thất bại!",
+        );
         return;
       } else {
         message.success("Thuộc tính mới được thêm thành công!");
@@ -129,8 +137,10 @@ const ModalManager = ({
         setAttributeModalVisible(false);
       }
     } catch (error) {
-      console.error("Failed to add attribute", error?.message);
-      message.error(error?.message || "Thêm thuộc tính thất bại!");
+      console.error("Failed to add attribute", error?.response?.data?.message);
+      message.error(
+        error?.response?.data?.message || "Thêm thuộc tính thất bại!",
+      );
     }
   };
 
@@ -141,8 +151,8 @@ const ModalManager = ({
   const handleUnitSubmit = async (values) => {
     try {
       const res = await createUnit({ name: values.unitName });
-      if (!res || res?.error) {
-        message.error(res?.message || "Thêm đơn vị thất bại!");
+      if (!res || res?.response?.data?.message) {
+        message.error(res?.response?.data?.message || "Thêm đơn vị thất bại!");
         return;
       } else {
         message.success("Đơn vị mới được thêm thành công!");
@@ -150,8 +160,8 @@ const ModalManager = ({
         setUnitModalVisible(false);
       }
     } catch (error) {
-      console.error("Failed to add unit", error?.message);
-      message.error(error?.message || "Thêm đơn vị thất bại!");
+      console.error("Failed to add unit", error?.response?.data?.message);
+      message.error(error?.response?.data?.message || "Thêm đơn vị thất bại!");
     }
   };
 
