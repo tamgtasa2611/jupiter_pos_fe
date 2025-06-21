@@ -75,7 +75,8 @@ const CustomerTable = ({
         key: "totalOrders",
         ellipsis: true,
         width: 120,
-        render: (orders) => orders || 0,
+        sorter: true,
+        render: (orders) => orders || "-",
       },
       {
         title: "Tổng chi tiêu",
@@ -83,8 +84,9 @@ const CustomerTable = ({
         key: "totalSpent",
         ellipsis: true,
         width: 120,
-
-        render: (spent) => new Intl.NumberFormat("vi-VN").format(spent) + "đ",
+        sorter: true,
+        render: (spent) =>
+          new Intl.NumberFormat("vi-VN").format(spent) + "đ" || "-",
       },
       {
         title: "Ngày tạo",

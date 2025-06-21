@@ -23,8 +23,8 @@ const CustomersMainPage = () => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   const [searchText, setSearchText] = useState("");
-  const [sortBy, setSortBy] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null);
+  const [sortBy, setSortBy] = useState("lastModifiedDate");
+  const [sortDirection, setSortDirection] = useState("descend");
   const [pagination, setPagination] = useState({
     current: 0,
     pageSize: 10,
@@ -35,20 +35,22 @@ const CustomersMainPage = () => {
     tarPage = 0,
     tarSize = pagination.pageSize,
     searchValue = searchText,
+    sortField = sortBy,
+    sortOrder = sortDirection,
   ) => {
     setLoading(true);
     try {
       const page = tarPage;
       const size = tarSize;
-      const sort =
-        sortBy && sortOrder
-          ? `${sortBy},${sortOrder === "ascend" ? "asc" : "desc"}`
-          : undefined;
+
+      const sortDirection = sortOrder === "ascend" ? "ASC" : "DESC";
+
       const params = {
         page,
         size,
         search: searchValue || undefined,
-        sort,
+        sortBy: sortField,
+        sortDirection: sortDirection,
       };
 
       const response = await getCustomers(params);
@@ -88,8 +90,14 @@ const CustomersMainPage = () => {
     }));
     if (sorter.field) {
       setSortBy(sorter.field);
-      setSortOrder(sorter.order);
-      fetchCustomers(currentPage, tablePagination.pageSize, searchText);
+      setSortDirection(sorter.order);
+      fetchCustomers(
+        currentPage,
+        tablePagination.pageSize,
+        searchText,
+        sorter.field,
+        sorter.order,
+      );
     } else {
       fetchCustomers(currentPage, tablePagination.pageSize, searchText);
     }
