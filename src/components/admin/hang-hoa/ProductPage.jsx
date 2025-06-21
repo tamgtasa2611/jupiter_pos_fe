@@ -541,30 +541,23 @@ const ProductPage = () => {
         editVariantModalVisible={editVariantModalVisible}
         setEditVariantModalVisible={setEditVariantModalVisible}
         handleEditProductVariant={handleEditProductVariant}
+        isOpenManageCategories={isOpenManageCategories}
+        setIsOpenManageCategories={setIsOpenManageCategories}
+        isOpenManageAttributes={isOpenManageAttributes}
+        setIsOpenManageAttributes={setIsOpenManageAttributes}
+        isOpenManageUnits={isOpenManageUnits}
+        setIsOpenManageUnits={setIsOpenManageUnits}
+        pagination={pagination}
+        searchText={searchText}
+        selectedCategory={selectedCategory}
+        selectedStatus={selectedStatus}
+        fetchProducts={fetchProducts}
       />
 
       <FloatingActionButton
         setAddProductModalVisible={setAddProductModalVisible}
         isMobile={isMobile}
       />
-
-      {isOpenManageCategories && (
-        <ManageCategoryModal
-          open={isOpenManageCategories}
-          setOpen={setIsOpenManageCategories}
-          reloadCategories={reloadCategories}
-          onCancel={() => {
-            setIsOpenManageCategories(false);
-            fetchProducts({
-              page: pagination.current - 1,
-              size: pagination.pageSize,
-              search: searchText,
-              category: selectedCategory,
-              status: selectedStatus,
-            });
-          }}
-        />
-      )}
     </div>
   );
 };

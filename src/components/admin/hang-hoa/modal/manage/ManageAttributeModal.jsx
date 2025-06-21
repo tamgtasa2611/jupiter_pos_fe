@@ -23,16 +23,21 @@ import {
   ReloadOutlined,
 } from "@ant-design/icons";
 import {
-  getPagableCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-} from "@/requests/category";
+  getPagableAttributes,
+  createAttribute,
+  updateAttribute,
+  deleteAttribute,
+} from "@/requests/attribute";
 
 const { Title } = Typography;
 
-const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
-  const [categories, setCategories] = useState([]);
+const ManageAttributeModal = ({
+  open,
+  setOpen,
+  reloadAttributes,
+  onCancel,
+}) => {
+  const [attributes, setAttributes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("id");
   const [sortDirection, setSortDirection] = useState("DESC");
@@ -45,7 +50,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
   const [oldName, setOldName] = useState("");
   const [form] = Form.useForm();
 
-  const fetchCategories = async (
+  const fetchAttributes = async (
     page = 0,
     size = 5,
     sortField = sortBy,
@@ -53,7 +58,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
   ) => {
     setLoading(true);
     try {
-      const response = await getPagableCategories({
+      const response = await getPagableAttributes({
         page,
         size,
         sortBy: sortField,
@@ -61,7 +66,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
       });
 
       if (response && response.content) {
-        setCategories(response.content);
+        setAttributes(response.content);
         setPagination((prev) => ({
           ...prev,
           total: response.totalElements,
@@ -70,7 +75,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
         }));
       }
     } catch (error) {
-      message.error("Lỗi khi tải danh mục");
+      message.error("Lỗi khi tải thuộc tính");
     } finally {
       setLoading(false);
     }
@@ -78,7 +83,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
 
   useEffect(() => {
     if (open) {
-      fetchCategories();
+      fetchAttributes();
     }
   }, [open]);
 
@@ -99,7 +104,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
       const newPage = newPagination.current - 1;
       const newSize = newPagination.pageSize;
 
-      fetchCategories(newPage, newSize, newSortBy, newSortDirection);
+      fetchAttributes(newPage, newSize, newSortBy, newSortDirection);
     }
   };
 
@@ -107,24 +112,24 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
 
   const edit = (record) => {
     form.setFieldsValue({
-      categoryName: record.categoryName,
+      attributeName: record.attributeName,
     });
     setEditingKey(record.id);
-    setOldName(record.categoryName);
+    setOldName(record.attributeName);
   };
 
   const cancel = () => {
     setEditingKey("");
     form.resetFields();
     setOldName("");
-    setCategories((prev) => prev.filter((item) => !item.isNew));
+    setAttributes((prev) => prev.filter((item) => !item.isNew));
   };
 
   const saveNew = async () => {
     try {
       const row = await form.validateFields();
 
-      const response = await createCategory(row);
+      const response = await createAttribute(row);
 
       if (
         response &&
@@ -134,14 +139,14 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
         message.error(response?.response?.data?.message);
         return;
       } else {
-        message.success("Thêm danh mục thành công");
-        fetchCategories(0, pagination.pageSize, sortBy, sortDirection);
+        message.success("Thêm thuộc tính thành công");
+        fetchAttributes(0, pagination.pageSize, sortBy, sortDirection);
         setEditingKey("");
-        reloadCategories && reloadCategories();
+        reloadAttributes && reloadAttributes();
       }
     } catch (errInfo) {
       message.error(
-        errInfo?.response?.data?.message || "Lỗi khi thêm danh mục",
+        errInfo?.response?.data?.message || "Lỗi khi thêm thuộc tính",
       );
     }
   };
@@ -149,14 +154,14 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
   const update = async (id) => {
     try {
       const row = await form.validateFields();
-      const categoryName = row.categoryName;
-      const response = await updateCategory(id, categoryName);
+      const attributeName = row.attributeName;
+      const response = await updateAttribute(id, attributeName);
 
-      if (categoryName === oldName) {
+      if (attributeName === oldName) {
         message.info("Không có thay đổi nào để cập nhật");
         setEditingKey("");
         form.resetFields();
-        setOldName(""); // Reset tên cũ
+        setOldName("");
         return;
       } else {
         if (
@@ -167,20 +172,21 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
           message.error(response?.response?.data?.message);
           return;
         } else {
-          message.success("Cập nhật danh mục thành công");
-          fetchCategories(
+          message.success("Cập nhật thuộc tính thành công");
+          fetchAttributes(
             pagination.current - 1,
             pagination.pageSize,
             sortBy,
             sortDirection,
           );
           setEditingKey("");
-          reloadCategories && reloadCategories();
+          setOldName("");
+          reloadAttributes && reloadAttributes();
         }
       }
     } catch (errInfo) {
       message.error(
-        errInfo?.response?.data?.message || "Lỗi khi cập nhật danh mục",
+        errInfo?.response?.data?.message || "Lỗi khi cập nhật thuộc tính",
       );
     }
   };
@@ -188,23 +194,23 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
   const handleAdd = () => {
     const newData = {
       id: `new_${Date.now()}`, // Thêm id để tránh lỗi key
-      categoryName: "",
+      attributeName: "",
       isNew: true,
     };
     setPagination((prev) => ({ ...prev, current: 1 }));
 
-    fetchCategories(0, pagination.pageSize, sortBy, sortDirection).then(() => {
-      setCategories((prev) => [newData, ...prev]);
+    fetchAttributes(0, pagination.pageSize, sortBy, sortDirection).then(() => {
+      setAttributes((prev) => [newData, ...prev]);
       setEditingKey(newData.id);
       form.setFieldsValue({
-        categoryName: "",
+        attributeName: "",
       });
     });
   };
 
   const handleDelete = async (id) => {
     try {
-      const response = await deleteCategory(id);
+      const response = await deleteAttribute(id);
 
       if (
         response &&
@@ -214,22 +220,24 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
         message.error(response?.response?.data?.message);
         return;
       } else {
-        message.success("Xóa danh mục thành công");
-        fetchCategories(
+        message.success("Xóa thuộc tính thành công");
+        fetchAttributes(
           pagination.current - 1,
           pagination.pageSize,
           sortBy,
           sortDirection,
         );
-        reloadCategories && reloadCategories();
+        reloadAttributes && reloadAttributes();
       }
     } catch (errInfo) {
-      message.error(errInfo?.response?.data?.message || "Lỗi khi xóa danh mục");
+      message.error(
+        errInfo?.response?.data?.message || "Lỗi khi xóa thuộc tính",
+      );
     }
   };
 
   const handleRefresh = () => {
-    fetchCategories(0, pagination.pageSize, sortBy, sortDirection);
+    fetchAttributes(0, pagination.pageSize, sortBy, sortDirection);
   };
 
   const columns = [
@@ -244,23 +252,23 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
       },
     },
     {
-      title: "Tên danh mục",
-      dataIndex: "categoryName",
-      key: "categoryName",
+      title: "Tên thuộc tính",
+      dataIndex: "attributeName",
+      key: "attributeName",
       render: (text, record) => {
         const editing = isEditing(record);
         return editing ? (
           <Form.Item
-            name="categoryName"
+            name="attributeName"
             style={{ margin: 0 }}
             rules={[
               {
                 required: true,
-                message: "Vui lòng nhập tên danh mục!",
+                message: "Vui lòng nhập tên thuộc tính!",
               },
             ]}
           >
-            <Input placeholder="Nhập tên danh mục" />
+            <Input placeholder="Nhập tên thuộc tính" />
           </Form.Item>
         ) : (
           text
@@ -304,7 +312,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
               Sửa
             </Button>
             <Popconfirm
-              title="Bạn có chắc chắn muốn xóa danh mục này?"
+              title="Bạn có chắc chắn muốn xóa thuộc tính này?"
               onConfirm={() => handleDelete(record.id)}
               disabled={editingKey !== ""}
             >
@@ -328,12 +336,12 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
     onCancel();
     setEditingKey("");
     form.resetFields();
-    setCategories((prev) => prev.filter((item) => !item.isNew));
+    setAttributes((prev) => prev.filter((item) => !item.isNew));
   };
 
   return (
     <Modal
-      title="Quản lý danh mục"
+      title="Quản lý thuộc tính"
       centered
       maskClosable={false}
       width={800}
@@ -351,7 +359,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
               onClick={handleAdd}
               disabled={editingKey !== ""}
             >
-              Thêm danh mục
+              Thêm thuộc tính
             </Button>
             <Button
               type="default"
@@ -367,7 +375,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
       <Form form={form} component={false}>
         <Table
           bordered
-          dataSource={categories}
+          dataSource={attributes}
           columns={columns}
           rowKey="id"
           loading={loading}
@@ -383,4 +391,4 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
   );
 };
 
-export default ManageCategoryModal;
+export default ManageAttributeModal;

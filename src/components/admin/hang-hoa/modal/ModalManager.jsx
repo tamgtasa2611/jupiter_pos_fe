@@ -28,6 +28,14 @@ const EditVariantModal = dynamic(() => import("./variant/EditVariantModal"), {
   loading: () => <p>Đang tải dữ liệu...</p>,
 });
 
+const ManageCategoryModal = dynamic(() => import("./manage/ManageCategoryModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
+});
+
+const ManageAttributeModal = dynamic(() => import("./manage/ManageAttributeModal"), {
+  loading: () => <p>Đang tải dữ liệu...</p>,
+});
+
 const ModalManager = ({
   addProductModalVisible,
   editProductModalVisible,
@@ -58,6 +66,17 @@ const ModalManager = ({
   setViewVariantModalVisible,
   editVariantModalVisible,
   setEditVariantModalVisible,
+  isOpenManageCategories,
+  setIsOpenManageCategories,
+  isOpenManageAttributes,
+  setIsOpenManageAttributes,
+  isOpenManageUnits,
+  setIsOpenManageUnits,
+  pagination,
+  searchText,
+  selectedCategory,
+  selectedStatus,
+  fetchProducts
 }) => {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [attributeModalVisible, setAttributeModalVisible] = useState(false);
@@ -234,6 +253,42 @@ const ModalManager = ({
         onCancel={() => setUnitModalVisible(false)}
         onOk={handleUnitSubmit}
       />
+
+      {isOpenManageCategories && (
+        <ManageCategoryModal
+          open={isOpenManageCategories}
+          setOpen={setIsOpenManageCategories}
+          reloadCategories={reloadCategories}
+          onCancel={() => {
+            setIsOpenManageCategories(false);
+            fetchProducts({
+              page: pagination.current - 1,
+              size: pagination.pageSize,
+              search: searchText,
+              category: selectedCategory,
+              status: selectedStatus,
+            });
+          }}
+        />
+      )}
+
+        {isOpenManageAttributes && (
+        <ManageAttributeModal
+          open={isOpenManageAttributes}
+          setOpen={setIsOpenManageAttributes}
+          reloadAttributes={reloadAttributes}
+          onCancel={() => {
+            setIsOpenManageAttributes(false);
+            fetchProducts({
+              page: pagination.current - 1,
+              size: pagination.pageSize,
+              search: searchText,
+              category: selectedCategory,
+              status: selectedStatus,
+            });
+          }}
+        />
+      )}
     </>
   );
 };
