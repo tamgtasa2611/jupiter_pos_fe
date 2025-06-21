@@ -18,6 +18,7 @@ const OrderTable = ({
       dataIndex: "id",
       key: "id",
       width: 80,
+      sorter: true,
       ellipsis: true,
     },
     {
@@ -26,7 +27,9 @@ const OrderTable = ({
       key: "orderDate",
       width: 100,
       ellipsis: true,
-      render: (text) => new Intl.DateTimeFormat("vi-VN").format(new Date(text)),
+      sorter: true,
+      render: (text) =>
+        new Intl.DateTimeFormat("vi-VN").format(new Date(text)) || "-",
     },
     {
       title: "Tên khách hàng",
@@ -63,8 +66,9 @@ const OrderTable = ({
       key: "totalAmount",
       width: 140,
       ellipsis: true,
+      sorter: true,
       render: (amount) =>
-        new Intl.NumberFormat("vi-VN").format(amount || 0) + "đ",
+        new Intl.NumberFormat("vi-VN").format(amount || 0) + "đ" || "-",
     },
     {
       title: "Trạng thái",
@@ -72,7 +76,9 @@ const OrderTable = ({
       key: "orderStatus",
       width: 140,
       ellipsis: true,
+      sorter: true,
       render: (status) => {
+        if (!status) return <Tag color="grey">Chưa xác định</Tag>;
         const currentStatus = ORDER_STATUS_MAP[status] || {
           label: status,
           color: "grey",

@@ -23,8 +23,8 @@ const OrderMainPage = () => {
   const [selectedStatus, setSelectedStatus] = useState([]);
   const [dateRange, setDateRange] = useState(null);
 
-  const [sortBy, setSortBy] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null);
+  const [sortBy, setSortBy] = useState("orderDate");
+  const [sortDirection, setSortDirection] = useState("DESC");
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -53,7 +53,7 @@ const OrderMainPage = () => {
           ? dayjs(dateRange[1]).format("YYYY-MM-DD")
           : undefined,
       sortBy,
-      sortOrder,
+      sortDirection: sortDirection === "ascend" ? "ASC" : "DESC",
     };
   }, [
     pagination.current,
@@ -62,17 +62,27 @@ const OrderMainPage = () => {
     selectedStatus,
     dateRange,
     sortBy,
-    sortOrder,
+    sortDirection,
   ]);
 
-  const fetchOrders = async (isLoadMore = false) => {
+  const fetchOrders = async (isLoadMore = false, targetPage = null) => {
     setLoading(true);
     try {
-      // Nếu load thêm: giữ nguyên current, nếu không thì thiết lập trang hiện tại về 1 (0-index)
+      // Xác định trang cần load
+      let pageNumber;
+      if (targetPage !== null) {
+        pageNumber = targetPage - 1; // Convert từ 1-based sang 0-based
+      } else if (isLoadMore) {
+        pageNumber = pagination.current; // Trang tiếp theo khi load more
+      } else {
+        pageNumber = pagination.current - 1; // Giữ nguyên trang hiện tại thay vì reset về 0
+      }
+
       const params = {
         ...apiParams,
-        pageNumber: isLoadMore ? pagination.current : 0,
+        pageNumber,
       };
+
       const response = await getOrders(params);
       // Nếu đang load thêm thì nối các đơn hàng, ngược lại thay thế
       setOrders((prev) =>
@@ -83,7 +93,8 @@ const OrderMainPage = () => {
       setPagination((prev) => ({
         ...prev,
         total: response.totalElements || prev.total,
-        current: isLoadMore ? prev.current + 1 : 1,
+        // Chỉ update current khi có targetPage hoặc reset về 1
+        current: targetPage !== null ? targetPage : prev.current,
       }));
     } catch (error) {
       const errMsg = error?.response?.data?.error || "Lỗi không xác định";
@@ -102,7 +113,7 @@ const OrderMainPage = () => {
 
   useEffect(() => {
     fetchOrders(false);
-  }, [selectedStatus, sortBy, sortOrder, dateRange]);
+  }, [selectedStatus, sortBy, sortDirection, dateRange]);
 
   const handleLoadMore = () => {
     if (!loading && hasMore) {
@@ -111,17 +122,24 @@ const OrderMainPage = () => {
   };
 
   const handleTableChange = (newPagination, filters, sorter) => {
-    setPagination((prev) => ({
-      ...prev,
-      current: newPagination.current,
-      pageSize: newPagination.pageSize,
-    }));
     if (sorter?.field) {
       setSortBy(sorter.field);
-      setSortOrder(sorter.order);
+      setSortDirection(sorter.order);
     } else {
-      setSortBy(null);
-      setSortOrder(null);
+      setSortBy("orderDate");
+      setSortDirection("DESC");
+    }
+    // Xử lý thay đổi pagination
+    if (
+      newPagination.current !== pagination.current ||
+      newPagination.pageSize !== pagination.pageSize
+    ) {
+      setPagination((prev) => ({
+        ...prev,
+        current: newPagination.current,
+        pageSize: newPagination.pageSize,
+      }));
+      fetchOrders(false, newPagination.current);
     }
   };
 
