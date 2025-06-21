@@ -69,7 +69,7 @@ const ModalManager = ({
 
   const handleCategorySubmit = async (values) => {
     try {
-      const res = await createCategory({ name: values.categoryName });
+      const res = await createCategory({ categoryName: values.categoryName });
       if (!res || res?.error) {
         message.error(res?.message || "Thêm danh mục thất bại!");
         return;

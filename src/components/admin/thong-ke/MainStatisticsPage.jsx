@@ -43,8 +43,6 @@ const MainStatisticsPage = () => {
         <Content
           style={{
             margin: "0 16px",
-            padding: 24,
-            background: "#fff",
             minHeight: 360,
           }}
         >

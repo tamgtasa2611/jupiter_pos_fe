@@ -13,6 +13,9 @@ const ProductHeader = ({
   setMenuDrawerOpen,
   setFilterDrawerOpen,
   onRefresh,
+  onManageCategoriesClick,
+  onManageAttributesClick,
+  onManageUnitsClick,
 }) => {
   return (
     <Flex
@@ -36,6 +39,20 @@ const ProductHeader = ({
           Hàng hóa
         </Title>
       </div>
+
+      <Flex gap="middle" align="center">
+        <Button type="default" onClick={onManageCategoriesClick}>
+          Quản lý danh mục
+        </Button>
+
+        <Button type="default" onClick={onManageAttributesClick}>
+          Quản lý thuộc tính
+        </Button>
+
+        <Button type="default" onClick={onManageUnitsClick}>
+          Quản lý đơn vị
+        </Button>
+      </Flex>
 
       {/* Mobile Filter Button */}
       {isMobile && (

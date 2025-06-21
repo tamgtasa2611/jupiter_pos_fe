@@ -12,6 +12,7 @@ import MobileProductList from "./mobile/MobileProductList";
 import FilterDrawerContent from "./FilterDrawerContent";
 import ModalManager from "./modal/ModalManager";
 import FloatingActionButton from "./mobile/FloatingActionButton";
+import ManageCategoryModal from "./modal/manage/ManageCategoryModal";
 
 import {
   getProductsWithVariants,
@@ -48,6 +49,21 @@ const ProductPage = () => {
   const [viewVariantModalVisible, setViewVariantModalVisible] = useState(false);
   const [editProductModalVisible, setEditProductModalVisible] = useState(false);
   const [editVariantModalVisible, setEditVariantModalVisible] = useState(false);
+
+  // quản lý danh mục, thuộc tính và đơn vị
+  const [isOpenManageCategories, setIsOpenManageCategories] = useState(false);
+  const [isOpenManageAttributes, setIsOpenManageAttributes] = useState(false);
+  const [isOpenManageUnits, setIsOpenManageUnits] = useState(false);
+
+  const onManageCategoriesClick = () => {
+    setIsOpenManageCategories(true);
+  };
+  const onManageAttributesClick = () => {
+    setIsOpenManageAttributes(true);
+  };
+  const onManageUnitsClick = () => {
+    setIsOpenManageUnits(true);
+  };
 
   // States cho product và bộ lọc
   const [products, setProducts] = useState([]);
@@ -398,6 +414,9 @@ const ProductPage = () => {
             setMenuDrawerOpen={setMenuDrawerOpen}
             setFilterDrawerOpen={setFilterDrawerOpen}
             onRefresh={handleRefresh}
+            onManageCategoriesClick={onManageCategoriesClick}
+            onManageAttributesClick={onManageAttributesClick}
+            onManageUnitsClick={onManageUnitsClick}
           />
 
           {/* Action bar - Desktop */}
@@ -528,6 +547,24 @@ const ProductPage = () => {
         setAddProductModalVisible={setAddProductModalVisible}
         isMobile={isMobile}
       />
+
+      {isOpenManageCategories && (
+        <ManageCategoryModal
+          open={isOpenManageCategories}
+          setOpen={setIsOpenManageCategories}
+          reloadCategories={reloadCategories}
+          onCancel={() => {
+            setIsOpenManageCategories(false);
+            fetchProducts({
+              page: pagination.current - 1,
+              size: pagination.pageSize,
+              search: searchText,
+              category: selectedCategory,
+              status: selectedStatus,
+            });
+          }}
+        />
+      )}
     </div>
   );
 };
