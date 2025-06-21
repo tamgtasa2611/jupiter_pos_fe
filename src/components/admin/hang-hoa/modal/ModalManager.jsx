@@ -28,11 +28,21 @@ const EditVariantModal = dynamic(() => import("./variant/EditVariantModal"), {
   loading: () => <p>Đang tải dữ liệu...</p>,
 });
 
-const ManageCategoryModal = dynamic(() => import("./manage/ManageCategoryModal"), {
-  loading: () => <p>Đang tải dữ liệu...</p>,
-});
+const ManageCategoryModal = dynamic(
+  () => import("./manage/ManageCategoryModal"),
+  {
+    loading: () => <p>Đang tải dữ liệu...</p>,
+  },
+);
 
-const ManageAttributeModal = dynamic(() => import("./manage/ManageAttributeModal"), {
+const ManageAttributeModal = dynamic(
+  () => import("./manage/ManageAttributeModal"),
+  {
+    loading: () => <p>Đang tải dữ liệu...</p>,
+  },
+);
+
+const ManageUnitModal = dynamic(() => import("./manage/ManageUnitModal"), {
   loading: () => <p>Đang tải dữ liệu...</p>,
 });
 
@@ -76,7 +86,7 @@ const ModalManager = ({
   searchText,
   selectedCategory,
   selectedStatus,
-  fetchProducts
+  fetchProducts,
 }) => {
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [attributeModalVisible, setAttributeModalVisible] = useState(false);
@@ -272,13 +282,31 @@ const ModalManager = ({
         />
       )}
 
-        {isOpenManageAttributes && (
+      {isOpenManageAttributes && (
         <ManageAttributeModal
           open={isOpenManageAttributes}
           setOpen={setIsOpenManageAttributes}
           reloadAttributes={reloadAttributes}
           onCancel={() => {
             setIsOpenManageAttributes(false);
+            fetchProducts({
+              page: pagination.current - 1,
+              size: pagination.pageSize,
+              search: searchText,
+              category: selectedCategory,
+              status: selectedStatus,
+            });
+          }}
+        />
+      )}
+
+      {isOpenManageUnits && (
+        <ManageUnitModal
+          open={isOpenManageUnits}
+          setOpen={setIsOpenManageUnits}
+          reloadUnits={reloadUnits}
+          onCancel={() => {
+            setIsOpenManageUnits(false);
             fetchProducts({
               page: pagination.current - 1,
               size: pagination.pageSize,
