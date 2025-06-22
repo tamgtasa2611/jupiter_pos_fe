@@ -65,7 +65,11 @@ const OrderMainPage = () => {
     sortDirection,
   ]);
 
-  const fetchOrders = async (isLoadMore = false, targetPage = null) => {
+  const fetchOrders = async (
+    isLoadMore = false,
+    targetPage = null,
+    targetPageSize = null,
+  ) => {
     setLoading(true);
     try {
       // Xác định trang cần load
@@ -78,8 +82,12 @@ const OrderMainPage = () => {
         pageNumber = pagination.current - 1; // Giữ nguyên trang hiện tại thay vì reset về 0
       }
 
+      // Sử dụng targetPageSize nếu có, ngược lại dùng pagination.pageSize
+      const pageSize = targetPageSize || pagination.pageSize;
+
       const params = {
         ...apiParams,
+        pageSize: pageSize,
         pageNumber,
       };
 
@@ -95,6 +103,7 @@ const OrderMainPage = () => {
         total: response.totalElements || prev.total,
         // Chỉ update current khi có targetPage hoặc reset về 1
         current: targetPage !== null ? targetPage : prev.current,
+        pageSize: pageSize,
       }));
     } catch (error) {
       const errMsg = error?.response?.data?.error || "Lỗi không xác định";
@@ -139,7 +148,7 @@ const OrderMainPage = () => {
         current: newPagination.current,
         pageSize: newPagination.pageSize,
       }));
-      fetchOrders(false, newPagination.current);
+      fetchOrders(false, newPagination.current, newPagination.pageSize);
     }
   };
 
