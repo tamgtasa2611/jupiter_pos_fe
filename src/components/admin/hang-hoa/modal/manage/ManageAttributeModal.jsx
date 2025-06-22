@@ -20,6 +20,7 @@ import {
   DeleteOutlined,
   SaveOutlined,
   CloseOutlined,
+  SearchOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
 import {
@@ -30,6 +31,7 @@ import {
 } from "@/requests/attribute";
 
 const { Title } = Typography;
+const { Search } = Input;
 
 const ManageAttributeModal = ({
   open,
@@ -41,6 +43,8 @@ const ManageAttributeModal = ({
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("id");
   const [sortDirection, setSortDirection] = useState("DESC");
+  const [searchText, setSearchText] = useState("");
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
@@ -55,6 +59,7 @@ const ManageAttributeModal = ({
     size = 5,
     sortField = sortBy,
     sortOrder = sortDirection,
+    searchValue = searchText,
   ) => {
     setLoading(true);
     try {
@@ -63,6 +68,7 @@ const ManageAttributeModal = ({
         size,
         sortBy: sortField,
         sortDirection: sortOrder,
+        search: searchValue || undefined,
       });
 
       if (response && response.content) {
@@ -87,6 +93,17 @@ const ManageAttributeModal = ({
     }
   }, [open]);
 
+  const handleSearch = (value) => {
+    const trimmed = value.trim();
+    setSearchText(trimmed);
+    setPagination((prev) => ({ ...prev, current: 1 }));
+    fetchAttributes(0, pagination.pageSize, sortBy, sortDirection, trimmed);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
   const handleTableChange = (newPagination, filters, sorter) => {
     if (editingKey !== "") {
       return;
@@ -104,7 +121,13 @@ const ManageAttributeModal = ({
       const newPage = newPagination.current - 1;
       const newSize = newPagination.pageSize;
 
-      fetchAttributes(newPage, newSize, newSortBy, newSortDirection);
+      fetchAttributes(
+        newPage,
+        newSize,
+        newSortBy,
+        newSortDirection,
+        searchText,
+      );
     }
   };
 
@@ -140,7 +163,8 @@ const ManageAttributeModal = ({
         return;
       } else {
         message.success("Thêm thuộc tính thành công");
-        fetchAttributes(0, pagination.pageSize, sortBy, sortDirection);
+        setSearchText("");
+        fetchAttributes(0, pagination.pageSize, sortBy, sortDirection, "");
         setEditingKey("");
         reloadAttributes && reloadAttributes();
       }
@@ -336,6 +360,8 @@ const ManageAttributeModal = ({
     onCancel();
     setEditingKey("");
     form.resetFields();
+    setOldName("");
+    setSearchText("");
     setAttributes((prev) => prev.filter((item) => !item.isNew));
   };
 
@@ -348,30 +374,47 @@ const ManageAttributeModal = ({
       open={open}
       onCancel={handleModalClose}
       footer={
-        <Flex justify="space-between" align="center">
+        <Flex justify="end" align="center">
           <Button onClick={handleModalClose} icon={<CloseOutlined />}>
             Đóng
           </Button>
-          <Flex>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-              disabled={editingKey !== ""}
-            >
-              Thêm thuộc tính
-            </Button>
-            <Button
-              type="default"
-              onClick={handleRefresh}
-              style={{ marginLeft: 8 }}
-              icon={<ReloadOutlined />}
-              loading={loading}
-            />
-          </Flex>
         </Flex>
       }
     >
+      <Flex
+        justify="space-between"
+        gap={16}
+        style={{ marginBottom: 16, marginTop: 16 }}
+      >
+        <Search
+          placeholder="Tìm kiếm danh mục theo tên"
+          allowClear
+          enterButton={<SearchOutlined />}
+          size="middle"
+          onSearch={handleSearch}
+          onChange={handleSearchChange}
+          value={searchText}
+          disabled={editingKey !== ""}
+        />
+
+        <Flex>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAdd}
+            disabled={editingKey !== ""}
+          >
+            Thêm danh mục
+          </Button>
+          <Button
+            type="default"
+            onClick={handleRefresh}
+            style={{ marginLeft: 8 }}
+            icon={<ReloadOutlined />}
+            loading={loading}
+          />
+        </Flex>
+      </Flex>
       <Form form={form} component={false}>
         <Table
           bordered

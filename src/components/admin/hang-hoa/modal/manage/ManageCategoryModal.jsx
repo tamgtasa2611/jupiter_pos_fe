@@ -8,9 +8,6 @@ import {
   Input,
   message,
   Popconfirm,
-  Card,
-  Row,
-  Col,
   Typography,
   Flex,
 } from "antd";
@@ -21,6 +18,7 @@ import {
   SaveOutlined,
   CloseOutlined,
   ReloadOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import {
   getPagableCategories,
@@ -30,12 +28,14 @@ import {
 } from "@/requests/category";
 
 const { Title } = Typography;
+const { Search } = Input;
 
 const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("id");
   const [sortDirection, setSortDirection] = useState("DESC");
+  const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
@@ -50,6 +50,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
     size = 5,
     sortField = sortBy,
     sortOrder = sortDirection,
+    searchValue = searchText,
   ) => {
     setLoading(true);
     try {
@@ -58,6 +59,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
         size,
         sortBy: sortField,
         sortDirection: sortOrder,
+        search: searchValue || undefined,
       });
 
       if (response && response.content) {
@@ -82,6 +84,17 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
     }
   }, [open]);
 
+  const handleSearch = (value) => {
+    const trimmed = value.trim();
+    setSearchText(trimmed);
+    setPagination((prev) => ({ ...prev, current: 1 }));
+    fetchCategories(0, pagination.pageSize, sortBy, sortDirection, trimmed);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
   const handleTableChange = (newPagination, filters, sorter) => {
     if (editingKey !== "") {
       return;
@@ -99,7 +112,13 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
       const newPage = newPagination.current - 1;
       const newSize = newPagination.pageSize;
 
-      fetchCategories(newPage, newSize, newSortBy, newSortDirection);
+      fetchCategories(
+        newPage,
+        newSize,
+        newSortBy,
+        newSortDirection,
+        searchText,
+      );
     }
   };
 
@@ -135,7 +154,8 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
         return;
       } else {
         message.success("Thêm danh mục thành công");
-        fetchCategories(0, pagination.pageSize, sortBy, sortDirection);
+        setSearchText("");
+        fetchCategories(0, pagination.pageSize, sortBy, sortDirection, "");
         setEditingKey("");
         reloadCategories && reloadCategories();
       }
@@ -155,6 +175,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
       if (categoryName === oldName) {
         message.info("Không có thay đổi nào để cập nhật");
         setEditingKey("");
+        setSearchText("");
         form.resetFields();
         setOldName(""); // Reset tên cũ
         return;
@@ -229,7 +250,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
   };
 
   const handleRefresh = () => {
-    fetchCategories(0, pagination.pageSize, sortBy, sortDirection);
+    fetchCategories(0, pagination.pageSize, sortBy, sortDirection, searchText);
   };
 
   const columns = [
@@ -328,6 +349,7 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
     onCancel();
     setEditingKey("");
     form.resetFields();
+    setSearchText("");
     setCategories((prev) => prev.filter((item) => !item.isNew));
   };
 
@@ -340,30 +362,48 @@ const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
       open={open}
       onCancel={handleModalClose}
       footer={
-        <Flex justify="space-between" align="center">
+        <Flex justify="end" align="center">
           <Button onClick={handleModalClose} icon={<CloseOutlined />}>
             Đóng
           </Button>
-          <Flex>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-              disabled={editingKey !== ""}
-            >
-              Thêm danh mục
-            </Button>
-            <Button
-              type="default"
-              onClick={handleRefresh}
-              style={{ marginLeft: 8 }}
-              icon={<ReloadOutlined />}
-              loading={loading}
-            />
-          </Flex>
         </Flex>
       }
     >
+      <Flex
+        justify="space-between"
+        gap={16}
+        style={{ marginBottom: 16, marginTop: 16 }}
+      >
+        <Search
+          placeholder="Tìm kiếm danh mục theo tên"
+          allowClear
+          enterButton={<SearchOutlined />}
+          size="middle"
+          onSearch={handleSearch}
+          onChange={handleSearchChange}
+          value={searchText}
+          disabled={editingKey !== ""}
+        />
+
+        <Flex>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAdd}
+            disabled={editingKey !== ""}
+          >
+            Thêm danh mục
+          </Button>
+          <Button
+            type="default"
+            onClick={handleRefresh}
+            style={{ marginLeft: 8 }}
+            icon={<ReloadOutlined />}
+            loading={loading}
+          />
+        </Flex>
+      </Flex>
+
       <Form form={form} component={false}>
         <Table
           bordered

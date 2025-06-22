@@ -1,27 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Đây là một dự án [Next.js](https://nextjs.org) được khởi tạo bằng [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## Bắt đầu
 
-First, run the development server:
+Để chạy dự án, bạn thực hiện các bước sau:
+
+1. Cài đặt các thư viện cần thiết:
 
 ```bash
 npm install
 ```
 
+2. Khởi động server môi trường dev:
+
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-To auto format all files, run:
+3. Để tự động định dạng lại toàn bộ mã nguồn, chạy lệnh:
 
-```
+```bash
 npm run format
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sau đó, mở trình duyệt và truy cập [http://localhost:3000](http://localhost:3000) để xem kết quả.

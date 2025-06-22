@@ -18,6 +18,7 @@ import {
   SaveOutlined,
   CloseOutlined,
   ReloadOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import {
   getPagableUnits,
@@ -27,12 +28,14 @@ import {
 } from "@/requests/unit";
 
 const { Title } = Typography;
+const { Search } = Input;
 
 const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
   const [units, setUnits] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("id");
   const [sortDirection, setSortDirection] = useState("DESC");
+  const [searchText, setSearchText] = useState("");
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 5,
@@ -47,6 +50,7 @@ const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
     size = 5,
     sortField = sortBy,
     sortOrder = sortDirection,
+    searchValue = searchText,
   ) => {
     setLoading(true);
     try {
@@ -55,6 +59,7 @@ const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
         size,
         sortBy: sortField,
         sortDirection: sortOrder,
+        search: searchValue || undefined,
       });
 
       if (response && response.content) {
@@ -79,6 +84,17 @@ const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
     }
   }, [open]);
 
+  const handleSearch = (value) => {
+    const trimmed = value.trim();
+    setSearchText(trimmed);
+    setPagination((prev) => ({ ...prev, current: 1 }));
+    fetchUnits(0, pagination.pageSize, sortBy, sortDirection, trimmed);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
   const handleTableChange = (newPagination, filters, sorter) => {
     if (editingKey !== "") {
       return;
@@ -96,7 +112,7 @@ const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
       const newPage = newPagination.current - 1;
       const newSize = newPagination.pageSize;
 
-      fetchUnits(newPage, newSize, newSortBy, newSortDirection);
+      fetchUnits(newPage, newSize, newSortBy, newSortDirection, searchText);
     }
   };
 
@@ -132,8 +148,10 @@ const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
         return;
       } else {
         message.success("Thêm đơn vị thành công");
-        fetchUnits(0, pagination.pageSize, sortBy, sortDirection);
+        setSearchText("");
+        fetchUnits(0, pagination.pageSize, sortBy, sortDirection, "");
         setEditingKey("");
+
         reloadUnits && reloadUnits();
       }
     } catch (errInfo) {
@@ -163,14 +181,10 @@ const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
           return;
         } else {
           message.success("Cập nhật đơn vị thành công");
-          fetchUnits(
-            pagination.current - 1,
-            pagination.pageSize,
-            sortBy,
-            sortDirection,
-          );
+          fetchUnits(0, pagination.pageSize, sortBy, sortDirection);
           setEditingKey("");
           setOldName("");
+
           reloadUnits && reloadUnits();
         }
       }
@@ -336,30 +350,47 @@ const ManageUnitModal = ({ open, setOpen, reloadUnits, onCancel }) => {
       open={open}
       onCancel={handleModalClose}
       footer={
-        <Flex justify="space-between" align="center">
+        <Flex justify="end" align="center">
           <Button onClick={handleModalClose} icon={<CloseOutlined />}>
             Đóng
           </Button>
-          <Flex>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-              disabled={editingKey !== ""}
-            >
-              Thêm đơn vị
-            </Button>
-            <Button
-              type="default"
-              onClick={handleRefresh}
-              style={{ marginLeft: 8 }}
-              icon={<ReloadOutlined />}
-              loading={loading}
-            />
-          </Flex>
         </Flex>
       }
     >
+      <Flex
+        justify="space-between"
+        gap={16}
+        style={{ marginBottom: 16, marginTop: 16 }}
+      >
+        <Search
+          placeholder="Tìm kiếm đơn vị theo tên"
+          allowClear
+          enterButton={<SearchOutlined />}
+          size="middle"
+          onSearch={handleSearch}
+          onChange={handleSearchChange}
+          value={searchText}
+          disabled={editingKey !== ""}
+        />
+
+        <Flex>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAdd}
+            disabled={editingKey !== ""}
+          >
+            Thêm đơn vị
+          </Button>
+          <Button
+            type="default"
+            onClick={handleRefresh}
+            style={{ marginLeft: 8 }}
+            icon={<ReloadOutlined />}
+            loading={loading}
+          />
+        </Flex>
+      </Flex>
       <Form form={form} component={false}>
         <Table
           bordered
