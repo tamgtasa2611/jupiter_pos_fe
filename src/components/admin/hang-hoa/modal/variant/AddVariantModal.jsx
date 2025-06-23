@@ -31,6 +31,10 @@ const AddVariantModal = ({
   attributes = [],
   handleAddAttribute,
   isMobile,
+  setUnitSearchText,
+  setAttributeSearchText,
+  reloadUnits = () => {},
+  reloadAttributes = () => {},
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -171,6 +175,27 @@ const AddVariantModal = ({
             <Select
               placeholder="Chọn đơn vị tính"
               style={mobileSelectStyle}
+              showSearch
+              filterOption={false}
+              onSearch={(value) => {
+                setUnitSearchText(value);
+              }}
+              onInputKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const searchValue = e.target.value;
+                  if (searchValue && searchValue.trim() !== "") {
+                    reloadUnits && reloadUnits(searchValue.trim());
+                  } else {
+                    reloadUnits && reloadUnits("");
+                  }
+                }
+              }}
+              onBlur={() => {
+                setUnitSearchText("");
+                reloadUnits && reloadUnits("");
+              }}
               popupRender={(menu) => (
                 <>
                   {menu}
@@ -249,6 +274,28 @@ const AddVariantModal = ({
                   >
                     <Select
                       placeholder="Chọn thuộc tính"
+                      showSearch
+                      filterOption={false}
+                      onSearch={(value) => {
+                        setAttributeSearchText(value);
+                      }}
+                      onInputKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const searchValue = e.target.value;
+                          if (searchValue && searchValue.trim() !== "") {
+                            reloadAttributes &&
+                              reloadAttributes(searchValue.trim());
+                          } else {
+                            reloadAttributes && reloadAttributes("");
+                          }
+                        }
+                      }}
+                      onBlur={() => {
+                        setAttributeSearchText("");
+                        reloadAttributes && reloadAttributes("");
+                      }}
                       style={{
                         flex: "1",
                         ...mobileSelectStyle,
@@ -303,6 +350,27 @@ const AddVariantModal = ({
                   >
                     <Select
                       placeholder="Chọn đơn vị"
+                      showSearch
+                      filterOption={false}
+                      onSearch={(value) => {
+                        setUnitSearchText(value);
+                      }}
+                      onInputKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const searchValue = e.target.value;
+                          if (searchValue && searchValue.trim() !== "") {
+                            reloadUnits && reloadUnits(searchValue.trim());
+                          } else {
+                            reloadUnits && reloadUnits("");
+                          }
+                        }
+                      }}
+                      onBlur={() => {
+                        setUnitSearchText("");
+                        reloadUnits && reloadUnits("");
+                      }}
                       popupRender={(menu) => (
                         <>
                           {menu}

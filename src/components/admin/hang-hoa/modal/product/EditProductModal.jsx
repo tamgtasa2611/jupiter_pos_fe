@@ -25,6 +25,8 @@ const EditProductModal = ({
   categories = [],
   handleAddCategory,
   isMobile,
+  setCategorySearchText,
+  reloadCategories = () => {}
 }) => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
@@ -145,6 +147,27 @@ const EditProductModal = ({
               placeholder="Chọn danh mục"
               style={mobileSelectStyle}
               allowClear
+              showSearch
+              filterOption={false}
+              onSearch={(value) => {
+                setCategorySearchText(value);
+              }}
+              onInputKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const searchValue = e.target.value;
+                  if (searchValue && searchValue.trim() !== "") {
+                    reloadCategories && reloadCategories(searchValue.trim());
+                  } else {
+                    reloadCategories && reloadCategories("");
+                  }
+                }
+              }}
+              onBlur={() => {
+                setCategorySearchText("");
+                reloadCategories && reloadCategories("");
+              }}
               popupRender={(menu) => (
                 <>
                   {menu}

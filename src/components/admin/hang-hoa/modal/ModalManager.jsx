@@ -67,10 +67,16 @@ const ModalManager = ({
   handleImportProducts,
   categories,
   reloadCategories,
+  categorySearchText,
+  setCategorySearchText,
   units,
   reloadUnits,
+  unitSearchText,
+  setUnitSearchText,
   attributes,
   reloadAttributes,
+  attributeSearchText,
+  setAttributeSearchText,
   isMobile,
   viewVariantModalVisible,
   setViewVariantModalVisible,
@@ -172,6 +178,15 @@ const ModalManager = ({
     handleCategorySubmit: handleCategorySubmit,
     handleAttributeSubmit: handleAttributeSubmit,
     handleUnitSubmit: handleUnitSubmit,
+    categorySearchText: categorySearchText,
+    setCategorySearchText: setCategorySearchText,
+    unitSearchText: unitSearchText,
+    setUnitSearchText: setUnitSearchText,
+    attributeSearchText: attributeSearchText,
+    setAttributeSearchText: setAttributeSearchText,
+    reloadCategories: reloadCategories,
+    reloadUnits: reloadUnits,
+    reloadAttributes: reloadAttributes,
   };
 
   return (
@@ -222,6 +237,12 @@ const ModalManager = ({
             attributes={attributes}
             handleAddAttribute={handleAddAttribute}
             isMobile={isMobile}
+            setUnitSearchText={setUnitSearchText}
+            setAttributeSearchText={setAttributeSearchText}
+            unitSearchText={unitSearchText}
+            attributeSearchText={attributeSearchText}
+            reloadUnits={reloadUnits}
+            reloadAttributes={reloadAttributes}
           />
         </>
       )}
@@ -251,6 +272,10 @@ const ModalManager = ({
             isMobile={isMobile}
             handleAddUnit={handleAddUnit}
             handleAddAttribute={handleAddAttribute}
+            setUnitSearchText={setUnitSearchText}
+            setAttributeSearchText={setAttributeSearchText}
+            unitSearchText={unitSearchText}
+            attributeSearchText={attributeSearchText}
           />
         </>
       )}

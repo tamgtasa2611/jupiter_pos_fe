@@ -42,6 +42,10 @@ const EditVariantModal = ({
   isMobile,
   handleAddUnit = () => {},
   handleAddAttribute = () => {},
+  setUnitSearchText,
+  setAttributeSearchText,
+  unitSearchText,
+  attributeSearchText,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -207,6 +211,27 @@ const EditVariantModal = ({
           <Form.Item name="unitId" label="Đơn vị tính">
             <Select
               placeholder="Chọn đơn vị tính"
+              showSearch
+              filterOption={false}
+              onSearch={(value) => {
+                setUnitSearchText(value);
+              }}
+              onInputKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const searchValue = e.target.value;
+                  if (searchValue && searchValue.trim() !== "") {
+                    reloadUnits && reloadUnits(searchValue.trim());
+                  } else {
+                    reloadUnits && reloadUnits("");
+                  }
+                }
+              }}
+              onBlur={() => {
+                setUnitSearchText("");
+                reloadUnits && reloadUnits("");
+              }}
               popupRender={(menu) => (
                 <>
                   {menu}
@@ -275,6 +300,28 @@ const EditVariantModal = ({
                           value: attr.id,
                           label: attr.attributeName,
                         }))}
+                        showSearch
+                        filterOption={false}
+                        onSearch={(value) => {
+                          setAttributeSearchText(value);
+                        }}
+                        onInputKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const searchValue = e.target.value;
+                            if (searchValue && searchValue.trim() !== "") {
+                              reloadAttributes &&
+                                reloadAttributes(searchValue.trim());
+                            } else {
+                              reloadAttributes && reloadAttributes("");
+                            }
+                          }
+                        }}
+                        onBlur={() => {
+                          setAttributeSearchText("");
+                          reloadAttributes && reloadAttributes("");
+                        }}
                         popupRender={(menu) => (
                           <>
                             {menu}
@@ -310,6 +357,27 @@ const EditVariantModal = ({
                       <Select
                         placeholder="Đơn vị"
                         style={{ flex: 1 }}
+                        showSearch
+                        filterOption={false}
+                        onSearch={(value) => {
+                          setUnitSearchText(value);
+                        }}
+                        onInputKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const searchValue = e.target.value;
+                            if (searchValue && searchValue.trim() !== "") {
+                              reloadUnits && reloadUnits(searchValue.trim());
+                            } else {
+                              reloadUnits && reloadUnits("");
+                            }
+                          }
+                        }}
+                        onBlur={() => {
+                          setUnitSearchText("");
+                          reloadUnits && reloadUnits("");
+                        }}
                         options={units.map((unit) => ({
                           value: unit.id,
                           label: unit.name,

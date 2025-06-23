@@ -23,7 +23,7 @@ import CloudinaryImageUpload from "@/components/common/upload/CloudinaryImageUpl
 import { MAX_VARIANT_IMAGES, DANG_BAN, NGUNG_BAN } from "@/constants/product";
 
 const { Option } = Select;
-const { TextArea } = Input;
+const { TextArea, Search } = Input;
 
 const AddProductModal = ({
   visible,
@@ -39,6 +39,15 @@ const AddProductModal = ({
   handleCategorySubmit,
   handleAttributeSubmit,
   handleUnitSubmit,
+  categorySearchText,
+  attributeSearchText,
+  unitSearchText,
+  setCategorySearchText,
+  setAttributeSearchText,
+  setUnitSearchText,
+  reloadCategories,
+  reloadAttributes,
+  reloadUnits,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -186,10 +195,32 @@ const AddProductModal = ({
               placeholder="Chọn danh mục"
               style={mobileSelectStyle}
               allowClear
+              showSearch
+              filterOption={false}
+              onSearch={(value) => {
+                setCategorySearchText(value);
+              }}
+              onInputKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const searchValue = e.target.value;
+                  if (searchValue && searchValue.trim() !== "") {
+                    reloadCategories && reloadCategories(searchValue.trim());
+                  } else {
+                    reloadCategories && reloadCategories("");
+                  }
+                }
+              }}
+              onBlur={() => {
+                setCategorySearchText("");
+                reloadCategories && reloadCategories("");
+              }}
               popupRender={(menu) => (
                 <>
                   {menu}
                   <Divider dashed style={{ margin: "8px 0" }} />
+
                   <Button type="link" block onClick={handleAddCategory}>
                     Thêm danh mục
                   </Button>
@@ -331,6 +362,28 @@ const AddProductModal = ({
                               value: unit.id,
                               label: unit.name,
                             }))}
+                            showSearch
+                            filterOption={false}
+                            onSearch={(value) => {
+                              setUnitSearchText(value);
+                            }}
+                            onInputKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const searchValue = e.target.value;
+                                if (searchValue && searchValue.trim() !== "") {
+                                  reloadUnits &&
+                                    reloadUnits(searchValue.trim());
+                                } else {
+                                  reloadUnits && reloadUnits("");
+                                }
+                              }
+                            }}
+                            onBlur={() => {
+                              setUnitSearchText("");
+                              reloadUnits && reloadUnits("");
+                            }}
                             popupRender={(menu) => (
                               <>
                                 {menu}
@@ -433,6 +486,35 @@ const AddProductModal = ({
                                         value: attr.id,
                                         label: attr.attributeName,
                                       }))}
+                                      showSearch
+                                      filterOption={false}
+                                      onSearch={(value) => {
+                                        setAttributeSearchText(value);
+                                      }}
+                                      onInputKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          const searchValue = e.target.value;
+                                          if (
+                                            searchValue &&
+                                            searchValue.trim() !== ""
+                                          ) {
+                                            reloadAttributes &&
+                                              reloadAttributes(
+                                                searchValue.trim(),
+                                              );
+                                          } else {
+                                            reloadAttributes &&
+                                              reloadAttributes("");
+                                          }
+                                        }
+                                      }}
+                                      onBlur={() => {
+                                        setAttributeSearchText("");
+                                        reloadAttributes &&
+                                          reloadAttributes("");
+                                      }}
                                       style={{
                                         flex: "1",
                                       }}
@@ -492,6 +574,31 @@ const AddProductModal = ({
                                         value: unit.id,
                                         label: unit.name,
                                       }))}
+                                      showSearch
+                                      filterOption={false}
+                                      onSearch={(value) => {
+                                        setUnitSearchText(value);
+                                      }}
+                                      onInputKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          const searchValue = e.target.value;
+                                          if (
+                                            searchValue &&
+                                            searchValue.trim() !== ""
+                                          ) {
+                                            reloadUnits &&
+                                              reloadUnits(searchValue.trim());
+                                          } else {
+                                            reloadUnits && reloadUnits("");
+                                          }
+                                        }
+                                      }}
+                                      onBlur={() => {
+                                        setUnitSearchText("");
+                                        reloadUnits && reloadUnits("");
+                                      }}
                                       popupRender={(menu) => (
                                         <>
                                           {menu}

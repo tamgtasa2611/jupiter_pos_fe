@@ -23,9 +23,9 @@ import {
   createVariant,
   updateVariant,
 } from "@/requests/product";
-import { getCategories } from "@/requests/category";
-import { getAttributes } from "@/requests/attribute";
-import { getUnits } from "@/requests/unit";
+import { getCategories, getPagableCategories } from "@/requests/category";
+import { getAttributes, getPagableAttributes } from "@/requests/attribute";
+import { getUnits, getPagableUnits } from "@/requests/unit";
 
 // Memoize các component để tối ưu performance
 const MemoizedProductTable = React.memo(ProductTable);
@@ -71,8 +71,11 @@ const ProductPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("0"); // "0" là tất cả danh mục
   const [selectedStatus, setSelectedStatus] = useState("0"); // "0" là tất cả trạng thái
   const [categories, setCategories] = useState([]);
-  const [units, setUnits] = useState([]);
+  const [categorySearchText, setCategorySearchText] = useState("");
   const [attributes, setAttributes] = useState([]);
+  const [attributeSearchText, setAttributeSearchText] = useState("");
+  const [units, setUnits] = useState([]);
+  const [unitSearchText, setUnitSearchText] = useState("");
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     current: 1,
@@ -80,10 +83,14 @@ const ProductPage = () => {
     total: 0,
   });
 
-  async function loadCategories() {
+  async function loadCategories(searchKey = "") {
     try {
-      const categoryResponse = await getCategories();
-      setCategories(categoryResponse);
+      const categoryResponse = await getPagableCategories({
+        page: 0,
+        size: 99999,
+        search: searchKey,
+      });
+      setCategories(categoryResponse?.content || []);
     } catch (error) {
       console.error("Lỗi khi lấy danh mục:", error);
     }
@@ -92,10 +99,14 @@ const ProductPage = () => {
     loadCategories();
   }, []);
 
-  async function loadAttributes() {
+  async function loadAttributes(searchKey = "") {
     try {
-      const attributeResponse = await getAttributes();
-      setAttributes(attributeResponse);
+      const attributeResponse = await getPagableAttributes({
+        page: 0,
+        size: 99999,
+        search: searchKey,
+      });
+      setAttributes(attributeResponse?.content || []);
     } catch (error) {
       console.error("Lỗi khi lấy thuộc tính:", error);
     }
@@ -104,10 +115,14 @@ const ProductPage = () => {
     loadAttributes();
   }, []);
 
-  async function loadUnits() {
+  async function loadUnits(searchKey = "") {
     try {
-      const unitResponse = await getUnits();
-      setUnits(unitResponse);
+      const unitResponse = await getPagableUnits({
+        page: 0,
+        size: 99999,
+        search: searchKey,
+      });
+      setUnits(unitResponse?.content || []);
     } catch (error) {
       console.error("Lỗi khi lấy đơn vị:", error);
     }
@@ -380,28 +395,40 @@ const ProductPage = () => {
     }
   };
 
-  const reloadCategories = async () => {
+  const reloadCategories = async (searchKey = "") => {
     try {
-      const categoryResponse = await getCategories();
-      setCategories(categoryResponse);
+      const categoryResponse = await getPagableCategories({
+        page: 0,
+        size: 99999,
+        search: searchKey,
+      });
+      setCategories(categoryResponse?.content || []);
     } catch (error) {
       console.error("Lỗi khi tải lại danh mục:", error);
     }
   };
 
-  const reloadAttributes = async () => {
+  const reloadAttributes = async (searchKey = "") => {
     try {
-      const attributeResponse = await getAttributes();
-      setAttributes(attributeResponse);
+      const attributeResponse = await getPagableAttributes({
+        page: 0,
+        size: 99999,
+        search: searchKey,
+      });
+      setAttributes(attributeResponse?.content || []);
     } catch (error) {
       console.error("Lỗi khi tải lại thuộc tính:", error);
     }
   };
 
-  const reloadUnits = async () => {
+  const reloadUnits = async (searchKey = "") => {
     try {
-      const unitResponse = await getUnits();
-      setUnits(unitResponse);
+      const unitResponse = await getPagableUnits({
+        page: 0,
+        size: 99999,
+        search: searchKey,
+      });
+      setUnits(unitResponse?.content || []);
     } catch (error) {
       console.error("Lỗi khi tải lại đơn vị:", error);
     }
@@ -534,10 +561,16 @@ const ProductPage = () => {
         handleImportProducts={handleImportProducts}
         categories={categories}
         reloadCategories={reloadCategories}
+        categorySearchText={categorySearchText}
+        setCategorySearchText={setCategorySearchText}
         attributes={attributes}
         reloadAttributes={reloadAttributes}
+        attributeSearchText={attributeSearchText}
+        setAttributeSearchText={setAttributeSearchText}
         units={units}
         reloadUnits={reloadUnits}
+        unitSearchText={unitSearchText}
+        setUnitSearchText={setUnitSearchText}
         isMobile={isMobile}
         viewVariantModalVisible={viewVariantModalVisible}
         setViewVariantModalVisible={setViewVariantModalVisible}
