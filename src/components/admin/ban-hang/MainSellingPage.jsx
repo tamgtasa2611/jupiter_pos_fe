@@ -146,12 +146,29 @@ const MainSellingPage = () => {
   };
 
   const addToCart = (product) => {
+    const inStock = product.quantity || 0;
+    if (inStock <= 0) {
+      message.error(`Sản phẩm ${product.name} đã hết hàng!`);
+      return;
+    }
+
     const existingItemIndex = cart.findIndex((item) => item.id === product.id);
     if (existingItemIndex !== -1) {
+      // Sản phẩm đã có trong giỏ hàng
       const updatedCart = [...cart];
-      updatedCart[existingItemIndex].quantity += 1;
-      setCart(updatedCart);
+      const newQuantity = updatedCart[existingItemIndex].quantity + 1;
+
+      if (newQuantity > inStock) {
+        message.error(
+          `Sản phẩm ${product.name} không đủ số lượng! Còn lại: ${inStock}`,
+        );
+        return;
+      } else {
+        updatedCart[existingItemIndex].quantity = newQuantity;
+        setCart(updatedCart);
+      }
     } else {
+      // Sản phẩm chưa có trong giỏ hàng
       setCart([...cart, { ...product, quantity: 1 }]);
     }
   };
@@ -160,15 +177,35 @@ const MainSellingPage = () => {
     setCart(cart.filter((item) => item.id !== productId));
   };
 
-  const updateQuantity = (productId, quantity) => {
-    if (quantity <= 0) {
+  const updateQuantity = (productId, newQuantity) => {
+    if (!newQuantity || newQuantity <= 0) {
       removeFromCart(productId);
       return;
     }
 
-    const updatedCart = cart.map((item) =>
-      item.id === productId ? { ...item, quantity } : item,
-    );
+    const product = products.find((item) => item.id === productId);
+    if (!product) {
+      message.error("Sản phẩm không tồn tại trong danh sách!");
+      return;
+    }
+    const inStock = product.quantity || 0;
+    // Kiểm tra số lượng yêu cầu có vượt quá tồn kho không
+    if (newQuantity > inStock) {
+      message.error(
+        `Sản phẩm ${product.name} không đủ số lượng! Còn lại: ${inStock}`,
+      );
+      return;
+    }
+
+    const existingItemIndex = cart.findIndex((item) => item.id === productId);
+    if (existingItemIndex === -1) {
+      message.error("Sản phẩm không tồn tại trong giỏ hàng!");
+      return;
+    }
+
+    // Cập nhật số lượng mới
+    const updatedCart = [...cart];
+    updatedCart[existingItemIndex].quantity = newQuantity;
     setCart(updatedCart);
   };
 
@@ -182,7 +219,36 @@ const MainSellingPage = () => {
     setShowNumericKeypad(false);
   };
 
+  const validateCart = () => {
+    const invalidItems = [];
+
+    for (const cartItem of cart) {
+      const product = products.find((p) => p.id === cartItem.id);
+      if (!product) {
+        invalidItems.push(`${cartItem.name} không còn tồn tại`);
+        continue;
+      }
+
+      const inStock = product.quantity || 0;
+      if (cartItem.quantity > inStock) {
+        invalidItems.push(
+          `${product.name} chỉ còn ${inStock} sản phẩm (yêu cầu: ${cartItem.quantity})`,
+        );
+      }
+    }
+
+    if (invalidItems.length > 0) {
+      message.error(`Lỗi: ${invalidItems.join(", ")}`);
+      return false;
+    }
+
+    return true;
+  };
+
   const handleCheckout = async (data) => {
+    if (!validateCart()) {
+      return;
+    }
     const orderPayload = {
       customerId: customerInfo.id || null,
       receiverName: customerInfo.customerName || "Khách lẻ",
@@ -202,18 +268,25 @@ const MainSellingPage = () => {
     };
 
     try {
-      const result = await createOrder(orderPayload);
-      if (!result || result.error) {
-        message.error("Không thể tạo đơn hàng. Vui lòng thử lại!");
+      const res = await createOrder(orderPayload);
+      if (!res || res?.response?.data?.message) {
+        message.error(
+          res?.response?.data?.message ||
+            "Không thể tạo đơn hàng. Vui lòng thử lại!",
+        );
       } else {
         message.success("Đơn hàng đã được tạo thành công!");
       }
     } catch (error) {
-      message.error("Tạo đơn hàng thất bại. Vui lòng thử lại!");
+      message.error(
+        error?.response?.data?.message ||
+          "Tạo đơn hàng thất bại. Vui lòng thử lại!",
+      );
     }
     setCustomerInfo(KHACH_LE);
     setCart([]);
     setIsPaymentModalVisible(false);
+    handleSearch({ search: "", page: 0, size: 30 });
   };
 
   const openPriceModal = (itemId, soldPrice) => {
@@ -301,7 +374,11 @@ const MainSellingPage = () => {
                 type="primary"
                 size="large"
                 icon={<DollarOutlined />}
-                onClick={() => setIsPaymentModalVisible(true)}
+                onClick={() => {
+                  if (validateCart()) {
+                    setIsPaymentModalVisible(true);
+                  }
+                }}
                 disabled={cart.length === 0}
                 block
                 style={{ height: 50 }}
@@ -329,6 +406,9 @@ const MainSellingPage = () => {
           visible={showNumericKeypad}
           onCancel={() => setShowNumericKeypad(false)}
           onConfirm={handleKeypadInput}
+          initialValue={
+            cart.find((item) => item.id === selectedProductId)?.quantity || 1
+          }
           title="Nhập số lượng"
         />
       )}
