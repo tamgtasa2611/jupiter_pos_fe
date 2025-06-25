@@ -1,15 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Form,
-  InputNumber,
-  Select,
-  Button,
-  Flex,
-  Tag,
-  message as antdMessage,
-} from "antd";
+import { Form, InputNumber, Select, Button, Flex, Tag, App } from "antd";
 import { createPayment } from "@/requests/payment";
 import { PAYMENT_METHOD } from "@/constants/order";
 
@@ -20,22 +12,31 @@ const CreatePaymentModal = ({
   onCancel,
 }) => {
   const [paying, setPaying] = useState(false);
-  const [messageApi, contextHolder] = antdMessage.useMessage();
+  const { message } = App.useApp();
+
+  const lastPayment = order?.payments[order.payments.length - 1] || {};
+  const remaining =
+    lastPayment?.remaining > 0 ? lastPayment.remaining : order?.totalAmount;
 
   const handleFinish = async (values) => {
     setPaying(true);
     try {
+      if (values.paid <= 0) {
+        message.error("Số tiền thanh toán phải lớn hơn 0");
+        setPaying(false);
+        return;
+      }
       const payload = {
         orderId: order.id,
         paid: values.paid,
         paymentMethod: values.paymentMethod,
       };
       await createPayment(payload);
-      messageApi.success("Cập nhật thanh toán thành công");
+      message.success("Cập nhật thanh toán thành công");
       if (onSuccess) onSuccess();
       else if (onCancel) onCancel();
     } catch (error) {
-      messageApi.error(
+      message.error(
         error?.response?.data?.message || "Cập nhật thanh toán thất bại",
       );
     } finally {
@@ -45,11 +46,10 @@ const CreatePaymentModal = ({
 
   return (
     <>
-      {contextHolder}
       <Form
         layout="vertical"
         initialValues={{
-          paid: order?.totalAmount || 0,
+          paid: remaining || 0,
           paymentMethod: PAYMENT_METHOD.TIEN_MAT,
         }}
         onFinish={handleFinish}
@@ -60,7 +60,7 @@ const CreatePaymentModal = ({
           rules={[{ required: true, message: "Nhập số tiền thanh toán" }]}
         >
           <InputNumber
-            min={0}
+            min={1}
             max={order?.totalAmount}
             style={{ width: "100%" }}
             formatter={(value) =>

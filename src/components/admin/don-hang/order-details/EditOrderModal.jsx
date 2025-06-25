@@ -40,6 +40,7 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
 
   useEffect(() => {
     if (visible && orderId) {
+      setOrder(null);
       setLoading(true);
       getOrderById(orderId)
         .then((res) => {
@@ -52,6 +53,14 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
         .finally(() => setLoading(false));
     }
   }, [visible, orderId]);
+
+  useEffect(() => {
+    if (!visible) {
+      setOrder(null);
+      setActiveTab("order");
+      setShowPaymentForm(false);
+    }
+  }, [visible]);
 
   const handleCreatePayment = async () => {
     setShowPaymentForm(false);
@@ -147,7 +156,8 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
           </div>
         ) : order ? (
           <Tabs
-            defaultActiveKey={activeTab}
+            key={`tabs-${orderId}`}
+            activeKey={activeTab}
             tabBarStyle={{
               backgroundColor: "#fff",
               borderRadius: 8,
@@ -198,7 +208,7 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
           />
         ) : (
           <div style={{ textAlign: "center", padding: 60 }}>
-            Không có dữ liệu
+            {orderId ? "Đang tải dữ liệu..." : "Không có dữ liệu"}
           </div>
         )}
       </Modal>
@@ -209,6 +219,7 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
         centered
         title="Thêm thanh toán cho đơn hàng"
         maskClosable={false}
+        destroyOnHidden
         width={480}
       >
         <CreatePaymentForm
