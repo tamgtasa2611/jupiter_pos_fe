@@ -53,7 +53,7 @@ export default function NavBar({ onLogout }) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const menuItems = [
+  const rawMenuItems = [
     {
       key: "/admin/ban-hang",
       icon: <ShoppingCartOutlined className="text-lg" />,
@@ -110,7 +110,11 @@ export default function NavBar({ onLogout }) {
       ),
       adminOnly: true,
     },
-  ].filter((item) => !item.adminOnly || role === ADMIN);
+  ];
+
+  const menuItems = rawMenuItems
+  .filter((item) => !item.adminOnly || role === ADMIN)
+  .map(({ adminOnly, ...rest }) => rest);
 
   useStockNotification();
 

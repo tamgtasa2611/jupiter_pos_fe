@@ -1,7 +1,7 @@
 "use client";
 
-import MainStatisticsPage from "@components/admin/thong-ke/MainStatisticsPage";
+import AdminDashboard from "@components/admin/trang-chu/AdminDashboard";
 
 export default function Page() {
-  return <MainStatisticsPage />;
+  return <AdminDashboard />;
 }

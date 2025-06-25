@@ -1,12 +1,7 @@
 "use client";
 
-import MainStatisticsPage from "@components/admin/thong-ke/MainStatisticsPage";
-import AdminRoute from "@components/admin/common/AdminRoute";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  return (
-    <AdminRoute>
-      <MainStatisticsPage />
-    </AdminRoute>
-  );
+export default function RedirectPage() {
+  redirect("/admin/thong-ke/ban-hang");
 }

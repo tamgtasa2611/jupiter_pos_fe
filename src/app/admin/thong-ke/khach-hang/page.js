@@ -1,7 +1,7 @@
 "use client";
 
-import MainStatisticsPage from "@components/admin/thong-ke/MainStatisticsPage";
+import CustomerReport from "@components/admin/thong-ke/CustomerReport";
 
 export default function Page() {
-  return <MainStatisticsPage />;
+  return <CustomerReport />;
 }
