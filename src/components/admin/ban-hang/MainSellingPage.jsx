@@ -239,10 +239,7 @@ const MainSellingPage = () => {
 
   return (
     <>
-      <Row
-        gutter={[token.marginLG, 0]}
-        style={{ height: "100%", width: "100%" }}
-      >
+      <Row gutter={[16, 0]} style={{ width: "100%" }} className="h-fit-screen">
         {/* Products - takes 14/24 of the width */}
         <Col span={14} style={{ height: "100%" }}>
           <ProductsSection
