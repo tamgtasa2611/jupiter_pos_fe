@@ -15,6 +15,7 @@ import {
   message,
   Flex,
   Image,
+  App,
 } from "antd";
 import {
   MobileOutlined,
@@ -33,6 +34,7 @@ const { Title, Text } = Typography;
 
 const PaymentModal = memo(
   ({ visible, onCancel, onCheckout, totalAmount, cartSummary }) => {
+    const { message } = App.useApp();
     const [form] = Form.useForm();
     const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHOD.TIEN_MAT);
     const [orderType, setOrderType] = useState(ORDER_TYPE.MUA_TRUC_TIEP);
@@ -127,18 +129,17 @@ const PaymentModal = memo(
               title: "Xác nhận thanh toán bằng mã QR",
               content: `Bạn có chắc chắn khách đã thanh toán (${received.toLocaleString()}đ)?`,
               onOk: () => {
-                setFinishLoading(true);
                 // Nếu xác nhận thành công thì mới tiến hành thanh toán
-                console.log(values);
+
                 onCheckout({
                   ...values,
                   paid: received,
                   paymentMethod: paymentMethod,
                   orderType: orderType,
+                }).then(() => {
+                  form.resetFields();
+                  setIsProcessing(false);
                 });
-                form.resetFields();
-                setIsProcessing(false);
-                setFinishLoading(false);
               },
               onCancel: () => {
                 setIsProcessing(false);
@@ -146,17 +147,15 @@ const PaymentModal = memo(
             });
           }
         } else if (paymentMethod === PAYMENT_METHOD.TIEN_MAT) {
-          setFinishLoading(true);
-          console.log(values);
           onCheckout({
             ...values,
             paid: received,
             paymentMethod: paymentMethod,
             orderType: orderType,
+          }).then(() => {
+            form.resetFields();
+            setIsProcessing(false);
           });
-          form.resetFields();
-          setIsProcessing(false);
-          setFinishLoading(false);
         }
       }
     };
