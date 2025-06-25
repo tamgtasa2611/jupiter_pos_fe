@@ -178,6 +178,7 @@ const EmployeePage = () => {
             total: pagination.total,
             showSizeChanger: true,
           }}
+          fetchEmployees={fetchEmployees}
         />
       </Flex>
       <AddEmployeeModal

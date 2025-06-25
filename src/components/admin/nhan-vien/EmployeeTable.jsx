@@ -19,6 +19,7 @@ const EmployeeTable = ({
   setDeleteModalVisible,
   paginationConfig,
   onDeleteUser,
+  fetchEmployees,
 }) => {
   const { message } = App.useApp();
   const [selectedEmployee, setSelectedEmployeeState] = useState(null);
@@ -32,13 +33,13 @@ const EmployeeTable = ({
         return;
       }
       message.success("Xóa nhân viên thành công!");
-      setLocalDeleteModalVisible(false);
-      if (onDeleteUser) onDeleteUser();
     } catch (error) {
-      console.log(res);
       message.error(
         error?.response?.data?.message || "Xóa nhân viên thất bại!",
       );
+    } finally {
+      setLocalDeleteModalVisible(false);
+      fetchEmployees();
     }
   };
 
