@@ -2,7 +2,7 @@
 
 ## Bắt đầu
 
-Để chạy dự án, bạn thực hiện các bước sau:
+Để chạy dự án, thầy/cô hãy thực hiện các bước sau:
 
 1. Cài đặt các thư viện cần thiết:
 

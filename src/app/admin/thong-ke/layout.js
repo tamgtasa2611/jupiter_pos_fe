@@ -8,14 +8,10 @@ const { Content, Sider } = Layout;
 export default function ThongKeLayout({ children }) {
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider width={250} style={{ background: "#fff" }}>
+      <Content style={{ margin: "0 16px", minHeight: 360 }}>
         <StatisticMenu />
-      </Sider>
-      <Layout>
-        <Content style={{ margin: "0 16px", minHeight: 360 }}>
-          {children}
-        </Content>
-      </Layout>
+        {children}
+      </Content>
     </Layout>
   );
 }

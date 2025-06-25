@@ -1,40 +1,55 @@
 "use client";
 
 import React from "react";
-import { Menu } from "antd";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Tabs } from "antd";
+import { usePathname, useRouter } from "next/navigation";
+import { BarChartOutlined, UserOutlined } from "@ant-design/icons";
 import { EMPLOYEE, ADMIN } from "@/constants/user";
 import { getUserFromToken } from "@/utils/utils";
 
 const StatisticMenu = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const user = getUserFromToken();
   const role = user?.role || EMPLOYEE;
 
-  const rawMenuItems = [
+  const tabItems = [
     {
       key: "/admin/thong-ke/ban-hang",
-      label: <Link href="/admin/thong-ke/ban-hang">Bán hàng</Link>,
-      adminOnly: true,
+      label: (
+        <span>
+          <BarChartOutlined />
+          Thống kê bán hàng
+        </span>
+      ),
     },
     {
       key: "/admin/thong-ke/khach-hang",
-      label: <Link href="/admin/thong-ke/khach-hang">Khách hàng</Link>,
-      adminOnly: true,
+      label: (
+        <span>
+          <UserOutlined />
+          Thống kê khách hàng
+        </span>
+      ),
     },
   ];
 
-  const menuItems = rawMenuItems
-    .filter((item) => !item.adminOnly || role === ADMIN)
-    .map(({ adminOnly, ...rest }) => rest);
+  const handleTabChange = (activeKey) => {
+    router.push(activeKey);
+  };
+
+  const getActiveKey = () => {
+    const currentTab = tabItems.find((item) => pathname.startsWith(item.key));
+    return currentTab ? currentTab.key : tabItems[0]?.key;
+  };
 
   return (
-    <Menu
-      mode="inline"
-      selectedKeys={[pathname]}
-      style={{ height: "100%", borderRight: 0 }}
-      items={menuItems}
+    <Tabs
+      activeKey={getActiveKey()}
+      onChange={handleTabChange}
+      items={tabItems}
+      size="large"
+      type="card"
     />
   );
 };
