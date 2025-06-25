@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Tabs, Spin, App, Flex, Button } from "antd";
 import { getOrderById, updateOrderStatus } from "@/requests/order";
 import {
+  ORDER_STATUS,
   ORDER_STATUS_MAP,
   PAYMENT_STATUS_MAP,
   PAYMENT_METHOD_MAP,
@@ -33,6 +34,13 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
   const [loading, setLoading] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [activeTab, setActiveTab] = useState("order");
+
+  const totalPaid =
+    order?.payments.reduce((sum, payment) => sum + (payment.paid || 0), 0) || 0;
+  const lastPayment = order?.payments[order.payments.length - 1] || {};
+  const remaining =
+    lastPayment?.remaining || order?.totalAmount - totalPaid || 0;
+
   const reloadOrder = async () => {
     const updatedOrder = await getOrderById(orderId);
     setOrder(updatedOrder);
@@ -94,12 +102,18 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
   const renderFooter = () => {
     switch (activeTab) {
       case "payment":
+        const isPaymentEditable =
+          order?.orderStatus !== ORDER_STATUS.HOAN_THANH &&
+          order?.orderStatus !== ORDER_STATUS.DA_HUY;
         return (
-          <Flex justify="flex-end" style={{ marginTop: 8 }}>
-            <Button type="primary" onClick={() => setShowPaymentForm(true)}>
-              Thêm thanh toán
-            </Button>
-          </Flex>
+          remaining > 0 &&
+          isPaymentEditable && (
+            <Flex justify="flex-end" style={{ marginTop: 8 }}>
+              <Button type="primary" onClick={() => setShowPaymentForm(true)}>
+                Thêm thanh toán
+              </Button>
+            </Flex>
+          )
         );
       case "order":
         const orderStatus = order?.orderStatus;
@@ -148,7 +162,7 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
         }}
         footer={renderFooter()}
         centered={true}
-        width={800}
+        width={840}
       >
         {loading ? (
           <div style={{ textAlign: "center", padding: 60 }}>
@@ -189,6 +203,8 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
                       order={order}
                       paymentMethodOptions={paymentMethodOptions}
                       reloadOrder={reloadOrder}
+                      totalPaid={totalPaid}
+                      remaining={remaining}
                     />
                   ) : (
                     "Không có dữ liệu thanh toán"

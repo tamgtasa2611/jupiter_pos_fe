@@ -1,18 +1,24 @@
 import React, { useState } from "react";
-import { Card, Descriptions, Select, Tag, List, App } from "antd";
+import { Card, Descriptions, Select, Tag, List, App, Flex } from "antd";
 import { PAYMENT_METHOD_MAP, PAYMENT_STATUS_MAP } from "@constants/order";
 import dayjs from "dayjs";
 import { updatePayment } from "@/requests/payment";
 
-const PaymentInfo = ({ order, paymentMethodOptions, reloadOrder}) => {
+const PaymentInfo = ({
+  order,
+  paymentMethodOptions,
+  reloadOrder,
+  totalPaid,
+  remaining,
+}) => {
   const { message } = App.useApp();
   const [editingPaymentId, setEditingPaymentId] = useState(null);
   const [updating, setUpdating] = useState(false);
-  
+
   const handleChangeMethod = async (paymentId, newMethod) => {
     setUpdating(true);
     try {
-      await updatePayment({paymentId, paymentMethod: newMethod});
+      await updatePayment({ paymentId, paymentMethod: newMethod });
       if (reloadOrder) await reloadOrder();
       message.success("Cập nhật phương thức thanh toán thành công");
       setEditingPaymentId(null);
@@ -33,6 +39,20 @@ const PaymentInfo = ({ order, paymentMethodOptions, reloadOrder}) => {
         borderRadius: 8,
       }}
     >
+      <Flex justify="space-between" align="center" style={{ padding: 16 }}>
+        <div>
+          Số tiền phải thanh toán:{" "}
+          {new Intl.NumberFormat("vi-VN").format(order.totalAmount)} đ
+        </div>
+        <div>
+          Tổng đã thanh toán: {new Intl.NumberFormat("vi-VN").format(totalPaid)}{" "}
+          đ
+        </div>
+        <div>
+          {remaining >= 0 ? `Còn nợ` : `Tiền thừa`}:{" "}
+          {new Intl.NumberFormat("vi-VN").format(Math.abs(remaining))} đ
+        </div>
+      </Flex>
       <List
         itemLayout="vertical"
         dataSource={order.payments}
@@ -48,16 +68,14 @@ const PaymentInfo = ({ order, paymentMethodOptions, reloadOrder}) => {
               column={2}
               size="small"
             >
-            <Descriptions.Item label="Phương thức thanh toán">
+              <Descriptions.Item label="Phương thức thanh toán">
                 {editingPaymentId === payment.id ? (
                   <Select
                     style={{ minWidth: 150 }}
                     loading={updating}
                     defaultValue={payment.paymentMethod}
                     options={paymentMethodOptions}
-                    onChange={(value) =>
-                      handleChangeMethod(payment.id, value)
-                    }
+                    onChange={(value) => handleChangeMethod(payment.id, value)}
                     onBlur={() => setEditingPaymentId(null)}
                     autoFocus
                   />
