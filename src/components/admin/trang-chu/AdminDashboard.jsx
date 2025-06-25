@@ -13,8 +13,7 @@ export default function AdminDashboard() {
         gap="large"
         justify="space-between"
         className="flex flex-col md:flex-row"
-      >
-      </Flex>
+      ></Flex>
       <Top10Products />
       <Top10Customers />
     </Flex>

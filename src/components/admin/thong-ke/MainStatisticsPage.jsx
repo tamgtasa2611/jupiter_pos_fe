@@ -12,7 +12,7 @@ const { Content, Sider } = Layout;
 const MainStatisticsPage = () => {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
-  const [content, setContent] = useState<JSX.Element>(<></>);
+  const [content, setContent] = useState < JSX.Element > <></>;
 
   useEffect(() => {
     setMounted(true);
@@ -29,7 +29,7 @@ const MainStatisticsPage = () => {
       default:
         setContent(<AdminDashboard />);
     }
-  }, [pathname]); 
+  }, [pathname]);
 
   if (!mounted) return null;
 

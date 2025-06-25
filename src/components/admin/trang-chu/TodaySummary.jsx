@@ -34,7 +34,7 @@ const TodaySummary = () => {
           netRevenue: data.thisMonthRevenue ?? 0,
           comparedToYesterday: data.todayChangePercent ?? 0,
           comparedToLastMonth: data.thisMonthChangePercent ?? 0,
-          todayOrderCount : data.totalOrders?? 0,
+          todayOrderCount: data.totalOrders ?? 0,
         });
       } catch (error) {
         setTodayData({
@@ -102,8 +102,7 @@ const TodaySummary = () => {
             value={loading ? "..." : todayData.comparedToYesterday}
             precision={2}
             valueStyle={{
-              color:
-                todayData.comparedToYesterday >= 0 ? "#3f8600" : "#cf1322",
+              color: todayData.comparedToYesterday >= 0 ? "#3f8600" : "#cf1322",
               fontSize: "18px",
             }}
             prefix={
@@ -123,8 +122,7 @@ const TodaySummary = () => {
             value={loading ? "..." : todayData.comparedToLastMonth}
             precision={2}
             valueStyle={{
-              color:
-                todayData.comparedToLastMonth >= 0 ? "#3f8600" : "#cf1322",
+              color: todayData.comparedToLastMonth >= 0 ? "#3f8600" : "#cf1322",
               fontSize: "18px",
             }}
             prefix={

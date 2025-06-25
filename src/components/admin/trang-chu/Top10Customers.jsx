@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Card, Space, Select } from "antd";
-import { 
+import {
   ShoppingOutlined,
   DollarOutlined,
-  FileDoneOutlined, 
+  FileDoneOutlined,
 } from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
 import { getCustomerData } from "@requests/statistic";
 import dayjs from "dayjs";
-
 
 const { Option } = Select;
 
@@ -59,14 +58,13 @@ const Top10Customers = () => {
           index: index + 1,
         }));
       setCustomerData(top10);
-      
     } catch (error) {
       setCustomerData([]);
     }
     setLoading(false);
-  };  
+  };
 
-    const config = {
+  const config = {
     data: customerData,
     yField: sortBy === "totalSpent" ? "totalSpent" : "totalOrders",
     xField: "index",
@@ -135,7 +133,7 @@ const Top10Customers = () => {
               ]}
             />
 
-            <Select 
+            <Select
               className="w-39"
               value={timeRange}
               onChange={setTimeRange}

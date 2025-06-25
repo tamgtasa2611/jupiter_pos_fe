@@ -67,7 +67,10 @@ const SalesSummary = () => {
           }));
         setChartData(top10);
         setTotalNetRevenue(
-          (netRevenue || []).reduce((sum, item) => sum + (item.totalRevenue || 0), 0)
+          (netRevenue || []).reduce(
+            (sum, item) => sum + (item.totalRevenue || 0),
+            0,
+          ),
         );
       } catch (error) {
         setChartData([]);
@@ -93,7 +96,10 @@ const SalesSummary = () => {
     },
     tooltip: {
       formatter: (totalRevenue) => {
-        return { name: "Doanh thu", value: `${formatCurrency(totalRevenue)} ₫` };
+        return {
+          name: "Doanh thu",
+          value: `${formatCurrency(totalRevenue)} ₫`,
+        };
       },
     },
     xAxis: {
@@ -160,7 +166,14 @@ const SalesSummary = () => {
           {chartData.length > 0 ? (
             <Column {...config} />
           ) : (
-            <div style={{ height: 320, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div
+              style={{
+                height: 320,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               {loading ? "Đang tải dữ liệu..." : "Không có dữ liệu"}
             </div>
           )}

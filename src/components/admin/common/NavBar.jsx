@@ -113,8 +113,8 @@ export default function NavBar({ onLogout }) {
   ];
 
   const menuItems = rawMenuItems
-  .filter((item) => !item.adminOnly || role === ADMIN)
-  .map(({ adminOnly, ...rest }) => rest);
+    .filter((item) => !item.adminOnly || role === ADMIN)
+    .map(({ adminOnly, ...rest }) => rest);
 
   useStockNotification();
 

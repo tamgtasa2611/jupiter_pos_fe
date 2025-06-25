@@ -63,7 +63,6 @@ const Top10Products = () => {
           index: index + 1,
         }));
       setProductData(top10);
-      
     } catch (error) {
       setProductData([]);
     }
@@ -138,7 +137,7 @@ const Top10Products = () => {
               ]}
             />
 
-            <Select 
+            <Select
               className="w-39"
               value={timeRange}
               onChange={setTimeRange}

@@ -20,7 +20,6 @@ export const getNetReveneues = async (data) => {
   }
 };
 
-
 export const getProductData = async (data) => {
   try {
     const res = await api.post("/statistic/products", data);
@@ -31,7 +30,7 @@ export const getProductData = async (data) => {
   }
 };
 
-export const getCustomerData= async (data) => {
+export const getCustomerData = async (data) => {
   try {
     const res = await api.post("/statistic/customers", data);
     return res;

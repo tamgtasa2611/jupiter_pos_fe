@@ -120,7 +120,7 @@ export const VALID_TRANSITIONS = new Map([
     new Set([
       ORDER_STATUS.DA_HUY,
       ORDER_STATUS.DA_GIAO,
-      ORDER_STATUS.HOAN_THANH
+      ORDER_STATUS.HOAN_THANH,
     ]),
   ],
   [ORDER_STATUS.DA_GIAO, new Set([ORDER_STATUS.HOAN_THANH])],

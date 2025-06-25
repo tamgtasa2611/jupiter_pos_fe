@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Card, Space, Select } from "antd";
-import { 
+import {
   ShoppingOutlined,
   DollarOutlined,
-  FileDoneOutlined, 
+  FileDoneOutlined,
 } from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
 import { getCustomerData } from "@requests/statistic";
 import dayjs from "dayjs";
-
 
 const { Option } = Select;
 
@@ -57,14 +56,13 @@ const TopDebtCustomer = () => {
           index: index + 1,
         }));
       setCustomerData(top10);
-      
     } catch (error) {
       setCustomerData([]);
     }
     setLoading(false);
-  };  
+  };
 
-    const config = {
+  const config = {
     data: customerData,
     yField: "totalDebt",
     xField: "index",
@@ -107,7 +105,7 @@ const TopDebtCustomer = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center w-full gap-2">
-            <Select 
+            <Select
               className="w-39"
               value={timeRange}
               onChange={setTimeRange}
