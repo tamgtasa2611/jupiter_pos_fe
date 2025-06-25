@@ -11,14 +11,16 @@ import {
   Divider,
   Modal,
 } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { UserOutlined, LockOutlined, EditOutlined } from "@ant-design/icons";
 import ChangePasswordForm from "./ChangePasswordForm";
 import { getUserFromToken } from "@/utils/utils";
 import { USER_ROLES_MAP } from "@/constants/user";
+import UpdateUserForm from "./UpdateUserForm";
 const { Title, Text } = Typography;
 
 const AccountMainPage = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [showUpdateInfo, setShowUpdateInfo] = useState(false);
   const user = getUserFromToken();
   const fullName = user?.fullName || "-";
   const email = user?.email || "-";
@@ -66,6 +68,16 @@ const AccountMainPage = () => {
               Đổi mật khẩu
             </Button>
           </div>
+          <div style={{ marginTop: 16, marginLeft: 9 }}>
+            <Button
+              type="primary"
+              icon={<EditOutlined />}
+              size="large"
+              onClick={() => setShowUpdateInfo(true)}
+            >
+              Cập nhật thông tin
+            </Button>
+          </div>
         </div>
       </Card>
 
@@ -78,6 +90,17 @@ const AccountMainPage = () => {
         width={600}
       >
         <ChangePasswordForm />
+      </Modal>
+
+      <Modal
+        title="Cập nhật thông tin cá nhân"
+        open={showUpdateInfo}
+        onCancel={() => setShowUpdateInfo(false)}
+        footer={null}
+        centered
+        width={600}
+      >
+        <UpdateUserForm />
       </Modal>
     </>
   );

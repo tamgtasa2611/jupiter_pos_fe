@@ -46,15 +46,9 @@ const UserProfile = ({ scrolled, onLogout }) => {
             icon: <UserOutlined />,
             label: <Link href="/admin/tai-khoan">Hồ sơ cá nhân</Link>,
           },
-          {
-            key: "2",
-            icon: <SettingOutlined />,
-            label: "Cài đặt tài khoản",
-            onClick: () => {},
-          },
           { type: "divider" },
           {
-            key: "3",
+            key: "2",
             icon: <LogoutOutlined />,
             label: "Đăng xuất",
             onClick: () => onLogout(),

@@ -3,7 +3,7 @@ import { getToken } from "@utils/utils";
 
 // Tạo instance mặc định
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api", // Sửa lại baseURL cho phù hợp
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://jupiterstore.onrender.com/api",
   timeout: 20000,
   headers: {
     "Content-Type": "application/json",

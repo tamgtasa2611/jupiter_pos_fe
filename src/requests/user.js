@@ -40,6 +40,16 @@ export const verifyOtpAndChangePws = async (data) => {
   }
 };
 
+export const UpdateUser = async (userId) => {
+  try {
+    const users = await api.put(`/users/${userId}`);
+    return users;
+  } catch (error) {
+    console.error("Lỗi khi cập nhật người dùng!", error);
+    return [];
+  }
+};
+
 export const deleteUser = async (userId) => {
   try {
     const res = await api.delete(`/users/delete/${userId}`);

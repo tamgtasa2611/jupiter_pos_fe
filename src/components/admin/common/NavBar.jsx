@@ -165,81 +165,43 @@ export default function NavBar({ onLogout }) {
       {/* Right side - Actions */}
       <Flex gap={8} justify="end" align="center">
         {/* Notifications */}
-        <Dropdown
-          menu={{
-            items: [
-              {
-                key: "1",
-                label: (
-                  <div className="flex flex-col">
-                    <span className="font-semibold">Đơn hàng mới</span>
-                    <span className="text-xs text-gray-500">5 phút trước</span>
-                  </div>
-                ),
-                icon: <ShoppingCartOutlined className="text-blue-500" />,
-              },
-              {
-                key: "2",
-                label: (
-                  <div className="flex flex-col">
-                    <span className="font-semibold">Cảnh báo tồn kho thấp</span>
-                    <span className="text-xs text-gray-500">20 phút trước</span>
-                  </div>
-                ),
-                icon: <ShoppingOutlined className="text-orange-500" />,
-              },
-              { type: "divider" },
-
-              {
-                key: "3",
-                label: (
-                  <div onClick={() => setShowAllNotifications(true)}>
-                    Xem tất cả thông báo
-                  </div>
-                ),
-                icon: <BellOutlined />,
-              },
-            ],
-          }}
-          placement="bottomRight"
-          trigger={["click"]}
-          overlayClassName="w-80"
-          popupRender={(menu) => (
-            <div className="bg-white rounded-xl drop-shadow-md border border-gray-100 overflow-hidden animate-fadeIn">
-              <div className="px-4 py-3 bg-gray-50 border-gray-100 border-b">
-                <span className="font-bold">Thông báo</span>
-              </div>
-              {menu}
-            </div>
-          )}
-        >
-          <div className="relative">
-            <Tooltip title="Thông báo">
-              <Badge
-                count={5}
-                size="small"
-                offset={[-5, 5]}
-                className="cursor-pointer"
-                style={{ backgroundColor: "#8b5cf6" }}
-              >
-                <Button
-                  type="text"
-                  icon={<BellOutlined />}
-                  shape="circle"
-                  className="flex items-center justify-center text-lg hover:bg-gray-100 transition-colors"
-                />
-              </Badge>
-            </Tooltip>
-            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
-          </div>
-        </Dropdown>
-
+        <div className="relative">
+          <Tooltip title="Thông báo">
+            <Badge
+              count={5}
+              size="small"
+              offset={[-5, 5]}
+              className="cursor-pointer"
+              style={{ backgroundColor: "#8b5cf6" }}
+              onClick={() => setShowAllNotifications(true)}
+            >
+              <Button
+                type="text"
+                icon={<BellOutlined />}
+                shape="circle"
+                className="flex items-center justify-center text-lg hover:bg-gray-100 transition-colors"
+              />
+            </Badge>
+          </Tooltip>
+          <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+        </div>
         {/* User Profile */}
         <UserProfile scrolled={scrolled} onLogout={onLogout} />
       </Flex>
 
       {showAllNotifications && (
-        <NotificationList onClose={() => setShowAllNotifications(false)} />
+
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 999,
+            background: "rgba(0,0,0,0)",
+          }}
+          onClick={() => setShowAllNotifications(false)}
+        >
+          <NotificationList onClose={() => setShowAllNotifications(false)} />
+        </div>
       )}
     </div>
   );
