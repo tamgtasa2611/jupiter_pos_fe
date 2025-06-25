@@ -6,6 +6,7 @@ import StatisticMenu from "./StatisticMenu";
 import AdminDashboard from "../trang-chu/AdminDashboard";
 import DailyReport from "./DailyReport";
 import SalesReport from "./SalesReport";
+import CustomerReport from "./CustomerReport";
 import { usePathname } from "next/navigation";
 
 const { Content, Sider } = Layout;
@@ -25,7 +26,7 @@ const MainStatisticsPage = () => {
       content = <AdminDashboard />;
       break;
     case "/admin/thong-ke/khach-hang":
-      content = <AdminDashboard />;
+      content = <CustomerReport />;
       break;
     case "/admin/thong-ke/don-hang":
       content = <AdminDashboard />;

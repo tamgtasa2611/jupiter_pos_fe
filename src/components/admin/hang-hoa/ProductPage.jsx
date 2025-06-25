@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useLayoutEffect, useEffect } from "react";
-import { Card, Drawer, message, Spin } from "antd";
+import { App, Card, Drawer, Spin } from "antd";
 import ProductHeader from "./ProductHeader";
 import ProductActionBar from "./ProductActionBar";
 import MobileSearchBar from "./mobile/MobileSearchBar";
@@ -33,6 +33,7 @@ const MemoizedMobileProductList = React.memo(MobileProductList);
 const MemoizedProductFilters = React.memo(ProductFilters);
 
 const ProductPage = () => {
+  const { message } = App.useApp();
   // Mobile và trạng thái drawer
   const [isMobile, setIsMobile] = useState(false);
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);

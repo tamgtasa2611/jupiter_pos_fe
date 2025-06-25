@@ -10,12 +10,12 @@ export const getReveneues = async () => {
   }
 };
 
-export const getNetReveneues = async () => {
+export const getNetReveneues = async (data) => {
   try {
-    const res = await api.get(`/statistic/net-revenues`);
+    const res = await api.post(`/statistic/net-revenues`, data);
     return res;
   } catch (error) {
-    console.error("Lỗi khi lấy dữ liệu!", error);
+    console.error("Lỗi khi lấy dữ liệu!", error?.response?.data);
     return { data: [] };
   }
 };

@@ -31,6 +31,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import UserProfile from "./UserProfile";
+import useStockNotification from "@/utils/useStockNotification";
 
 const { Title } = Typography;
 
@@ -103,6 +104,8 @@ export default function NavBar({ onLogout }) {
       ),
     },
   ];
+
+  useStockNotification();
 
   return (
     <div

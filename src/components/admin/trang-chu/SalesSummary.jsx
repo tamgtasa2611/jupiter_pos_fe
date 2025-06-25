@@ -4,8 +4,7 @@ import { Column } from "@ant-design/plots";
 import dayjs from "dayjs";
 import { getNetReveneues } from "@requests/statistic";
 
-const { Title, Text } = Typography;
-const { Option } = Select;
+const { Title } = Typography;
 
 const TIME_OPTIONS = [
   {
@@ -29,58 +28,72 @@ const TIME_OPTIONS = [
   }),
 ];
 
+const VIEW_OPTIONS = [
+  { label: "Theo ngày", value: "day" },
+  { label: "Theo giờ", value: "hour" },
+  { label: "Theo thứ", value: "weekday" },
+];
+
 const SalesSummary = () => {
   const [timeRange, setTimeRange] = useState(TIME_OPTIONS[0].value);
-  const [viewType, setViewType] = useState("hour");
+  const [viewType, setViewType] = useState("day");
   const [chartData, setChartData] = useState([]);
-  const [sortBy, setSortBy] = useState("day");
   const [loading, setLoading] = useState(true);
-
-  const totalNetRevenue = 551280000;
+  const [totalNetRevenue, setTotalNetRevenue] = useState(0);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat("vi-VN").format(value);
   };
 
-  const fetchCustomerData = async (range) => {
-    setLoading(true);
-    try {
-      const { startTime, endTime } = range;
-      const customer = await getNetReveneues({ startTime, endTime });
-      const sortField = sortBy === "totalSpent" ? "totalSpent" : "totalOrders";
-      const top10 = (customer || [])
-        .sort((a, b) => (b[sortField] || 0) - (a[sortField] || 0))
-        .slice(0, 10)
-        .map((customer, index) => ({
-          ...customer,
-          totalSpentFormatted: formatVND(customer.totalSpent),
-          index: index + 1,
-        }));
-      setCustomerData(top10);
-      
-    } catch (error) {
-      setCustomerData([]);
-    }
-    setLoading(false);
-  }; 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const timeOpt = TIME_OPTIONS.find((opt) => opt.value === timeRange);
+        const { startTime, endTime } = timeOpt.getRange();
+        const requestBody = {
+          label: viewType,
+          startTime,
+          endTime,
+        };
+        const netRevenue = await getNetReveneues(requestBody);
+        const top10 = (netRevenue || [])
+          .sort((a, b) => (b.totalRevenue || 0) - (a.totalRevenue || 0))
+          .slice(0, 10)
+          .map((item, index) => ({
+            ...item,
+            revenueFormatted: formatCurrency(item.totalRevenue),
+            index: index + 1,
+          }));
+        setChartData(top10);
+        setTotalNetRevenue(
+          (netRevenue || []).reduce((sum, item) => sum + (item.totalRevenue || 0), 0)
+        );
+      } catch (error) {
+        setChartData([]);
+        setTotalNetRevenue(0);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, [timeRange, viewType]);
 
   const config = {
     data: chartData,
-    xField: "time",
-    yField: "revenueFormatted",
+    xField: "label",
+    yField: "totalRevenue",
     columnWidthRatio: 0.6,
     label: {
-      text: "revenueFormatted",
       position: "top",
       style: {
         fill: "#000",
         fontSize: 12,
-        dy: 5,
+        dy: -15,
       },
     },
     tooltip: {
-      formatter: (datum) => {
-        return { name: "Doanh thu", value: `${datum.revenueFormatted}` };
+      formatter: (totalRevenue) => {
+        return { name: "Doanh thu", value: `${formatCurrency(totalRevenue)} ₫` };
       },
     },
     xAxis: {
@@ -91,11 +104,11 @@ const SalesSummary = () => {
     },
     yAxis: {
       label: {
-        text: "revenueFormatted",
+        formatter: (v) => formatCurrency(v),
       },
     },
     meta: {
-      revenue: {
+      totalRevenue: {
         alias: "Doanh thu",
       },
     },
@@ -106,68 +119,51 @@ const SalesSummary = () => {
         easing: "easeQuadIn",
       },
     },
-
     columnStyle: {
       fill: "l(90) 0:#1677ff 1:#58a9ff",
       radius: [4, 4, 0, 0],
     },
   };
 
-  const getViewOptions = () => {
-    if (timeRange === "today" || timeRange === "yesterday") {
-      return [{ label: "Theo giờ", value: "hour" }];
-    }
-
-    return [
-      { label: "Theo ngày", value: "day" },
-      { label: "Theo giờ", value: "hour" },
-      { label: "Theo thứ", value: "weekday" },
-    ];
-  };
-
   return (
     <Card className="transition-shadow">
       <Row gutter={[16, 16]} className="w-full">
         <Col xs={24} md={12}>
-          <Title level={4}>Doanh thu thuần</Title>
+          <Title level={4}>Doanh thu</Title>
           <Statistic
             value={formatCurrency(totalNetRevenue)}
             prefix="₫"
             valueStyle={{ color: "#3f8600", fontSize: "28px" }}
+            loading={loading}
           />
         </Col>
         <Col xs={24} md={12}>
           <div className="flex flex-col md:flex-row md:items-end md:justify-end gap-2">
             <Select
+              className="w-39"
               value={timeRange}
-              className="w-full md:w-40"
-              onChange={(value) => {
-                setTimeRange(value);
-
-                if (
-                  (value === "today" || value === "yesterday") &&
-                  viewType !== "hour"
-                ) {
-                  setViewType("hour");
-                }
-              }}
-            >
-              <Option value="today">Hôm nay</Option>
-              <Option value="yesterday">Hôm qua</Option>
-              <Option value="week">7 ngày qua</Option>
-              <Option value="thisMonth">Tháng này</Option>
-              <Option value="lastMonth">Tháng trước</Option>
-            </Select>
-
+              onChange={setTimeRange}
+              popupMatchSelectWidth={false}
+              options={TIME_OPTIONS.map((opt) => ({
+                value: opt.value,
+                label: opt.label,
+              }))}
+            />
             <Segmented
-              options={getViewOptions()}
+              options={VIEW_OPTIONS}
               value={viewType}
               onChange={setViewType}
             />
           </div>
         </Col>
         <Col xs={24} className="h-80">
-          <Column {...config} />
+          {chartData.length > 0 ? (
+            <Column {...config} />
+          ) : (
+            <div style={{ height: 320, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {loading ? "Đang tải dữ liệu..." : "Không có dữ liệu"}
+            </div>
+          )}
         </Col>
       </Row>
     </Card>
