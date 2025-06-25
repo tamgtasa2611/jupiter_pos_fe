@@ -30,12 +30,17 @@ import {
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getUserFromToken } from "@/utils/utils";
 import UserProfile from "./UserProfile";
 import useStockNotification from "@/utils/useStockNotification";
+import { EMPLOYEE, ADMIN } from "@/constants/user";
 
 const { Title } = Typography;
 
 export default function NavBar({ onLogout }) {
+  const user = getUserFromToken();
+  const role = user?.role || EMPLOYEE;
+
   const [scrolled, setScrolled] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const pathname = usePathname();
@@ -93,6 +98,7 @@ export default function NavBar({ onLogout }) {
           Nhân viên
         </Link>
       ),
+      adminOnly: true,
     },
     {
       key: "/admin/thong-ke",
@@ -102,8 +108,9 @@ export default function NavBar({ onLogout }) {
           Thống kê
         </Link>
       ),
+      adminOnly: true,
     },
-  ];
+  ].filter((item) => !item.adminOnly || role === ADMIN);
 
   useStockNotification();
 
