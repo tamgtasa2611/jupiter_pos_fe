@@ -26,7 +26,7 @@ const EditProductModal = ({
   handleAddCategory,
   isMobile,
   setCategorySearchText,
-  reloadCategories = () => {}
+  reloadCategories = () => {},
 }) => {
   const { message } = App.useApp();
   const [form] = Form.useForm();
@@ -123,87 +123,91 @@ const EditProductModal = ({
           <Spin size="large" />
         </Flex>
       ) : (
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{ productStatus: true }}
-        >
-          <Form.Item
-            name="productName"
-            label="Tên sản phẩm"
-            rules={[{ required: true, message: "Vui lòng nhập tên sản phẩm!" }]}
+        form && (
+          <Form
+            form={form}
+            layout="vertical"
+            initialValues={{ productStatus: true }}
           >
-            <Input placeholder="Nhập tên sản phẩm" style={mobileInputStyle} />
-          </Form.Item>
-          <Form.Item name="productDescription" label="Mô tả sản phẩm">
-            <TextArea
-              rows={4}
-              placeholder="Nhập mô tả sản phẩm"
-              style={mobileInputStyle}
-            />
-          </Form.Item>
-          <Form.Item name="categoryIds" label="Danh mục">
-            <Select
-              mode="multiple"
-              placeholder="Chọn danh mục"
-              style={mobileSelectStyle}
-              allowClear
-              showSearch
-              filterOption={false}
-              onSearch={(value) => {
-                setCategorySearchText(value);
-              }}
-              onInputKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const searchValue = e.target.value;
-                  if (searchValue && searchValue.trim() !== "") {
-                    reloadCategories && reloadCategories(searchValue.trim());
-                  } else {
-                    reloadCategories && reloadCategories("");
-                  }
-                }
-              }}
-              onBlur={() => {
-                setCategorySearchText("");
-                reloadCategories && reloadCategories("");
-              }}
-              popupRender={(menu) => (
-                <>
-                  {menu}
-                  <Divider style={{ margin: "8px 0" }} />
-                  <Button
-                    type="link"
-                    block
-                    onClick={() => {
-                      handleAddCategory();
-                    }}
-                  >
-                    + Thêm danh mục
-                  </Button>
-                </>
-              )}
+            <Form.Item
+              name="productName"
+              label="Tên sản phẩm"
+              rules={[
+                { required: true, message: "Vui lòng nhập tên sản phẩm!" },
+              ]}
             >
-              {categories.map((category) => (
-                <Option key={category.id} value={category.id}>
-                  {category.categoryName}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="productStatus"
-            label="Trạng thái sản phẩm"
-            valuePropName="checked"
-          >
-            <Switch
-              checkedChildren="Đang bán"
-              unCheckedChildren="Ngừng bán"
-              style={mobileSwitchStyle}
-            />
-          </Form.Item>
-        </Form>
+              <Input placeholder="Nhập tên sản phẩm" style={mobileInputStyle} />
+            </Form.Item>
+            <Form.Item name="productDescription" label="Mô tả sản phẩm">
+              <TextArea
+                rows={4}
+                placeholder="Nhập mô tả sản phẩm"
+                style={mobileInputStyle}
+              />
+            </Form.Item>
+            <Form.Item name="categoryIds" label="Danh mục">
+              <Select
+                mode="multiple"
+                placeholder="Chọn danh mục"
+                style={mobileSelectStyle}
+                allowClear
+                showSearch
+                filterOption={false}
+                onSearch={(value) => {
+                  setCategorySearchText(value);
+                }}
+                onInputKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const searchValue = e.target.value;
+                    if (searchValue && searchValue.trim() !== "") {
+                      reloadCategories && reloadCategories(searchValue.trim());
+                    } else {
+                      reloadCategories && reloadCategories("");
+                    }
+                  }
+                }}
+                onBlur={() => {
+                  setCategorySearchText("");
+                  reloadCategories && reloadCategories("");
+                }}
+                popupRender={(menu) => (
+                  <>
+                    {menu}
+                    <Divider style={{ margin: "8px 0" }} />
+                    <Button
+                      type="link"
+                      block
+                      onClick={() => {
+                        handleAddCategory();
+                      }}
+                    >
+                      + Thêm danh mục
+                    </Button>
+                  </>
+                )}
+              >
+                {categories.map((category) => (
+                  <Option key={category.id} value={category.id}>
+                    {category.categoryName}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name="productStatus"
+              label="Trạng thái sản phẩm"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren="Đang bán"
+                unCheckedChildren="Ngừng bán"
+                style={mobileSwitchStyle}
+              />
+            </Form.Item>
+          </Form>
+        )
       )}
     </Modal>
   );

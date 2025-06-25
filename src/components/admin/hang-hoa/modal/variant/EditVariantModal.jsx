@@ -172,289 +172,294 @@ const EditVariantModal = ({
           <Spin size="large" />
         </Flex>
       ) : (
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{ variantStatus: true }}
-        >
-          <Divider orientation="left">Thông tin biến thể</Divider>
-          <Form.Item
-            name="costPrice"
-            label="Giá nhập (VND)"
-            rules={[{ required: true, message: "Vui lòng nhập giá nhập!" }]}
+        form && (
+          <Form
+            form={form}
+            layout="vertical"
+            initialValues={{ variantStatus: true }}
           >
-            <InputNumber
-              min={0}
-              step={1000}
-              placeholder="0"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="price"
-            label="Giá bán (VND)"
-            rules={[{ required: true, message: "Vui lòng nhập giá bán!" }]}
-          >
-            <InputNumber
-              min={0}
-              step={1000}
-              placeholder="0"
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-          <Form.Item
-            name="quantity"
-            label="Số lượng tồn kho"
-            rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
-          >
-            <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item name="unitId" label="Đơn vị tính">
-            <Select
-              placeholder="Chọn đơn vị tính"
-              showSearch
-              filterOption={false}
-              onSearch={(value) => {
-                setUnitSearchText(value);
-              }}
-              onInputKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  const searchValue = e.target.value;
-                  if (searchValue && searchValue.trim() !== "") {
-                    reloadUnits && reloadUnits(searchValue.trim());
-                  } else {
-                    reloadUnits && reloadUnits("");
+            <Divider orientation="left">Thông tin biến thể</Divider>
+            <Form.Item
+              name="costPrice"
+              label="Giá nhập (VND)"
+              rules={[{ required: true, message: "Vui lòng nhập giá nhập!" }]}
+            >
+              <InputNumber
+                min={0}
+                step={1000}
+                placeholder="0"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="price"
+              label="Giá bán (VND)"
+              rules={[{ required: true, message: "Vui lòng nhập giá bán!" }]}
+            >
+              <InputNumber
+                min={0}
+                step={1000}
+                placeholder="0"
+                style={{ width: "100%" }}
+              />
+            </Form.Item>
+            <Form.Item
+              name="quantity"
+              label="Số lượng tồn kho"
+              rules={[{ required: true, message: "Vui lòng nhập số lượng!" }]}
+            >
+              <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
+            </Form.Item>
+            <Form.Item name="unitId" label="Đơn vị tính">
+              <Select
+                placeholder="Chọn đơn vị tính"
+                showSearch
+                filterOption={false}
+                onSearch={(value) => {
+                  setUnitSearchText(value);
+                }}
+                onInputKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const searchValue = e.target.value;
+                    if (searchValue && searchValue.trim() !== "") {
+                      reloadUnits && reloadUnits(searchValue.trim());
+                    } else {
+                      reloadUnits && reloadUnits("");
+                    }
                   }
-                }
-              }}
-              onBlur={() => {
-                setUnitSearchText("");
-                reloadUnits && reloadUnits("");
-              }}
-              popupRender={(menu) => (
+                }}
+                onBlur={() => {
+                  setUnitSearchText("");
+                  reloadUnits && reloadUnits("");
+                }}
+                popupRender={(menu) => (
+                  <>
+                    {menu}
+                    <Divider dashed style={{ margin: "4px 0" }} />
+                    <Button type="link" block onClick={handleAddUnit}>
+                      Thêm đơn vị mới
+                    </Button>
+                  </>
+                )}
+              >
+                {units.map((unit) => (
+                  <Option key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item name="sku" label="SKU">
+              <Input placeholder="Nhập SKU" />
+            </Form.Item>
+            <Form.Item name="variantBarcode" label="Mã vạch">
+              <Input placeholder="Nhập mã vạch" />
+            </Form.Item>
+            <Form.Item name="expiryDate" label="Ngày hết hạn">
+              <DatePicker
+                style={{ width: "100%" }}
+                placeholder="Chọn ngày hết hạn"
+              />
+            </Form.Item>
+            <Form.Item
+              name="variantStatus"
+              label="Trạng thái biến thể"
+              valuePropName="checked"
+            >
+              <Switch
+                checkedChildren="Đang bán"
+                unCheckedChildren="Ngừng bán"
+                defaultChecked
+              />
+            </Form.Item>
+            <Divider orientation="left">Thuộc tính biến thể</Divider>
+            <Form.List name="attrAndValues">
+              {(fields, { add, remove }) => (
                 <>
-                  {menu}
-                  <Divider dashed style={{ margin: "4px 0" }} />
-                  <Button type="link" block onClick={handleAddUnit}>
-                    Thêm đơn vị mới
-                  </Button>
+                  {fields.map(({ key, name, ...restField }, idx) => (
+                    <Flex
+                      key={key}
+                      justify="space-between"
+                      align="center"
+                      gap={8}
+                      style={{ marginBottom: 8 }}
+                    >
+                      <Form.Item
+                        {...restField}
+                        name={[name, "attrId"]}
+                        label={`Thuộc tính ${idx + 1}`}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Vui lòng chọn thuộc tính",
+                          },
+                        ]}
+                        style={{ flex: 1 }}
+                      >
+                        <Select
+                          placeholder="Chọn thuộc tính"
+                          style={{ flex: 1 }}
+                          options={attributes.map((attr) => ({
+                            value: attr.id,
+                            label: attr.attributeName,
+                          }))}
+                          showSearch
+                          filterOption={false}
+                          onSearch={(value) => {
+                            setAttributeSearchText(value);
+                          }}
+                          onInputKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const searchValue = e.target.value;
+                              if (searchValue && searchValue.trim() !== "") {
+                                reloadAttributes &&
+                                  reloadAttributes(searchValue.trim());
+                              } else {
+                                reloadAttributes && reloadAttributes("");
+                              }
+                            }
+                          }}
+                          onBlur={() => {
+                            setAttributeSearchText("");
+                            reloadAttributes && reloadAttributes("");
+                          }}
+                          popupRender={(menu) => (
+                            <>
+                              {menu}
+                              <Divider dashed style={{ margin: "4px 0" }} />
+                              <Button
+                                type="link"
+                                block
+                                onClick={handleAddAttribute}
+                              >
+                                Thêm thuộc tính mới
+                              </Button>
+                            </>
+                          )}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, "attrValue"]}
+                        style={{ flex: 1 }}
+                        label={`Giá trị ${idx + 1}`}
+                        rules={[
+                          { required: true, message: "Vui lòng nhập giá trị" },
+                        ]}
+                      >
+                        <Input placeholder="Giá trị" style={{ flex: 1 }} />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        label={`Đơn vị ${idx + 1}`}
+                        style={{ flex: 1 }}
+                        name={[name, "unitId"]}
+                      >
+                        <Select
+                          placeholder="Đơn vị"
+                          style={{ flex: 1 }}
+                          showSearch
+                          filterOption={false}
+                          onSearch={(value) => {
+                            setUnitSearchText(value);
+                          }}
+                          onInputKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const searchValue = e.target.value;
+                              if (searchValue && searchValue.trim() !== "") {
+                                reloadUnits && reloadUnits(searchValue.trim());
+                              } else {
+                                reloadUnits && reloadUnits("");
+                              }
+                            }
+                          }}
+                          onBlur={() => {
+                            setUnitSearchText("");
+                            reloadUnits && reloadUnits("");
+                          }}
+                          options={units.map((unit) => ({
+                            value: unit.id,
+                            label: unit.name,
+                          }))}
+                          popupRender={(menu) => (
+                            <>
+                              {menu}
+                              <Divider dashed style={{ margin: "4px 0" }} />
+                              <Button type="link" block onClick={handleAddUnit}>
+                                Thêm đơn vị mới
+                              </Button>
+                            </>
+                          )}
+                        />
+                      </Form.Item>
+                      <DeleteOutlined
+                        style={{ color: "red" }}
+                        onClick={() => remove(name)}
+                      />
+                    </Flex>
+                  ))}
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Thêm thuộc tính
+                    </Button>
+                  </Form.Item>
                 </>
               )}
-            >
-              {units.map((unit) => (
-                <Option key={unit.id} value={unit.id}>
-                  {unit.name}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item name="sku" label="SKU">
-            <Input placeholder="Nhập SKU" />
-          </Form.Item>
-          <Form.Item name="variantBarcode" label="Mã vạch">
-            <Input placeholder="Nhập mã vạch" />
-          </Form.Item>
-          <Form.Item name="expiryDate" label="Ngày hết hạn">
-            <DatePicker
-              style={{ width: "100%" }}
-              placeholder="Chọn ngày hết hạn"
-            />
-          </Form.Item>
-          <Form.Item
-            name="variantStatus"
-            label="Trạng thái biến thể"
-            valuePropName="checked"
-          >
-            <Switch
-              checkedChildren="Đang bán"
-              unCheckedChildren="Ngừng bán"
-              defaultChecked
-            />
-          </Form.Item>
-          <Divider orientation="left">Thuộc tính biến thể</Divider>
-          <Form.List name="attrAndValues">
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map(({ key, name, ...restField }, idx) => (
-                  <Flex
-                    key={key}
-                    justify="space-between"
-                    align="center"
-                    gap={8}
-                    style={{ marginBottom: 8 }}
-                  >
-                    <Form.Item
-                      {...restField}
-                      name={[name, "attrId"]}
-                      label={`Thuộc tính ${idx + 1}`}
-                      rules={[
-                        { required: true, message: "Vui lòng chọn thuộc tính" },
-                      ]}
-                      style={{ flex: 1 }}
-                    >
-                      <Select
-                        placeholder="Chọn thuộc tính"
-                        style={{ flex: 1 }}
-                        options={attributes.map((attr) => ({
-                          value: attr.id,
-                          label: attr.attributeName,
-                        }))}
-                        showSearch
-                        filterOption={false}
-                        onSearch={(value) => {
-                          setAttributeSearchText(value);
-                        }}
-                        onInputKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const searchValue = e.target.value;
-                            if (searchValue && searchValue.trim() !== "") {
-                              reloadAttributes &&
-                                reloadAttributes(searchValue.trim());
-                            } else {
-                              reloadAttributes && reloadAttributes("");
-                            }
-                          }
-                        }}
-                        onBlur={() => {
-                          setAttributeSearchText("");
-                          reloadAttributes && reloadAttributes("");
-                        }}
-                        popupRender={(menu) => (
-                          <>
-                            {menu}
-                            <Divider dashed style={{ margin: "4px 0" }} />
-                            <Button
-                              type="link"
-                              block
-                              onClick={handleAddAttribute}
-                            >
-                              Thêm thuộc tính mới
-                            </Button>
-                          </>
-                        )}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      name={[name, "attrValue"]}
-                      style={{ flex: 1 }}
-                      label={`Giá trị ${idx + 1}`}
-                      rules={[
-                        { required: true, message: "Vui lòng nhập giá trị" },
-                      ]}
-                    >
-                      <Input placeholder="Giá trị" style={{ flex: 1 }} />
-                    </Form.Item>
-                    <Form.Item
-                      {...restField}
-                      label={`Đơn vị ${idx + 1}`}
-                      style={{ flex: 1 }}
-                      name={[name, "unitId"]}
-                    >
-                      <Select
-                        placeholder="Đơn vị"
-                        style={{ flex: 1 }}
-                        showSearch
-                        filterOption={false}
-                        onSearch={(value) => {
-                          setUnitSearchText(value);
-                        }}
-                        onInputKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            const searchValue = e.target.value;
-                            if (searchValue && searchValue.trim() !== "") {
-                              reloadUnits && reloadUnits(searchValue.trim());
-                            } else {
-                              reloadUnits && reloadUnits("");
-                            }
-                          }
-                        }}
-                        onBlur={() => {
-                          setUnitSearchText("");
-                          reloadUnits && reloadUnits("");
-                        }}
-                        options={units.map((unit) => ({
-                          value: unit.id,
-                          label: unit.name,
-                        }))}
-                        popupRender={(menu) => (
-                          <>
-                            {menu}
-                            <Divider dashed style={{ margin: "4px 0" }} />
-                            <Button type="link" block onClick={handleAddUnit}>
-                              Thêm đơn vị mới
-                            </Button>
-                          </>
-                        )}
-                      />
-                    </Form.Item>
-                    <DeleteOutlined
-                      style={{ color: "red" }}
-                      onClick={() => remove(name)}
+            </Form.List>
+            <Divider orientation="left">Hình ảnh biến thể</Divider>
+            <Form.Item name="upload" label="Hình ảnh biến thể">
+              <CloudinaryImageUpload
+                onUploaded={(url) => handleUpload(url)}
+                buttonText="Tải ảnh lên"
+                disabled={variantImages.length >= MAX_VARIANT_IMAGES}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  flexWrap: "wrap",
+                  marginTop: 8,
+                }}
+              >
+                {variantImages.map((url, idx) => (
+                  <div key={idx} style={{ position: "relative" }}>
+                    <Image
+                      src={url || null}
+                      alt="Ảnh biến thể"
+                      style={{ width: 80, borderRadius: 8 }}
                     />
-                  </Flex>
+                    <Button
+                      size="small"
+                      danger
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        padding: 0,
+                        width: 20,
+                        height: 20,
+                      }}
+                      onClick={() => handleRemoveImage(idx)}
+                    >
+                      <DeleteOutlined style={{ fontSize: 12 }} />
+                    </Button>
+                  </div>
                 ))}
-                <Form.Item>
-                  <Button
-                    type="dashed"
-                    onClick={() => add()}
-                    block
-                    icon={<PlusOutlined />}
-                  >
-                    Thêm thuộc tính
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-          <Divider orientation="left">Hình ảnh biến thể</Divider>
-          <Form.Item name="upload" label="Hình ảnh biến thể">
-            <CloudinaryImageUpload
-              onUploaded={(url) => handleUpload(url)}
-              buttonText="Tải ảnh lên"
-              disabled={variantImages.length >= MAX_VARIANT_IMAGES}
-            />
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-                marginTop: 8,
-              }}
-            >
-              {variantImages.map((url, idx) => (
-                <div key={idx} style={{ position: "relative" }}>
-                  <Image
-                    src={url || null}
-                    alt="Ảnh biến thể"
-                    style={{ width: 80, borderRadius: 8 }}
-                  />
-                  <Button
-                    size="small"
-                    danger
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      right: 0,
-                      padding: 0,
-                      width: 20,
-                      height: 20,
-                    }}
-                    onClick={() => handleRemoveImage(idx)}
-                  >
-                    <DeleteOutlined style={{ fontSize: 12 }} />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </Form.Item>
-        </Form>
+              </div>
+            </Form.Item>
+          </Form>
+        )
       )}
     </Modal>
   );
