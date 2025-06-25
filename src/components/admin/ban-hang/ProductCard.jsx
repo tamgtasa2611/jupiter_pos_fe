@@ -29,16 +29,20 @@ const ProductCard = memo(
           )
         : "-";
 
+    const isOutOfStock = product.quantity === 0 || product.quantity == null;
+
     return (
       <Card
-        hoverable
-        onClick={() => onProductClick(product)}
+        hoverable={!isOutOfStock}
+        onClick={() => !isOutOfStock && onProductClick(product)}
         style={{
           overflow: "hidden",
-          cursor: "pointer",
+          cursor: isOutOfStock ? "not-allowed" : "pointer",
           height: 360,
           display: "flex",
           flexDirection: "column",
+          opacity: isOutOfStock ? 0.6 : 1,
+          position: "relative",
         }}
         styles={{
           body: {
@@ -47,7 +51,7 @@ const ProductCard = memo(
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            minHeight: 0, // Đảm bảo flexbox không bị tràn
+            minHeight: 0,
           },
         }}
         cover={
@@ -70,6 +74,26 @@ const ProductCard = memo(
               preview={false}
               fallback={FALLBACK_IMAGE}
             />
+
+            {isOutOfStock && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  background: "rgba(255, 0, 0, 0.8)",
+                  color: "white",
+                  padding: "8px 16px",
+                  borderRadius: "12px",
+                  fontWeight: "bold",
+                  fontSize: "14px",
+                  zIndex: 10,
+                }}
+              >
+                HẾT HÀNG
+              </div>
+            )}
             {product.expiryDate && (
               <Tag
                 style={{ position: "absolute", top: 8, right: 8, fontSize: 11 }}
