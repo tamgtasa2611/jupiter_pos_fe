@@ -12,6 +12,7 @@ import { createOrder } from "@requests/order";
 import PriceEditModal from "./PriceEditModal";
 import { ORDER_STATUS, PAYMENT_METHOD } from "@constants/order";
 import { KHACH_LE } from "@constants/customer";
+import { DANG_BAN } from "@constants/product";
 
 const MainSellingPage = () => {
   const { token } = theme.useToken();
@@ -44,17 +45,23 @@ const MainSellingPage = () => {
         size,
         category,
         productId,
+        status: DANG_BAN,
       };
       const response = await getProductsVariants(params);
+
       const mappedProducts = [];
       if (response.content.length === 0) {
         setOutOfProducts(true);
       } else {
         setOutOfProducts(false);
       }
+
       response.content.forEach((item) => {
-        const parent = item.product;
-        let productName = parent.productName;
+        const parent = item?.product;
+        let productName = parent?.productName;
+        if (!productName) {
+          return;
+        }
         const sortedAttrValues = [...item.attrValues].sort((a, b) =>
           JSON.stringify(a).localeCompare(JSON.stringify(b)),
         );
