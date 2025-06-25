@@ -2,7 +2,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App } from "antd";
 import themeConfig from "@config/themeConfig";
 import Script from "next/script";
 import viVN from "antd/locale/vi_VN";
@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
       >
         <AntdRegistry>
           <ConfigProvider theme={themeConfig} locale={viVN}>
-            {children}
+            <App>{children}</App>
           </ConfigProvider>
         </AntdRegistry>
       </body>
