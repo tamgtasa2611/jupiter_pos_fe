@@ -41,6 +41,11 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
   const remaining =
     lastPayment?.remaining || order?.totalAmount - totalPaid || 0;
 
+  const isOrderEditable =
+    order?.orderStatus !== ORDER_STATUS.DA_GIAO &&
+    order?.orderStatus !== ORDER_STATUS.HOAN_THANH &&
+    order?.orderStatus !== ORDER_STATUS.DA_HUY;
+
   const reloadOrder = async () => {
     const updatedOrder = await getOrderById(orderId);
     setOrder(updatedOrder);
@@ -182,7 +187,14 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
               {
                 key: "order",
                 label: "Thông tin chung",
-                children: <OrderInfo order={order} /> || "Không có dữ liệu",
+                children:
+                  (
+                    <OrderInfo
+                      order={order}
+                      editable={isOrderEditable}
+                      onOrderUpdate={reloadOrder}
+                    />
+                  ) || "Không có dữ liệu",
               },
               {
                 key: "product",

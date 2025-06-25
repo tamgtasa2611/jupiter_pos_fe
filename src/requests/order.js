@@ -39,3 +39,13 @@ export const updateOrderStatus = async (id, data) => {
     throw error?.response?.data?.message;
   }
 };
+
+export const updateOrderInfo = async (id, data) => {
+  try {
+    const res = await api.put(`/orders/${id}`, data);
+    return res;
+  } catch (error) {
+    console.error(error);
+    throw error?.response?.data?.message;
+  }
+};
