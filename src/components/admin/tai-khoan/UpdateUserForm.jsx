@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Alert, App, Switch, Select } from "antd";
 import { getUserFromToken } from "@/utils/utils";
-import { UpdateUser } from "@/requests/user";
+import { updateUser } from "@/requests/user";
 
 const genderOptions = [
   { label: "Nam", value: true },
   { label: "Nữ", value: false },
 ];
 
-const UpdateUserForm = () => {
+const UpdateUserForm = ({ fetchUserData }) => {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -36,23 +36,18 @@ const UpdateUserForm = () => {
     setAlertMessage("");
     const user = getUserFromToken();
     const requestBody = {
-      username:
-        values.username !== null
-          ? values.username
-          : null,
-      fullName:
-        values.fullName !== null
-          ? values.fullName
-          : null,
+      username: values.username !== null ? values.username : null,
+      fullName: values.fullName !== null ? values.fullName : null,
       email: values.email !== null ? values.email : null,
       phone: values.phone !== null ? values.phone : null,
       gender: values.gender !== null ? values.gender : null,
       active: values.active !== null ? values.active : null,
     };
     try {
-      await UpdateUser(user.id, requestBody);
+      const res = await updateUser(user.id, requestBody);
       setAlertMessage("Cập nhật người dùng thành công.");
       setMessageType("success");
+      fetchUserData();
     } catch (error) {
       let errorMessage = "Cập nhật người dùng thất bại.";
       if (error?.response?.data?.message) {
@@ -115,7 +110,6 @@ const UpdateUserForm = () => {
           options={genderOptions}
           placeholder="Chọn giới tính"
           size="large"
-          allowClear
         />
       </Form.Item>
       <Form.Item>

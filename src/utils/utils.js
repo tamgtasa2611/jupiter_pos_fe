@@ -53,6 +53,19 @@ export const getUserFromToken = () => {
   }
 };
 
+export const updateUserInToken = (user) => {
+  if (typeof window === "undefined") return; // Tránh lỗi khi chạy trên server
+  const itemStr = localStorage.getItem("token");
+  if (!itemStr) return;
+  try {
+    const item = JSON.parse(itemStr);
+    item.user = user;
+    localStorage.setItem("token", JSON.stringify(item));
+  } catch (error) {
+    localStorage.removeItem("token");
+  }
+};
+
 export const uploadToCloudinary = async (
   file,
   uploadPreset = "my_preset",

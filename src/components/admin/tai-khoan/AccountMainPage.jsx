@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Layout,
   Card,
@@ -13,8 +13,9 @@ import {
 } from "antd";
 import { UserOutlined, LockOutlined, EditOutlined } from "@ant-design/icons";
 import ChangePasswordForm from "./ChangePasswordForm";
-import { getUserFromToken } from "@/utils/utils";
+import { getUserFromToken, updateUserInToken } from "@/utils/utils";
 import { USER_ROLES_MAP } from "@/constants/user";
+import { getUserById } from "@/requests/user";
 import UpdateUserForm from "./UpdateUserForm";
 const { Title, Text } = Typography;
 
@@ -22,10 +23,31 @@ const AccountMainPage = () => {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [showUpdateInfo, setShowUpdateInfo] = useState(false);
   const user = getUserFromToken();
-  const fullName = user?.fullName || "-";
-  const email = user?.email || "-";
-  const phone = user?.phone || "-";
-  const role = user?.role ? USER_ROLES_MAP[user.role] : "Người dùng";
+  const [fullName, setFullName] = useState(user?.fullName || "-");
+  const [email, setEmail] = useState(user?.email || "-");
+  const [phone, setPhone] = useState(user?.phone || "-");
+  const [role, setRole] = useState(
+    user?.role ? USER_ROLES_MAP[user.role] : "Người dùng",
+  );
+
+  const fetchUserData = async () => {
+    try {
+      const userData = await getUserById(user.id);
+      if (userData) {
+        setFullName(userData.fullName || "-");
+        setEmail(userData.email || "-");
+        setPhone(userData.phone || "-");
+        setRole(userData.role ? USER_ROLES_MAP[userData.role] : "Người dùng");
+        updateUserInToken(userData);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin người dùng:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
   return (
     <>
@@ -100,7 +122,7 @@ const AccountMainPage = () => {
         centered
         width={600}
       >
-        <UpdateUserForm />
+        <UpdateUserForm fetchUserData={fetchUserData} />
       </Modal>
     </>
   );
