@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Table, Dropdown, Button, Space, message, Tag, Flex } from "antd";
+import { Table, Dropdown, Button, Space, App, Tag, Flex } from "antd";
 import {
   MoreOutlined,
   EditOutlined,
@@ -20,6 +20,7 @@ const EmployeeTable = ({
   paginationConfig,
   onDeleteUser,
 }) => {
+  const { message } = App.useApp();
   const [selectedEmployee, setSelectedEmployeeState] = useState(null);
   const [localDeleteModalVisible, setLocalDeleteModalVisible] = useState(false);
   const handleDeleteEmployee = async () => {

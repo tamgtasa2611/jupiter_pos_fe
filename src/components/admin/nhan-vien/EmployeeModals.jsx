@@ -4,7 +4,7 @@ import {
   Form,
   Input,
   Button,
-  message,
+  App,
   Spin,
   Switch,
   Select,
@@ -12,9 +12,9 @@ import {
   Descriptions,
 } from "antd";
 import { getEmployeeById } from "@/requests/employee";
-const { Option } = Select;
 
 export const AddEmployeeModal = ({ visible, onCancel, onAdd }) => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
 
   const handleFinish = async (values) => {

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Descriptions, Spin, message } from "antd";
+import { Modal, Descriptions, Spin, App } from "antd";
 import { getCustomerById } from "@/requests/customer";
 
 const ViewCustomerModal = ({ visible, onCancel, customerId }) => {
+  const { message } = App.useApp();
   const [customer, setCustomer] = useState(null);
   const [loading, setLoading] = useState(false);
 

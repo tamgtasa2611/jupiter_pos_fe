@@ -7,7 +7,7 @@ import {
   Switch,
   Button,
   Divider,
-  message,
+  App,
   Flex,
   Spin,
 } from "antd";
@@ -28,6 +28,7 @@ const EditProductModal = ({
   setCategorySearchText,
   reloadCategories = () => {}
 }) => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);

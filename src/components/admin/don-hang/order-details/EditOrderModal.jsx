@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Tabs, Spin, message, Flex, Button } from "antd";
+import { Modal, Tabs, Spin, App, Flex, Button } from "antd";
 import { getOrderById, updateOrderStatus } from "@/requests/order";
 import {
   ORDER_STATUS_MAP,
@@ -28,6 +28,7 @@ const paymentStatusOptions = Object.entries(PAYMENT_STATUS_MAP).map(
 );
 
 const EditOrderModal = ({ visible, onCancel, orderId }) => {
+  const { message, modal } = App.useApp();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
@@ -104,7 +105,7 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
                     danger={ORDER_STATUS_MAP[status]?.danger || false}
                     type="primary"
                     onClick={() => {
-                      Modal.confirm({
+                      modal.confirm({
                         title: `Xác nhận cập nhật trạng thái`,
                         content: `Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng sang "${ORDER_STATUS_MAP[status].label}"?`,
                         onOk: () => handleUpdateOrderStatus(status),

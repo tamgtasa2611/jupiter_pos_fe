@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Card, Button, message, Flex } from "antd";
+import { Card, Button, App, Flex } from "antd";
 import { UserOutlined, ReloadOutlined } from "@ant-design/icons";
 import AddCustomerModal from "./AddCustomerModal";
 import ViewCustomerModal from "./ViewCustomerModal";
@@ -13,6 +13,7 @@ import SearchBar from "./SearchBar";
 import CustomerTable from "./CustomerTable";
 
 const CustomersMainPage = () => {
+  const { message } = App.useApp();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
 

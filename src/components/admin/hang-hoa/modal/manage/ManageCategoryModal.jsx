@@ -6,7 +6,7 @@ import {
   Space,
   Form,
   Input,
-  message,
+  App,
   Popconfirm,
   Typography,
   Flex,
@@ -31,6 +31,7 @@ const { Title } = Typography;
 const { Search } = Input;
 
 const ManageCategoryModal = ({ open, setOpen, reloadCategories, onCancel }) => {
+  const { message } = App.useApp();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("id");

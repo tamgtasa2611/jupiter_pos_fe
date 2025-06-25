@@ -1,8 +1,9 @@
 import React from "react";
-import { Modal, Form, Input, Button, message, Switch } from "antd";
+import { Modal, Form, Input, Button, App, Switch } from "antd";
 import { createCustomer } from "@/requests/customer";
 
 const AddCustomerModal = ({ visible, onCancel, onAdd }) => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
 
   const handleFinish = async (values) => {

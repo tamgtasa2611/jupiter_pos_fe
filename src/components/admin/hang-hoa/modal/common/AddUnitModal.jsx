@@ -1,7 +1,8 @@
-import { Modal, Form, Input, message } from "antd";
+import { Modal, Form, Input, App } from "antd";
 import { useEffect, useState } from "react";
 
 const AddUnitModal = ({ visible, onCancel, onOk }) => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 

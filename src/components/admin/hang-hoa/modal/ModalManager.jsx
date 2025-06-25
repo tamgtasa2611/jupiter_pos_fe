@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { message } from "antd";
+import { App } from "antd";
 import dynamic from "next/dynamic";
 import { createCategory } from "@requests/category";
 import { createUnit } from "@requests/unit";
@@ -94,6 +94,7 @@ const ModalManager = ({
   selectedStatus,
   fetchProducts,
 }) => {
+  const { message } = App.useApp();
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [attributeModalVisible, setAttributeModalVisible] = useState(false);
   const [unitModalVisible, setUnitModalVisible] = useState(false);

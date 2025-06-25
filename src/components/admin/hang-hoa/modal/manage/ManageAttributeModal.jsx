@@ -6,7 +6,7 @@ import {
   Space,
   Form,
   Input,
-  message,
+  App,
   Popconfirm,
   Card,
   Row,
@@ -39,6 +39,7 @@ const ManageAttributeModal = ({
   reloadAttributes,
   onCancel,
 }) => {
+  const { message } = App.useApp();
   const [attributes, setAttributes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("id");

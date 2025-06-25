@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { App, Layout, message, Spin } from "antd";
+import { App, Layout, Spin } from "antd";
 import NavBar from "@components/admin/common/NavBar";
 import MobileNavBar from "@components/admin/common/MobileNavBar";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ const { Content } = Layout;
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
+  const { message } = App.useApp();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const isMobile = useIsMobile();

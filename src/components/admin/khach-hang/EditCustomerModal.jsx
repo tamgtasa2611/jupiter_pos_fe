@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Button, Switch, message, Spin } from "antd";
+import { Modal, Form, Input, Button, Switch, App, Spin } from "antd";
 import { getCustomerById, updateCustomer } from "@/requests/customer";
 
 const EditCustomerModal = ({ visible, onCancel, onEdit, customerId }) => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [oldValues, setOldValues] = useState({});

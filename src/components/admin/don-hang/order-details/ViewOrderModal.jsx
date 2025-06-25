@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Tabs, Spin, message, Button } from "antd";
+import { Modal, Tabs, Spin, App, Button } from "antd";
 import { getOrderById } from "@/requests/order";
 import { PAYMENT_METHOD_MAP } from "@constants/order";
 import OrderInfo from "./OrderInfo";
@@ -15,6 +15,7 @@ const paymentMethodOptions = Object.entries(PAYMENT_METHOD_MAP).map(
 );
 
 const ViewOrderModal = ({ visible, onCancel, orderId, onEdit }) => {
+  const { message } = App.useApp();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("order");

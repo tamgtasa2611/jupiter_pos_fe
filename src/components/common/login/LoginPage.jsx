@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, Form, message } from "antd";
+import { Card, Form, App } from "antd";
 import { useRouter } from "next/navigation";
 import LoginForm from "./LoginForm";
 import { login } from "@/requests/auth";
@@ -10,6 +10,7 @@ import { setTokenWithExpiry, getToken } from "@/utils/utils";
 import { useCurrentUser } from "@/contexts/CurrentUserContext";
 
 const LoginPage = () => {
+  const { message } = App.useApp();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const { currentUser, setCurrentUser } = useCurrentUser();

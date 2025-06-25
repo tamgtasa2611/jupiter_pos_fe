@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Upload, Button, message } from "antd";
+import { Upload, Button, App } from "antd";
 import { PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { uploadToCloudinary } from "@utils/utils";
 
@@ -15,6 +15,7 @@ const CloudinaryImageUpload = ({
   buttonText = "Tải ảnh lên",
   disabled,
 }) => {
+  const { message } = App.useApp();
   const [uploading, setUploading] = useState(false);
 
   const customRequest = async ({ file, onSuccess, onError }) => {

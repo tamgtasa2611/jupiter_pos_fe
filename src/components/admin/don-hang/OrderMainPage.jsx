@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { Card, Flex, message } from "antd";
+import { Card, Flex, App } from "antd";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 
@@ -15,6 +15,7 @@ import { getOrders } from "@requests/order";
 dayjs.extend(isBetween);
 
 const OrderMainPage = () => {
+  const { message } = App.useApp();
   const isMobile = false;
   const [orders, setOrders] = useState([]);
   const [hasMore, setHasMore] = useState(true);

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Card, Descriptions, Select, Tag, List, message } from "antd";
+import { Card, Descriptions, Select, Tag, List, App } from "antd";
 import { PAYMENT_METHOD_MAP, PAYMENT_STATUS_MAP } from "@constants/order";
 import dayjs from "dayjs";
 import { updatePayment } from "@/requests/payment";
 
 const PaymentInfo = ({ order, paymentMethodOptions, reloadOrder}) => {
+  const { message } = App.useApp();
   const [editingPaymentId, setEditingPaymentId] = useState(null);
   const [updating, setUpdating] = useState(false);
   

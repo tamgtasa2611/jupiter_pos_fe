@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { Form, Input, Button, Alert, message as antdMessage } from "antd";
+import { Form, Input, Button, Alert, App } from "antd";
 import { generateOtp, verifyOtpAndChangePws } from "@/requests/user";
 import { useRouter } from "next/navigation";
 
 const ChangePasswordForm = () => {
+  const { message } = App.useApp();
   const [loginInfo, setLoginInfo] = useState("");
   const [loadingOtp, setLoadingOtp] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -24,7 +25,7 @@ const ChangePasswordForm = () => {
     setAlertMessage("");
 
     if (!validateLoginInfo(loginInfo)) {
-      antdMessage.error("Vui lòng nhập đúng email hoặc số điện thoại");
+      message.error("Vui lòng nhập đúng email hoặc số điện thoại");
       setLoadingOtp(false);
       return;
     }
@@ -66,7 +67,7 @@ const ChangePasswordForm = () => {
     } catch (err) {
       const errorMessage =
         err?.response?.data?.message || "Đổi mật khẩu thất bại.";
-      antdMessage.error(errorMessage);
+      message.error(errorMessage);
       setAlertMessage(errorMessage);
       setMessageType("error");
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Typography, theme, Flex, Row, Col, message } from "antd";
+import { Button, theme, Flex, Row, Col, App } from "antd";
 import { DollarOutlined } from "@ant-design/icons";
 import ProductsSection from "./ProductsSection";
 import CartSection from "./CartSection";
@@ -15,6 +15,7 @@ import { KHACH_LE } from "@constants/customer";
 import { DANG_BAN } from "@constants/product";
 
 const MainSellingPage = () => {
+  const { message } = App.useApp();
   const { token } = theme.useToken();
   const [cart, setCart] = useState([]);
   const [products, setProducts] = useState([]);

@@ -10,7 +10,7 @@ import {
   Button,
   Divider,
   Space,
-  message,
+  App,
   DatePicker,
   Flex,
   Spin,
@@ -47,6 +47,7 @@ const EditVariantModal = ({
   unitSearchText,
   attributeSearchText,
 }) => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fileList, setFileList] = useState([]);

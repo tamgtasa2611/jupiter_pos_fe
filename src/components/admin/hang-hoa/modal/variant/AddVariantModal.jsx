@@ -10,7 +10,7 @@ import {
   DatePicker,
   Divider,
   Space,
-  message,
+  App,
   Flex,
   Image,
 } from "antd";
@@ -36,6 +36,7 @@ const AddVariantModal = ({
   reloadUnits = () => {},
   reloadAttributes = () => {},
 }) => {
+  const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const mobileStyles = useMobileStyles();

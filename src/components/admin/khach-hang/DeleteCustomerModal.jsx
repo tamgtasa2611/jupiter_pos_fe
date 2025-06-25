@@ -1,8 +1,9 @@
 import React from "react";
-import { Modal, message } from "antd";
+import { Modal, App } from "antd";
 import { deleteCustomer } from "@/requests/customer";
 
 const DeleteCustomerModal = ({ visible, onCancel, customer }) => {
+  const { message } = App.useApp();
   const handleOk = async () => {
     try {
       if (!customer) return;

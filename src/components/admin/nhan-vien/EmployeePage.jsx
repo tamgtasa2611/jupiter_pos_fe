@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, message, Button, Spin, Flex } from "antd";
+import { Card, App, Button, Spin, Flex } from "antd";
 import { ReloadOutlined, UserOutlined } from "@ant-design/icons";
 import EmployeeHeader from "./EmployeeHeader";
 import EmployeeSearch from "./EmployeeSearch";
@@ -19,6 +19,7 @@ import {
 } from "@/requests/employee";
 
 const EmployeePage = () => {
+  const { message } = App.useApp();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");

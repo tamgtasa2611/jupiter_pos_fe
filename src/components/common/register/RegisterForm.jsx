@@ -9,7 +9,7 @@ import {
   Card,
   Typography,
   Divider,
-  message,
+  App,
 } from "antd";
 import {
   UserOutlined,
@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 const { Title, Text } = Typography;
 
 const RegisterForm = () => {
+  const { message } = App.useApp();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 

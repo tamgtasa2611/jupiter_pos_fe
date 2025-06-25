@@ -12,7 +12,6 @@ import {
   Space,
   InputNumber,
   Radio,
-  message,
   Flex,
   Image,
   App,
@@ -34,7 +33,7 @@ const { Title, Text } = Typography;
 
 const PaymentModal = memo(
   ({ visible, onCancel, onCheckout, totalAmount, cartSummary }) => {
-    const { message } = App.useApp();
+    const { message, modal } = App.useApp();
     const [form] = Form.useForm();
     const [paymentMethod, setPaymentMethod] = useState(PAYMENT_METHOD.TIEN_MAT);
     const [orderType, setOrderType] = useState(ORDER_TYPE.MUA_TRUC_TIEP);
@@ -86,14 +85,14 @@ const PaymentModal = memo(
           return resolve(false);
         }
         if (received > totalAmount) {
-          Modal.confirm({
+          modal.confirm({
             title: "Xác nhận số tiền khách trả vượt mức",
             content: `Số tiền khách trả (${received.toLocaleString()}đ) VƯỢT QUÁ số tiền cần thanh toán (${totalAmount.toLocaleString()}đ). Bạn có chắc chắn muốn tiếp tục?`,
             onOk: () => resolve(true),
             onCancel: () => resolve(false),
           });
         } else if (received < totalAmount) {
-          Modal.confirm({
+          modal.confirm({
             title: "Xác nhận số tiền khách trả không đủ",
             content: `Số tiền khách trả (${received.toLocaleString()}đ) KHÔNG ĐỦ số tiền cần thanh toán (${totalAmount.toLocaleString()}đ). Bạn có chắc chắn muốn tiếp tục?`,
             onOk: () => resolve(true),
@@ -125,7 +124,7 @@ const PaymentModal = memo(
 
             return;
           } else {
-            Modal.confirm({
+            modal.confirm({
               title: "Xác nhận thanh toán bằng mã QR",
               content: `Bạn có chắc chắn khách đã thanh toán (${received.toLocaleString()}đ)?`,
               onOk: () => {
@@ -558,7 +557,7 @@ const PaymentModal = memo(
           >
             <Text strong>Số tiền: {received.toLocaleString()}đ</Text>
             {qrCodeUrl ? (
-              <img
+              <Image
                 src={qrCodeUrl}
                 alt="QR Code"
                 style={{ width: "480px", height: "500px" }}
