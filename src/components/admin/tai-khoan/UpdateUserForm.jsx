@@ -10,7 +10,7 @@ const genderOptions = [
   { label: "Nữ", value: false },
 ];
 
-const UpdateUserForm = ({ fetchUserData }) => {
+const UpdateUserForm = ({ fetchUserData, onClose }) => {
   const { message } = App.useApp();
   const [form] = Form.useForm();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
@@ -48,6 +48,7 @@ const UpdateUserForm = ({ fetchUserData }) => {
       setAlertMessage("Cập nhật người dùng thành công.");
       setMessageType("success");
       fetchUserData();
+      if (onClose) onClose();
     } catch (error) {
       let errorMessage = "Cập nhật người dùng thất bại.";
       if (error?.response?.data?.message) {

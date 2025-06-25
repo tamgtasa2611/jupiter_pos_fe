@@ -122,7 +122,10 @@ const AccountMainPage = () => {
         centered
         width={600}
       >
-        <UpdateUserForm fetchUserData={fetchUserData} />
+        <UpdateUserForm
+          fetchUserData={fetchUserData}
+          onClose={() => setShowUpdateInfo(false)}
+        />
       </Modal>
     </>
   );
