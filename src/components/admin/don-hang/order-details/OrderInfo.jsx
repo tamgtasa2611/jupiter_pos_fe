@@ -19,7 +19,7 @@ import { updateOrderInfo } from "@/requests/order";
 const { Paragraph } = Typography;
 const { TextArea } = Input;
 
-const OrderInfo = ({ order, editable, onOrderUpdate }) => {
+const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
   const { message } = App.useApp();
   const [editMode, setEditMode] = useState(false);
   const [form] = Form.useForm();
@@ -113,7 +113,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
             label={
               <Space>
                 Tên khách hàng
-                {editable && !editMode && (
+                {editable && fullyEditable && !editMode && (
                   <Button
                     type="text"
                     size="small"
@@ -125,7 +125,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
               </Space>
             }
           >
-            {editMode ? (
+            {editMode && fullyEditable ? (
               <Form.Item
                 name="receiverName"
                 rules={[
@@ -157,7 +157,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
             label={
               <Space>
                 Số điện thoại
-                {editable && !editMode && (
+                {editable && fullyEditable && !editMode && (
                   <Button
                     type="text"
                     size="small"
@@ -169,7 +169,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
               </Space>
             }
           >
-            {editMode ? (
+            {editMode && fullyEditable ? (
               <Form.Item
                 name="receiverPhone"
                 rules={[
@@ -201,7 +201,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
             label={
               <Space>
                 Địa chỉ nhận hàng
-                {editable && !editMode && (
+                {editable && fullyEditable && !editMode && (
                   <Button
                     type="text"
                     size="small"
@@ -213,7 +213,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
               </Space>
             }
           >
-            {editMode ? (
+            {editMode && fullyEditable ? (
               <Form.Item
                 name="receiverAddress"
                 rules={[
@@ -238,7 +238,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
             label={
               <Space>
                 Hình thức mua hàng
-                {editable && !editMode && (
+                {editable && fullyEditable && !editMode && (
                   <Button
                     type="text"
                     size="small"
@@ -250,7 +250,7 @@ const OrderInfo = ({ order, editable, onOrderUpdate }) => {
               </Space>
             }
           >
-            {editMode ? (
+            {editMode && fullyEditable ? (
               <Form.Item
                 name="orderType"
                 rules={[
