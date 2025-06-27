@@ -33,6 +33,7 @@ import { usePathname } from "next/navigation";
 import { getUserFromToken } from "@/utils/utils";
 import UserProfile from "./UserProfile";
 import useStockNotification from "@/utils/useStockNotification";
+import Notification from "../thong-bao/Notification";
 import { EMPLOYEE, ADMIN } from "@/constants/user";
 
 const { Title } = Typography;
@@ -44,6 +45,7 @@ export default function NavBar({ onLogout }) {
   const [scrolled, setScrolled] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const pathname = usePathname();
+  const { message, setMessage } = useStockNotification();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -116,15 +118,24 @@ export default function NavBar({ onLogout }) {
     .filter((item) => !item.adminOnly || role === ADMIN)
     .map(({ adminOnly, ...rest }) => rest);
 
-  useStockNotification();
-
   return (
+    
     <div
       className={`flex items-center justify-between px-6 sticky top-0 z-10 w-full h-16 transition-all duration-500 bg-white border-b border-slate-200`}
       style={{
         boxShadow: "0 6px 16px rgba(0, 0, 0, 0.05)",
       }}
     >
+      <>
+        {/* Notification */}
+        {message && (
+          <Notification
+            message={message}
+            onClose={() => setMessage('')}
+          />
+        )}
+      </>
+
       {/* Left side - Logo */}
       <Link href="/admin/ban-hang" className="flex items-center group">
         <div className="bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 text-white p-2 rounded-xl mr-3 shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300">

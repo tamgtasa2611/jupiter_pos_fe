@@ -1,15 +1,18 @@
-import { useEffect } from "react";
-import SockJS from "sockjs-client";
-import { Client } from "@stomp/stompjs";
+import { useEffect, useState } from 'react';
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 
 export default function useStockNotification() {
+  const [message, setMessage] = useState('');
+
   useEffect(() => {
     const client = new Client({
-      webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+      webSocketFactory: () => new SockJS('https://jupiterstore.onrender.com/ws'),
       onConnect: () => {
-        client.subscribe("/topic/stock-alert", (msg) => {
-          const message = JSON.parse(msg.body).content;
-          alert("⚠️ " + message);
+        client.subscribe('/topic/stock-alert', (msg) => {
+          const content = JSON.parse(msg.body).content;
+          setMessage(content);
+          setTimeout(() => setMessage(''), 4800);
         });
       },
     });
@@ -20,4 +23,6 @@ export default function useStockNotification() {
       client.deactivate();
     };
   }, []);
+  
+  return { message, setMessage };
 }
