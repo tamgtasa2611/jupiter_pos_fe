@@ -41,7 +41,7 @@ const UpdateUserForm = ({ fetchUserData, onClose }) => {
       email: values.email !== null ? values.email : null,
       phone: values.phone !== null ? values.phone : null,
       gender: values.gender !== null ? values.gender : null,
-      active: values.active !== null ? values.active : null,
+      active: user.active,
     };
     try {
       const res = await updateUser(user.id, requestBody);
@@ -106,11 +106,16 @@ const UpdateUserForm = ({ fetchUserData, onClose }) => {
       >
         <Input placeholder="Số điện thoại" size="large" />
       </Form.Item>
-      <Form.Item label="Giới tính" name="gender">
-        <Select
-          options={genderOptions}
-          placeholder="Chọn giới tính"
-          size="large"
+      <Form.Item
+        name="gender"
+        style={{ display: "inline-block", width: "calc(50% - 8px)" }}
+      >
+        <Switch
+          checkedChildren="Nam"
+          unCheckedChildren="Nữ"
+          checked={form.getFieldValue("gender")}
+          onChange={val => form.setFieldsValue({ gender: val })}
+          style={{ width: 80 }}
         />
       </Form.Item>
       <Form.Item>
