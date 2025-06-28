@@ -39,3 +39,21 @@ export const getCustomerData = async (data) => {
     return { data: [] };
   }
 };
+
+export const getInactiveCustomers = async (data) => {
+  try {
+    const res = await api.get("/statistic/inactive-customers", {
+      params: {
+        sortBy: data?.sortBy,
+        sortDirection: data?.sortDirection,
+      },
+    });
+    return res;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy dữ liệu khách hàng không hoạt động!",
+      error?.response?.data,
+    );
+    throw error?.response?.data?.message || "Lỗi không xác định";
+  }
+};
