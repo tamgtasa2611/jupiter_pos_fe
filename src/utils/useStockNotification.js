@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 
 export default function useStockNotification() {
-  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const idRef = useRef(0);
 
   useEffect(() => {
     const client = new Client({
@@ -11,8 +12,11 @@ export default function useStockNotification() {
       onConnect: () => {
         client.subscribe('/topic/stock-alert', (msg) => {
           const content = JSON.parse(msg.body).content;
-          setMessage(content);
-          setTimeout(() => setMessage(''), 4800);
+          const id = idRef.current++;
+          setMessages((prev) => [...prev, { id, content }]);
+          setTimeout(() => {
+            setMessages((prev) => prev.filter((m) => m.id !== id));
+          }, 4500);
         });
       },
     });
@@ -23,6 +27,10 @@ export default function useStockNotification() {
       client.deactivate();
     };
   }, []);
-  
-  return { message, setMessage };
+
+  const removeMessage = (id) => {
+    setMessages((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  return { messages, removeMessage };
 }

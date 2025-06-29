@@ -5,20 +5,12 @@ import NotificationList from "../thong-bao/NotificationList";
 import {
   Menu,
   Button,
-  Space,
   Typography,
-  Avatar,
-  Dropdown,
   Badge,
   Tooltip,
   Flex,
 } from "antd";
 import {
-  UserOutlined,
-  SettingOutlined,
-  LogoutOutlined,
-  BarcodeOutlined,
-  DashboardOutlined,
   ShoppingOutlined,
   OrderedListOutlined,
   TeamOutlined,
@@ -26,7 +18,6 @@ import {
   BarChartOutlined,
   ShoppingCartOutlined,
   BellOutlined,
-  SearchOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -45,7 +36,7 @@ export default function NavBar({ onLogout }) {
   const [scrolled, setScrolled] = useState(false);
   const [showAllNotifications, setShowAllNotifications] = useState(false);
   const pathname = usePathname();
-  const { message, setMessage } = useStockNotification();
+  const { messages, removeMessage } = useStockNotification();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -119,22 +110,21 @@ export default function NavBar({ onLogout }) {
     .map(({ adminOnly, ...rest }) => rest);
 
   return (
-    
     <div
       className={`flex items-center justify-between px-6 sticky top-0 z-10 w-full h-16 transition-all duration-500 bg-white border-b border-slate-200`}
       style={{
         boxShadow: "0 6px 16px rgba(0, 0, 0, 0.05)",
       }}
     >
-      <>
-        {/* Notification */}
-        {message && (
-          <Notification
-            message={message}
-            onClose={() => setMessage('')}
-          />
-        )}
-      </>
+      {/* Notification stack */}
+      {messages && messages.map((msg, idx) => (
+        <Notification
+          key={msg.id}
+          message={msg.content}
+          onClose={() => removeMessage(msg.id)}
+          style={{ bottom: 40 + idx * 76 }}
+        />
+      ))}
 
       {/* Left side - Logo */}
       <Link href="/admin/ban-hang" className="flex items-center group">
