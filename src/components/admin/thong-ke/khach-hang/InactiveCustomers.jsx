@@ -237,12 +237,7 @@ const InactiveCustomers = () => {
       <div style={{ marginBottom: 24 }}>
         <Flex justify="space-between" align="start">
           <div>
-            <Title level={4} style={{ margin: 0, color: "#1890ff" }}>
-              📊 Top 10 khách hàng inactive
-            </Title>
-            <Text type="secondary">
-              Danh sách khách hàng được sắp xếp theo thời gian không mua hàng
-            </Text>
+            <Title level={5}>⚠️ Top 10 khách hàng đã lâu không mua hàng</Title>
           </div>
           <Button icon={<ReloadOutlined />} onClick={handleRefresh} />
         </Flex>
