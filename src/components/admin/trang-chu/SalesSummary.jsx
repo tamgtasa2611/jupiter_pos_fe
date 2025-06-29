@@ -94,14 +94,6 @@ const SalesSummary = () => {
         dy: -15,
       },
     },
-    tooltip: {
-      formatter: (totalRevenue) => {
-        return {
-          name: "Doanh thu",
-          value: `${formatCurrency(totalRevenue)} ₫`,
-        };
-      },
-    },
     xAxis: {
       label: {
         autoHide: true,
@@ -117,6 +109,21 @@ const SalesSummary = () => {
       totalRevenue: {
         alias: "Doanh thu",
       },
+    },
+    tooltip: {
+      title: null,
+      items: [
+        {
+          name: "📅 Thời gian",
+          field: "label",
+          formatter: (value) => value + " sản phẩm",
+        },
+        {
+          name: "💰 Tổng doanh thu",
+          field: "totalRevenue",
+          formatter: (value) => value + " sản phẩm",
+        },
+      ],
     },
     color: "#1677ff",
     animation: {

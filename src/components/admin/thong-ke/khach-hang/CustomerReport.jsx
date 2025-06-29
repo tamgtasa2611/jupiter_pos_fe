@@ -5,7 +5,6 @@ import InactiveCustomers from "./InactiveCustomers";
 import NewCustomers from "./NewCustomers";
 
 export default function CustomerReport() {
-  console.log("CustomerReport component rendered");
   return (
     <Flex gap="large" vertical>
       <NewCustomers />

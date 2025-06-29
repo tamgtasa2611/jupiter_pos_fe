@@ -1,7 +1,7 @@
 "use client";
 
-import CustomerReport from "@components/admin/thong-ke/khach-hang/CustomerReport";
+import ProductReport from "@/components/admin/thong-ke/hang-hoa/ProductReport";
 
 export default function Page() {
-  return <CustomerReport />;
+  return <ProductReport/>;
 }

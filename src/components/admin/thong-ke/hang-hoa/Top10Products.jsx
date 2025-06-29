@@ -18,14 +18,6 @@ const TIME_OPTIONS = [
       endTime: dayjs().endOf("day").toISOString(),
     }),
   },
-  {
-    label: "Tháng này",
-    value: "thisMonth",
-    getRange: () => ({
-      startTime: dayjs().startOf("month").toISOString(),
-      endTime: dayjs().endOf("day").toISOString(),
-    }),
-  },
   ...Array.from({ length: 12 }).map((_, i) => {
     const month = dayjs().subtract(i, "month");
     return {
@@ -79,7 +71,7 @@ const Top10Products = () => {
   const config = {
     data: productData,
     yField: sortBy === "revenue" ? "revenue" : "totalQuantity",
-    xField: sortBy === "revenue" ? "revenueFormatted" : "totalQuantity",
+    xField: "index",
     isStack: false,
     isGroup: false,
     legend: { position: "left" },
@@ -91,6 +83,21 @@ const Top10Products = () => {
       position: "left",
       textAlign: "left",
       dx: 5,
+    },
+    tooltip: {
+      title: (data) => `🏆 Top ${data.index}: ${data.productName}`,
+      items: [
+        {
+          name: "💰 Tổng doanh số",
+          field: "revenue",
+          formatter: (value) => formatVND(value),
+        },
+        {
+          name: "📦 Sản lượng bán ra ",
+          field: "totalQuantity",
+          formatter: (value) => value + " sản phẩm",
+        },
+      ],
     },
     interactions: [{ type: "element-active" }],
     animation: {
@@ -108,7 +115,7 @@ const Top10Products = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 my-4 md:my-0">
           <Space>
             <ShoppingOutlined />
-            <span>Top 10 hàng bán chạy theo doanh thu</span>
+            <span>Top 10 hàng bán chạy</span>
           </Space>
           <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center w-full gap-2">
             <Select

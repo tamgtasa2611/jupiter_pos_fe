@@ -72,3 +72,23 @@ export const getNewCustomers = async (params = {}) => {
     throw error?.response?.data?.message || "Lỗi không xác định";
   }
 };
+
+export const getProductLowStock = async () => {
+  try {
+    const response = await api.get("/statistic/products/low-stock");
+    return response;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu sản phẩm!", error?.response?.data);
+    throw error?.response?.data?.message || "Lỗi không xác định";
+  }
+};
+
+export const getOrderStatusStatistic = async (data) => {
+  try {
+    const res = await api.post(`/statistic/orders/status`, data);
+    return res;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu!", error?.response?.data);
+    return { data: [] };
+  }
+};
