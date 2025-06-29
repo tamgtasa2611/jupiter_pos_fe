@@ -1,6 +1,6 @@
 import { Flex } from "antd";
-import TopDebtCustomer from "../trang-chu/TopDebtCustomer";
-import Top10Customers from "../trang-chu/Top10Customers";
+import TopDebtCustomer from "./TopDebtCustomer";
+import Top10Customers from "./Top10Customers";
 import InactiveCustomers from "./InactiveCustomers";
 
 export default function CustomerReport() {

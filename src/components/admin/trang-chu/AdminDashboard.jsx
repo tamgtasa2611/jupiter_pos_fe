@@ -2,7 +2,7 @@ import { Flex } from "antd";
 import SalesSummary from "./SalesSummary";
 import TodaySummary from "./TodaySummary";
 import Top10Products from "./Top10Products";
-import Top10Customers from "./Top10Customers";
+import Top10Customers from "../thong-ke/khach-hang/Top10Customers";
 
 export default function AdminDashboard() {
   return (

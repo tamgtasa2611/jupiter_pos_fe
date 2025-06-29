@@ -3,7 +3,13 @@
 import React from "react";
 import { Tabs } from "antd";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChartOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  BarChartOutlined,
+  DollarCircleFilled,
+  DollarCircleOutlined,
+  ProductOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { EMPLOYEE, ADMIN } from "@/constants/user";
 import { getUserFromToken } from "@/utils/utils";
 
@@ -29,6 +35,33 @@ const StatisticMenu = () => {
         <span>
           <UserOutlined />
           Thống kê khách hàng
+        </span>
+      ),
+    },
+    {
+      key: "/admin/thong-ke/hang-hoa",
+      label: (
+        <span>
+          <ProductOutlined />
+          Thống kê hàng hóa
+        </span>
+      ),
+    },
+    {
+      key: "/admin/thong-ke/nhan-vien",
+      label: (
+        <span>
+          <UserOutlined />
+          Thống kê nhân viên
+        </span>
+      ),
+    },
+    {
+      key: "/admin/thong-ke/thanh-toan",
+      label: (
+        <span>
+          <DollarCircleOutlined />
+          Thống kê thanh toán
         </span>
       ),
     },

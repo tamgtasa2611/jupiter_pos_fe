@@ -13,24 +13,49 @@ const { Option } = Select;
 
 const TIME_OPTIONS = [
   {
-    label: "7 ngày gần nhất",
+    label: "Hôm nay",
+    value: "today",
+    getRange: () => ({
+      startTime: dayjs().startOf("day").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "7 ngày qua",
     value: "7days",
     getRange: () => ({
       startTime: dayjs().subtract(6, "day").startOf("day").toISOString(),
       endTime: dayjs().endOf("day").toISOString(),
     }),
   },
-  ...Array.from({ length: 12 }).map((_, i) => {
-    const month = dayjs().subtract(i, "month");
-    return {
-      label: month.format("MM/YYYY"),
-      value: `month-${month.format("YYYY-MM")}`,
-      getRange: () => ({
-        startTime: month.startOf("month").toISOString(),
-        endTime: month.endOf("month").toISOString(),
-      }),
-    };
-  }),
+  {
+    label: "1 tháng qua",
+    value: "1month",
+    getRange: () => ({
+      startTime: dayjs()
+        .subtract(1, "month")
+        .add(1, "day")
+        .startOf("day")
+        .toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "Năm nay",
+    value: "thisYear",
+    getRange: () => ({
+      startTime: dayjs().startOf("year").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "Toàn thời gian",
+    value: "allTime",
+    getRange: () => ({
+      startTime: "1970-01-01T00:00:00.000Z",
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
 ];
 
 const Top10Customers = () => {
