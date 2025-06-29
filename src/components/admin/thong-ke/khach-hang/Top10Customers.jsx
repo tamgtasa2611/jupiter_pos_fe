@@ -64,8 +64,16 @@ const Top10Customers = () => {
   const [sortBy, setSortBy] = useState("totalSpent");
   const [loading, setLoading] = useState(true);
 
+  console.log(customerData);
+
   const formatVND = (value) => {
-    return value / 1000000 + " tr";
+    if (value >= 1000000) {
+      return (value / 1000000).toFixed(1) + "Tr";
+    }
+    if (value >= 1000) {
+      return (value / 1000).toFixed(0) + "K";
+    }
+    return new Intl.NumberFormat("vi-VN").format(value);
   };
 
   const fetchCustomerData = async (range) => {
@@ -93,9 +101,12 @@ const Top10Customers = () => {
     data: customerData,
     yField: sortBy === "totalSpent" ? "totalSpent" : "totalOrders",
     xField: "index",
-    isStack: false,
-    isGroup: false,
-    legend: { position: "left" },
+    color: ({ index }) => {
+      if (index === 1) return "#1890ff";
+      if (index === 2) return "#52c41a";
+      if (index === 3) return "#faad14";
+      return "#d9d9d9";
+    },
     barStyle: {
       radius: [0, 4, 4, 0],
     },
@@ -104,15 +115,70 @@ const Top10Customers = () => {
       position: "left",
       textAlign: "left",
       dx: 5,
+      style: {
+        fontSize: 11,
+        fontWeight: (data) => (data.index <= 3 ? "bold" : "normal"),
+      },
+    },
+
+    yAxis: {
+      label: {
+        labelFormatter: (value) => {
+          if (sortBy === "totalSpent") {
+            return formatVND(value);
+          }
+          return value + " đơn";
+        },
+        style: { fontSize: 11, fill: "#666" },
+      },
+      grid: {
+        line: { style: { stroke: "#f0f0f0" } },
+      },
+    },
+
+    xAxis: {
+      label: {
+        labelFormatter: (value) => {
+          if (sortBy === "totalSpent") {
+            return formatVND(value);
+          }
+
+          return `#${value}`;
+        },
+        style: { fontSize: 11, fill: "#666" },
+      },
+    },
+
+    tooltip: {
+      title: (data) => `🏆 Top ${data.index}: ${data.customerName}`,
+      items: [
+        {
+          name: "💰 Tổng chi tiêu",
+          field: "totalSpentFormatted",
+          formatter: (value) => formatVND(value),
+        },
+        {
+          name: "📦 Số đơn hàng",
+          field: "totalOrders",
+          formatter: (value) => value + " đơn",
+        },
+      ],
     },
     interactions: [{ type: "element-active" }],
     animation: {
-      appear: {
-        animation: "fade-in",
-        duration: 800,
+      appear: { animation: "grow-in-y", duration: 600 },
+    },
+    meta: {
+      totalSpent: {
+        formatter: (value) => {
+          return formatVND(value);
+        },
+      },
+      totalOrders: {
+        formatter: (value) => value + " đơn",
       },
     },
-    padding: [20, 20, 20, 20], // top, right, bottom, left
+    padding: [40, 20, 40, 120],
   };
 
   useEffect(() => {

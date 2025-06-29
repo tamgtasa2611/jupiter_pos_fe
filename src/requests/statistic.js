@@ -57,3 +57,18 @@ export const getInactiveCustomers = async (data) => {
     throw error?.response?.data?.message || "Lỗi không xác định";
   }
 };
+
+export const getNewCustomers = async (params = {}) => {
+  try {
+    const response = await api.get("/statistic/new-customers", {
+      params: {
+        startDate: params.startDate,
+        endDate: params.endDate,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error("Lỗi khi lấy dữ liệu khách hàng mới!", error?.response?.data);
+    throw error?.response?.data?.message || "Lỗi không xác định";
+  }
+};

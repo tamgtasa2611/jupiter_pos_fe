@@ -13,24 +13,49 @@ const { Option } = Select;
 
 const TIME_OPTIONS = [
   {
-    label: "7 ngày gần nhất",
+    label: "Hôm nay",
+    value: "today",
+    getRange: () => ({
+      startTime: dayjs().startOf("day").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "7 ngày qua",
     value: "7days",
     getRange: () => ({
       startTime: dayjs().subtract(6, "day").startOf("day").toISOString(),
       endTime: dayjs().endOf("day").toISOString(),
     }),
   },
-  ...Array.from({ length: 12 }).map((_, i) => {
-    const month = dayjs().subtract(i, "month");
-    return {
-      label: month.format("MM/YYYY"),
-      value: `month-${month.format("YYYY-MM")}`,
-      getRange: () => ({
-        startTime: month.startOf("month").toISOString(),
-        endTime: month.endOf("month").toISOString(),
-      }),
-    };
-  }),
+  {
+    label: "1 tháng qua",
+    value: "1month",
+    getRange: () => ({
+      startTime: dayjs()
+        .subtract(1, "month")
+        .add(1, "day")
+        .startOf("day")
+        .toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "Năm nay",
+    value: "thisYear",
+    getRange: () => ({
+      startTime: dayjs().startOf("year").toISOString(),
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
+  {
+    label: "Toàn thời gian",
+    value: "allTime",
+    getRange: () => ({
+      startTime: "1970-01-01T00:00:00.000Z",
+      endTime: dayjs().endOf("day").toISOString(),
+    }),
+  },
 ];
 
 const TopDebtCustomer = () => {
@@ -39,7 +64,13 @@ const TopDebtCustomer = () => {
   const [loading, setLoading] = useState(true);
 
   const formatVND = (value) => {
-    return value / 1000000 + " tr";
+    if (value >= 1000000) {
+      return (value / 1000000).toFixed(1) + "Tr";
+    }
+    if (value >= 1000) {
+      return (value / 1000).toFixed(0) + "K";
+    }
+    return new Intl.NumberFormat("vi-VN").format(value);
   };
 
   const fetchCustomerData = async (range) => {
@@ -66,9 +97,12 @@ const TopDebtCustomer = () => {
     data: customerData,
     yField: "totalDebt",
     xField: "index",
-    isStack: false,
-    isGroup: false,
-    legend: { position: "left" },
+    color: ({ index }) => {
+      if (index === 1) return "#1890ff";
+      if (index === 2) return "#52c41a";
+      if (index === 3) return "#faad14";
+      return "#d9d9d9";
+    },
     barStyle: {
       radius: [0, 4, 4, 0],
     },
@@ -77,15 +111,53 @@ const TopDebtCustomer = () => {
       position: "left",
       textAlign: "left",
       dx: 5,
+      style: {
+        fontSize: 11,
+        fontWeight: (data) => (data.index <= 3 ? "bold" : "normal"),
+      },
+    },
+
+    yAxis: {
+      label: {
+        style: { fontSize: 11, fill: "#666" },
+      },
+      grid: {
+        line: { style: { stroke: "#f0f0f0" } },
+      },
+    },
+
+    xAxis: {
+      label: {
+        style: { fontSize: 11, fill: "#666" },
+      },
+    },
+
+    tooltip: {
+      title: (data) => `${data.index}: ${data.customerName}`,
+      items: [
+        {
+          name: "💰 Tổng nợ",
+          field: "totalDebtFormatted",
+        },
+        {
+          name: "📦 Số đơn hàng",
+          field: "totalOrders",
+          formatter: (value) => value + " đơn",
+        },
+      ],
     },
     interactions: [{ type: "element-active" }],
     animation: {
-      appear: {
-        animation: "fade-in",
-        duration: 800,
+      appear: { animation: "grow-in-y", duration: 600 },
+    },
+    meta: {
+      totalDept: {
+        formatter: (value) => {
+          return formatVND(value);
+        },
       },
     },
-    padding: [20, 20, 20, 20], // top, right, bottom, left
+    padding: [40, 20, 40, 120],
   };
 
   useEffect(() => {
