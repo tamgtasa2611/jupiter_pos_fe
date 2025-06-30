@@ -1,7 +1,7 @@
 "use client";
 
-import CustomerReport from "@components/admin/thong-ke/khach-hang/CustomerReport";
+import PaymentMethod from "@components/admin/thong-ke/thanh-toan/PaymentMethod";
 
 export default function Page() {
-  return <CustomerReport />;
+  return <PaymentMethod />;
 }

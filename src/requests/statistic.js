@@ -92,3 +92,21 @@ export const getOrderStatusStatistic = async (data) => {
     return { data: [] };
   }
 };
+
+export const getPaymentMethodStats = async (params = {}) => {
+  try {
+    const response = await api.get("/statistic/payment-methods", {
+      params: {
+        startDate: params.startDate,
+        endDate: params.endDate,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      "Error fetching payment method stats:",
+      error?.response?.data?.message,
+    );
+    throw error?.response?.data?.message || "Lỗi không xác định";
+  }
+};
