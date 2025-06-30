@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Card, Row, Col, Typography, Select, Statistic, Segmented } from "antd";
-import { Column } from "@ant-design/plots";
+import { Area } from "@ant-design/plots";
 import dayjs from "dayjs";
 import { getNetReveneues } from "@requests/statistic";
 
@@ -41,7 +41,13 @@ const SalesSummary = () => {
   const [loading, setLoading] = useState(true);
   const [totalNetRevenue, setTotalNetRevenue] = useState(0);
 
-  const formatCurrency = (value) => {
+  const formatVND = (value) => {
+    if (value >= 1000000) {
+      return (value / 1000000).toFixed(1) + "Tr";
+    }
+    if (value >= 1000) {
+      return (value / 1000).toFixed(0) + "K";
+    }
     return new Intl.NumberFormat("vi-VN").format(value);
   };
 
@@ -62,7 +68,7 @@ const SalesSummary = () => {
           .slice(0, 10)
           .map((item, index) => ({
             ...item,
-            revenueFormatted: formatCurrency(item.totalRevenue),
+            revenueFormatted: formatVND(item.totalRevenue),
             index: index + 1,
           }));
         setChartData(top10);
@@ -84,7 +90,7 @@ const SalesSummary = () => {
   const config = {
     data: chartData,
     xField: "label",
-    yField: "totalRevenue",
+    yField: "revenueFormatted",
     columnWidthRatio: 0.6,
     label: {
       position: "top",
@@ -102,7 +108,7 @@ const SalesSummary = () => {
     },
     yAxis: {
       label: {
-        formatter: (v) => formatCurrency(v),
+        formatter: (v) => formatVND(v),
       },
     },
     meta: {
@@ -116,25 +122,34 @@ const SalesSummary = () => {
         {
           name: "📅 Thời gian",
           field: "label",
-          formatter: (value) => value + " sản phẩm",
         },
         {
           name: "💰 Tổng doanh thu",
-          field: "totalRevenue",
-          formatter: (value) => value + " sản phẩm",
+          field: "revenueFormatted",
         },
       ],
     },
-    color: "#1677ff",
     animation: {
       appear: {
         duration: 1000,
         easing: "easeQuadIn",
       },
     },
-    columnStyle: {
-      fill: "l(90) 0:#1677ff 1:#58a9ff",
-      radius: [4, 4, 0, 0],
+    style: {
+      fill: 'linear-gradient(-90deg, white 0%, darkgreen 100%)',
+    },
+    line: {
+      style: {
+        stroke: 'darkgreen',
+        lineWidth: 2,
+      },
+    },
+    point: {
+      sizeField: 4,
+      style: {
+        stroke: 'darkgreen',
+        fill: '#fff',
+      },
     },
   };
 
@@ -144,7 +159,7 @@ const SalesSummary = () => {
         <Col xs={24} md={12}>
           <Title level={4}>Doanh thu</Title>
           <Statistic
-            value={formatCurrency(totalNetRevenue)}
+            value={formatVND(totalNetRevenue)}
             prefix="₫"
             valueStyle={{ color: "#3f8600", fontSize: "28px" }}
             loading={loading}
@@ -171,7 +186,7 @@ const SalesSummary = () => {
         </Col>
         <Col xs={24} className="h-80">
           {chartData.length > 0 ? (
-            <Column {...config} />
+            <Area {...config} />
           ) : (
             <div
               style={{

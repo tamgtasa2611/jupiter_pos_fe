@@ -48,34 +48,52 @@ const OrderStatusReport = () => {
     setLoading(false);
   };
 
-const config = {
+  const getColorFromStatus = (orderStatus) => {
+    if (orderStatus === 'unsold') return '#ff4d4f';  // đỏ
+    if (orderStatus === 'sold') return '#52c41a';    // xanh
+
+    // Sinh mã màu từ hash chuỗi
+    let hash = 0;
+    for (let i = 0; i < orderStatus.length; i++) {
+      hash = orderStatus.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const color = `hsl(${hash % 360}, 60%, 60%)`;
+    return color;
+  };
+
+  const config = {
     data: orderStatusData,
     yField: "totalOrders",
     xField: "orderStatus",
     barStyle: {
-        radius: [0, 4, 4, 0],
+      radius: [0, 4, 4, 0],
+    },
+    style: {
+      fill: ({ orderStatus }) => {
+        return getColorFromStatus(orderStatus);
+      },
     },
     tooltip: {
-        title: null,
-        items: [
-            {
-                name: "Trạng thái đơn hàng",
-                field: "orderStatus",
-                formatter: (value) => value,
-            },
-            {
-                name: "📦 Số đơn hàng",
-                field: "totalOrders",
-                formatter: (value) => value + " đơn",
-            },
-        ],
+      title: null,
+      items: [
+        {
+          name: "Trạng thái đơn hàng",
+          field: "orderStatus",
+          formatter: (value) => value,
+        },
+        {
+          name: "📦 Số đơn hàng",
+          field: "totalOrders",
+          formatter: (value) => value + " đơn",
+        },
+      ],
     },
     interactions: [{ type: "element-active" }],
     animation: {
-        appear: { animation: "grow-in-y", duration: 600 },
+      appear: { animation: "grow-in-y", duration: 600 },
     },
     padding: [40, 20, 40, 120],
-};
+  };
 
   useEffect(() => {
     const option = TIME_OPTIONS.find((opt) => opt.value === timeRange);

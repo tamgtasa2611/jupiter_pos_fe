@@ -44,11 +44,9 @@ const Top10Products = () => {
     setLoading(true);
     try {
       const { startTime, endTime } = range;
-      const product = await getProductData({ startTime, endTime });
+      const product = await getProductData({ label: "ASC", startTime, endTime });
       const sortField = sortBy === "revenue" ? "revenue" : "totalQuantity";
       const top10 = (product || [])
-        .sort((a, b) => (b[sortField] || 0) - (a[sortField] || 0))
-        .slice(0, 10)
         .map((product, index) => ({
           ...product,
           revenueFormatted: formatVND(product.revenue),
@@ -77,6 +75,9 @@ const Top10Products = () => {
     legend: { position: "left" },
     barStyle: {
       radius: [0, 4, 4, 0],
+    },
+    style: {
+      fill: "#ff4d4f",
     },
     label: {
       text: "productName",
@@ -115,7 +116,7 @@ const Top10Products = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 my-4 md:my-0">
           <Space>
             <ShoppingOutlined />
-            <span>Top 10 sản phẩm bán chạy</span>
+            <span>Top 10 sản phẩm có số lượng bán ra ít nhất</span>
           </Space>
           <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center w-full gap-2">
             <Select

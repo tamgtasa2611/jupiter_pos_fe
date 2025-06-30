@@ -4,9 +4,10 @@ import {
   ShoppingOutlined,
 } from "@ant-design/icons";
 import { Bar } from "@ant-design/plots";
-import { getProductLowStock } from "@/requests/statistic";
+import { getProductLowInventory } from "@/requests/statistic";
+import { fill } from "lodash";
 
-const ProductLowStock = () => {
+const ProductLowInventory = () => {
   const [loading, setLoading] = useState(true);
   const [productData, setProductData] = useState([]);
 
@@ -16,10 +17,8 @@ const ProductLowStock = () => {
   const fetchProductData = async () => {
     setLoading(true);
     try {
-      const product = await getProductLowStock();
+      const product = await getProductLowInventory();
       const top10 = (product || [])
-        .sort((a, b) => (a.inventoryCount || 0) - (b.inventoryCount || 0))
-        .slice(0, 10)
         .map((product, index) => ({
           ...product,
           revenueFormatted: formatVND(product.inventoryCount),
@@ -45,6 +44,9 @@ const ProductLowStock = () => {
     legend: { position: "left" },
     barStyle: {
       radius: [0, 4, 4, 0],
+    },
+    style: {
+      fill: "#e7c450",
     },
     label: {
       text: "productName",
@@ -78,7 +80,7 @@ const ProductLowStock = () => {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center w-full gap-2 my-4 md:my-0">
           <Space>
             <ShoppingOutlined />
-            <span>Top 10 mặt hàng có số lượng tồn kho ít nhất</span>
+            <span>Top 10 mặt hàng còn tồn kho ít nhất</span>
           </Space>
         </div>
       }
@@ -91,4 +93,4 @@ const ProductLowStock = () => {
   );
 };
 
-export default ProductLowStock;
+export default ProductLowInventory;
