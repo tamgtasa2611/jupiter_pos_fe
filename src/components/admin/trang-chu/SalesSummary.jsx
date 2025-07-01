@@ -64,8 +64,6 @@ const SalesSummary = () => {
         };
         const netRevenue = await getNetReveneues(requestBody);
         const top10 = (netRevenue || [])
-          .sort((a, b) => (b.totalRevenue || 0) - (a.totalRevenue || 0))
-          .slice(0, 10)
           .map((item, index) => ({
             ...item,
             revenueFormatted: formatVND(item.totalRevenue),

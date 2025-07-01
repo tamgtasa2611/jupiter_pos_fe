@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Card, Space, Select } from "antd";
-import {
-  ShoppingOutlined,
-  DollarOutlined,
-  FileDoneOutlined,
-} from "@ant-design/icons";
+import { ShoppingOutlined } from "@ant-design/icons";
 import { Column } from "@ant-design/plots";
-import { getOrderStatusStatistic } from "@requests/statistic";
+import { getOrderStatusStatistic } from "../../../requests/statistic";
+import { ORDER_STATUS_MAP } from "../../../constants/order";
 import dayjs from "dayjs";
 
 const TIME_OPTIONS = [
@@ -40,37 +37,41 @@ const OrderStatusReport = () => {
     setLoading(true);
     try {
       const { startTime, endTime } = range;
-      const orderStatus = await getOrderStatusStatistic({ startTime, endTime });
-      setOrderStatusData(orderStatus);
+      const data = await getOrderStatusStatistic({ startTime, endTime });
+      setOrderStatusData(data);
     } catch (error) {
       setOrderStatusData([]);
     }
     setLoading(false);
   };
 
-  const getColorFromStatus = (orderStatus) => {
-    if (orderStatus === 'unsold') return '#ff4d4f';  // đỏ
-    if (orderStatus === 'sold') return '#52c41a';    // xanh
-
-    // Sinh mã màu từ hash chuỗi
-    let hash = 0;
-    for (let i = 0; i < orderStatus.length; i++) {
-      hash = orderStatus.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const color = `hsl(${hash % 360}, 60%, 60%)`;
-    return color;
-  };
+  // Map lại dữ liệu để xField là label tiếng Việt, giữ mã code cho màu và tooltip
+  const mappedData = orderStatusData.map((item) => ({
+    ...item,
+    orderStatusLabel: ORDER_STATUS_MAP[item.orderStatus]?.label || item.orderStatus,
+    orderStatusCode: item.orderStatus,
+    orderStatus: ORDER_STATUS_MAP[item.orderStatus]?.label || item.orderStatus,
+  }));
 
   const config = {
-    data: orderStatusData,
+    data: mappedData,
     yField: "totalOrders",
     xField: "orderStatus",
     barStyle: {
       radius: [0, 4, 4, 0],
     },
     style: {
-      fill: ({ orderStatus }) => {
-        return getColorFromStatus(orderStatus);
+      fill: ({ orderStatusCode }) => {
+        return ORDER_STATUS_MAP[orderStatusCode]?.color || "default";
+      },
+    },
+    xAxis: {
+      label: {
+        style: {
+          fontSize: 9,
+          maxWidth: 70,
+          wordBreak: 'break-all',
+        },
       },
     },
     tooltip: {
@@ -78,8 +79,7 @@ const OrderStatusReport = () => {
       items: [
         {
           name: "Trạng thái đơn hàng",
-          field: "orderStatus",
-          formatter: (value) => value,
+          field: "orderStatusLabel",
         },
         {
           name: "📦 Số đơn hàng",

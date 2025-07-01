@@ -48,15 +48,6 @@ const StatisticMenu = () => {
       ),
     },
     {
-      key: "/admin/thong-ke/nhan-vien",
-      label: (
-        <span>
-          <UserOutlined />
-          Thống kê nhân viên
-        </span>
-      ),
-    },
-    {
       key: "/admin/thong-ke/thanh-toan",
       label: (
         <span>

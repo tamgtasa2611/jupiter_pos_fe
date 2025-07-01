@@ -15,6 +15,7 @@ import { EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { ORDER_TYPE_MAP, ORDER_STATUS_MAP } from "@constants/order";
 import { updateOrderInfo } from "@/requests/order";
+import { getCustomers } from "@/requests/customer";
 
 const { Paragraph } = Typography;
 const { TextArea } = Input;
@@ -24,15 +25,33 @@ const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
   const [editMode, setEditMode] = useState(false);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [customerLoading, setCustomerLoading] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  const fetchCustomers = async (search = "") => {
+    setCustomerLoading(true);
+    try {
+      const res = await getCustomers({ page: 0, size: 10, search });
+      const filteredCustomers = res?.content || []; 
+      setCustomers(filteredCustomers);
+    } catch (e) {
+      setCustomers([]);
+    } finally {
+      setCustomerLoading(false);
+    }
+  };
 
   const handleEdit = () => {
     setEditMode(true);
+    fetchCustomers();
+    setSelectedCustomer(null);
     form.setFieldsValue({
-      receiverName: order.receiverName || order.customer?.customerName || "",
-      receiverPhone: order.receiverPhone || order.customer?.phone || "",
-      receiverAddress: order.receiverAddress || order.customer?.address || "",
-      note: order.note || "",
-      orderType: order.orderType || "",
+      receiverName: order.receiverName || order.customer?.customerName || null,
+      receiverPhone: order.receiverPhone || order.customer?.phone || null,
+      receiverAddress: order.receiverAddress || order.customer?.address || null,
+      note: order.note || null,
+      orderType: order.orderType || null,
     });
   };
 
@@ -70,6 +89,22 @@ const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
       value: key,
     }),
   );
+
+  // Khi chọn customer từ select
+  const handleCustomerSelect = (value, option) => {
+    const customer = customers.find((c) => c.id === value);
+    setSelectedCustomer(customer);
+    form.setFieldsValue({
+      receiverName: customer?.customerName || "",
+      receiverPhone: customer?.phone || "",
+      receiverAddress: customer?.address || "",
+    });
+  };
+
+  // Khi user nhập tay tên khách hàng, reset selectedCustomer
+  const handleCustomerInput = (value) => {
+    setSelectedCustomer(null);
+  };
 
   return (
     <Card>
@@ -133,7 +168,33 @@ const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
                 ]}
                 style={{ margin: 0 }}
               >
-                <Input placeholder="Nhập tên khách hàng" />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Chọn hoặc nhập tên khách hàng"
+                  filterOption={false}
+                  notFoundContent={customerLoading ? "Đang tải..." : null}
+                  onSearch={fetchCustomers}
+                  onSelect={handleCustomerSelect}
+                  onChange={handleCustomerInput}
+                  onClear={() => setSelectedCustomer(null)}
+                  value={form.getFieldValue("receiverName")}
+                  style={{ width: "240px" }}
+                  options={customers.map((c) => ({
+                    label: c.customerName,
+                    value: c.id,
+                  }))}
+                  // Cho phép nhập tay
+                  labelInValue={false}
+                  popupRender={(menu) => (
+                    <>
+                      {menu}
+                      <div style={{ padding: 8, color: "#888", fontSize: 12 }}>
+                        Gõ để tìm hoặc nhập mới
+                      </div>
+                    </>
+                  )}
+                />
               </Form.Item>
             ) : order.customer && order.customer.customerName ? (
               order.customer.customerName
@@ -173,7 +234,6 @@ const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
               <Form.Item
                 name="receiverPhone"
                 rules={[
-                  { required: true, message: "Vui lòng nhập số điện thoại" },
                   {
                     pattern: /^[0-9]{10,11}$/,
                     message: "Số điện thoại không hợp lệ",
@@ -216,12 +276,6 @@ const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
             {editMode && fullyEditable ? (
               <Form.Item
                 name="receiverAddress"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập địa chỉ nhận hàng",
-                  },
-                ]}
                 style={{ margin: 0 }}
               >
                 <Input placeholder="Nhập địa chỉ nhận hàng" />

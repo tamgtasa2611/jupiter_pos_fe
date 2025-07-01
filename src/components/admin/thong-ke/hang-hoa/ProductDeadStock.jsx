@@ -24,7 +24,7 @@ const ProductDeadStock = () => {
     try {
       const product = await getProductDeadStock();
       const top10 = (product || [])
-        .sort((a, b) => (a.dayCount || 0) - (b.dayCount || 0))
+        .sort((a, b) => (b.dayCount || 0) - (a.dayCount || 0))
         .slice(0, 10)
         .map((product, index) => ({
           ...product,
