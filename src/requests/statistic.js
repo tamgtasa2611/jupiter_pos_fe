@@ -120,3 +120,21 @@ export const getPaymentMethodStats = async (params = {}) => {
     throw error?.response?.data?.message || "Lỗi không xác định";
   }
 };
+
+export const getRevenueByDates = async (params = {}) => {
+  try {
+    const response = await api.get("/statistic/get-revenue-by-dates", {
+      params: {
+        startDate: params.startDate,
+        endDate: params.endDate,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error(
+      "Lỗi khi lấy dữ liệu doanh thu theo ngày!",
+      error?.response?.data,
+    );
+    throw error?.response?.data?.message || "Lỗi không xác định";
+  }
+};

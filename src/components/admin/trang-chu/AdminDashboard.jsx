@@ -4,6 +4,7 @@ import TodaySummary from "./TodaySummary";
 import Top10Products from "../thong-ke/hang-hoa/Top10Products";
 import Top10Customers from "../thong-ke/khach-hang/Top10Customers";
 import OrderStatusReport from "./OrderStatusReport";
+import CompareRevenue from "../thong-ke/ban-hang/CompareRevenue";
 
 export default function AdminDashboard() {
   return (
@@ -19,6 +20,7 @@ export default function AdminDashboard() {
         <OrderStatusReport style={{ flex: 1 }} />
       </Flex>
       <Top10Customers />
+      <CompareRevenue />
     </Flex>
   );
 }
