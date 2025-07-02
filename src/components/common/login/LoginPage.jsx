@@ -32,10 +32,11 @@ const LoginPage = () => {
       });
       if (res.token) {
         let user = res.user || null;
-
-        setTokenWithExpiry(res.token, user);
         message.success(res.message || "Đăng nhập thành công!");
-        router.push("/admin/ban-hang");
+        setTimeout(() => {
+          setTokenWithExpiry(res.token, user);
+          router.push("/admin/ban-hang");
+        }, 500);
       } else {
         message.error(
           res.message || "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!",
