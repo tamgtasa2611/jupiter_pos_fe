@@ -63,12 +63,11 @@ const SalesSummary = () => {
           endTime,
         };
         const netRevenue = await getNetReveneues(requestBody);
-        const top10 = (netRevenue || [])
-          .map((item, index) => ({
-            ...item,
-            revenueFormatted: formatVND(item.totalRevenue),
-            index: index + 1,
-          }));
+        const top10 = (netRevenue || []).map((item, index) => ({
+          ...item,
+          revenueFormatted: formatVND(item.totalRevenue),
+          index: index + 1,
+        }));
         setChartData(top10);
         setTotalNetRevenue(
           (netRevenue || []).reduce(
@@ -134,19 +133,19 @@ const SalesSummary = () => {
       },
     },
     style: {
-      fill: 'linear-gradient(-90deg, white 0%, darkgreen 100%)',
+      fill: "linear-gradient(-90deg, white 0%, darkgreen 100%)",
     },
     line: {
       style: {
-        stroke: 'darkgreen',
+        stroke: "darkgreen",
         lineWidth: 2,
       },
     },
     point: {
       sizeField: 4,
       style: {
-        stroke: 'darkgreen',
-        fill: '#fff',
+        stroke: "darkgreen",
+        fill: "#fff",
       },
     },
   };
@@ -158,7 +157,7 @@ const SalesSummary = () => {
           <Title level={4}>Doanh thu</Title>
           <Statistic
             value={formatVND(totalNetRevenue)}
-            prefix="₫"
+            suffix="₫"
             valueStyle={{ color: "#3f8600", fontSize: "28px" }}
             loading={loading}
           />

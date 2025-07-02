@@ -70,7 +70,7 @@ const TodaySummary = () => {
           <Statistic
             title={<Title level={5}>Doanh thu</Title>}
             value={loading ? "..." : formatCurrency(todayData.todayRevenue)}
-            prefix="₫"
+            suffix="₫"
             valueStyle={{ color: "#3f8600", fontSize: "18px" }}
           />
           <Text type="secondary" className="block">
@@ -82,7 +82,7 @@ const TodaySummary = () => {
           <Statistic
             title={<Title level={5}>Lợi nhuận</Title>}
             value={loading ? "..." : formatCurrency(todayData.todayProfit)}
-            prefix="₫"
+            suffix="₫"
             valueStyle={{ color: "#3f8600", fontSize: "18px" }}
           />
         </Col>
@@ -91,7 +91,7 @@ const TodaySummary = () => {
           <Statistic
             title={<Title level={5}>Doanh thu tháng này </Title>}
             value={loading ? "..." : formatCurrency(todayData.netRevenue)}
-            prefix="₫"
+            suffix="₫"
             valueStyle={{ color: "#1677ff", fontSize: "18px" }}
           />
         </Col>

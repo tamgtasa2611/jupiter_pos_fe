@@ -274,7 +274,7 @@ const CompareRevenue = () => {
       const revenuePercentage =
         previousData.totalRevenue > 0
           ? (revenueDiff / previousData.totalRevenue) * 100
-          : 0;
+          : 100;
 
       setCompareData({
         current: {
@@ -376,10 +376,8 @@ const CompareRevenue = () => {
       className="shadow-sm hover:shadow-md transition-shadow duration-200"
       style={{ borderRadius: 8 }}
     >
-      {/* Controls */}
       <div className="mb-6">
         <Row gutter={[16, 16]} align="middle">
-          {/* Step 1: Choose compare type */}
           <Col xs={24} sm={8}>
             <Text strong>Chọn kiểu so sánh</Text>
             <br />
@@ -394,7 +392,6 @@ const CompareRevenue = () => {
             />
           </Col>
 
-          {/* Step 2: Choose time range option */}
           <Col xs={24} sm={8}>
             <Text strong>Chọn khoảng thời gian</Text>
             <br />
@@ -409,7 +406,6 @@ const CompareRevenue = () => {
             />
           </Col>
 
-          {/* Custom date pickers if needed */}
           {isCustomMode && (
             <>
               <Col xs={24} sm={6}>
@@ -464,7 +460,6 @@ const CompareRevenue = () => {
             </>
           )}
 
-          {/* Reset button */}
           <Col xs={24} sm={isCustomMode ? 24 : 8}>
             <div style={{ marginTop: isCustomMode ? 0 : 24 }}>
               <Button
@@ -485,7 +480,6 @@ const CompareRevenue = () => {
         </div>
       ) : (
         <>
-          {/* Summary Cards */}
           <Row gutter={16} style={{ marginBottom: 24 }}>
             <Col xs={24} lg={8}>
               <Card size="small" className="text-center">
@@ -493,8 +487,9 @@ const CompareRevenue = () => {
                   title="Doanh thu"
                   value={compareData.current.revenue}
                   formatter={(value) =>
-                    Intl.NumberFormat("vi-VN").format(value) + "đ"
+                    Intl.NumberFormat("vi-VN").format(value)
                   }
+                  suffix="₫"
                   valueStyle={{ color: "#1890ff", fontSize: 18 }}
                 />
                 <div className="mt-2">
@@ -553,8 +548,9 @@ const CompareRevenue = () => {
                   title="Giá trị đơn hàng TB"
                   value={compareData.current.avgOrderValue}
                   formatter={(value) =>
-                    Intl.NumberFormat("vi-VN").format(value) + "đ"
+                    Intl.NumberFormat("vi-VN").format(value)
                   }
+                  suffix="₫"
                   valueStyle={{ color: "#fa8c16", fontSize: 18 }}
                 />
                 <div className="mt-2">
@@ -579,7 +575,6 @@ const CompareRevenue = () => {
             </Col>
           </Row>
 
-          {/* Period Labels */}
           <div className="mb-4">
             <Row gutter={16}>
               <Col span={12}>
@@ -592,7 +587,7 @@ const CompareRevenue = () => {
                       <Text type="secondary" style={{ fontSize: 12 }}>
                         {new Intl.NumberFormat("vi-VN").format(
                           compareData.current.revenue,
-                        )}
+                        )}{" "}
                         đ
                       </Text>
                     </div>
@@ -611,7 +606,7 @@ const CompareRevenue = () => {
                       <Text type="secondary" style={{ fontSize: 12 }}>
                         {new Intl.NumberFormat("vi-VN").format(
                           compareData.previous.revenue,
-                        )}
+                        )}{" "}
                         đ
                       </Text>
                     </div>
@@ -623,7 +618,6 @@ const CompareRevenue = () => {
             </Row>
           </div>
 
-          {/* Performance Analysis */}
           <Card size="small" style={{ backgroundColor: "#fafafa" }}>
             <Title level={5}>📊 Phân tích hiệu suất</Title>
             <Row gutter={16}>
@@ -637,14 +631,17 @@ const CompareRevenue = () => {
                       Math.abs(compareData.difference.percentage),
                       100,
                     )}
-                    strokeColor={
+                    status={
                       compareData.difference.percentage >= 0
-                        ? "#52c41a"
-                        : "#ff4d4f"
+                        ? "success"
+                        : "exception"
                     }
-                    format={() =>
-                      `${compareData.difference.percentage >= 0 ? "+" : ""}${compareData.difference.percentage.toFixed(1)}%`
-                    }
+                    format={() => (
+                      <span>
+                        {compareData.difference.percentage >= 0 ? "+" : ""}
+                        {compareData.difference.percentage.toFixed(1)}%
+                      </span>
+                    )}
                     size={80}
                   />
                 </div>
@@ -664,7 +661,7 @@ const CompareRevenue = () => {
                       <Text>
                         {new Intl.NumberFormat("vi-VN").format(
                           Math.abs(compareData.difference.revenue),
-                        ) + "đ "}
+                        ) + " đ "}
                         so với kỳ trước
                       </Text>
                     </div>
@@ -690,7 +687,7 @@ const CompareRevenue = () => {
                             : "red"
                         }
                       >
-                        AOV{" "}
+                        Giá trị đơn hàng trung bình{" "}
                         {compareData.difference.avgOrderValue >= 0
                           ? "tăng"
                           : "giảm"}
