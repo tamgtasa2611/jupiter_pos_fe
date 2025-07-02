@@ -18,9 +18,11 @@ const ProductsSection = memo(
     initLoading,
     outOfProducts,
     setOutOfProducts,
+    searchQuery,
+    setSearchQuery,
+    currentPage,
+    setCurrentPage,
   }) => {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [currentPage, setCurrentPage] = useState(0);
     const [loadingMore, setLoadingMore] = useState(false);
 
     const handleSearch = async (searchValue) => {

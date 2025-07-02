@@ -30,6 +30,8 @@ const MainSellingPage = () => {
   const [initLoading, setInitLoading] = useState(true);
   const [showPriceModal, setShowPriceModal] = useState(false);
   const [selectedItemForPrice, setSelectedItemForPrice] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(0);
 
   const fetchProducts = async ({
     search = "",
@@ -286,6 +288,8 @@ const MainSellingPage = () => {
     setCustomerInfo(KHACH_LE);
     setCart([]);
     setIsPaymentModalVisible(false);
+    setCurrentPage(0);
+    setSearchQuery("");
     handleSearch({ search: "", page: 0, size: 30 });
   };
 
@@ -329,6 +333,10 @@ const MainSellingPage = () => {
             initLoading={initLoading}
             outOfProducts={outOfProducts}
             setOutOfProducts={setOutOfProducts}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
           />
         </Col>
 
