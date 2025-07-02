@@ -33,15 +33,24 @@ const CloudinaryImageUpload = ({
         },
       );
       const data = await res.json();
+
+      if (data.error) {
+        if (data.error.message === "Image file format webp not allowed") {
+          throw new Error("Vui lòng chỉ tải lên tệp đuôi JPG hoặc PNG!");
+        } else {
+          throw new Error(data?.error?.message || "Tải ảnh lên thất bại!");
+        }
+      }
       if (data.secure_url) {
         message.success("Tải ảnh lên thành công!");
         onUploaded && onUploaded(data.secure_url);
         onSuccess();
       } else {
-        throw new Error("Upload thất bại");
+        throw new Error("Tải ảnh lên thất bại!");
       }
     } catch (err) {
-      message.error("Tải ảnh lên thất bại!");
+      console.error("Upload error:", err);
+      message.error(err.message || "Tải ảnh lên thất bại!");
       onError(err);
     } finally {
       setUploading(false);
@@ -52,7 +61,15 @@ const CloudinaryImageUpload = ({
     <Upload
       customRequest={customRequest}
       showUploadList={false}
-      accept="image/*"
+      accept="image/jpeg,image/png"
+      beforeUpload={(file) => {
+        const isJpgOrPng =
+          file.type === "image/jpeg" || file.type === "image/png";
+        if (!isJpgOrPng) {
+          message.error("Chỉ chấp nhận tệp JPG hoặc PNG!");
+        }
+        return isJpgOrPng || Upload.LIST_IGNORE;
+      }}
     >
       <Button
         hidden={disabled}
