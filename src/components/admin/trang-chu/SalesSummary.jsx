@@ -88,7 +88,7 @@ const SalesSummary = () => {
   const config = {
     data: chartData,
     xField: "label",
-    yField: "revenueFormatted",
+    yField: "totalRevenue",
     columnWidthRatio: 0.6,
     label: {
       position: "top",
