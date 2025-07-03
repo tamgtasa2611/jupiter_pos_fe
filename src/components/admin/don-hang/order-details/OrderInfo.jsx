@@ -93,17 +93,23 @@ const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
   // Khi chọn customer từ select
   const handleCustomerSelect = (value, option) => {
     const customer = customers.find((c) => c.id === value);
-    setSelectedCustomer(customer);
-    form.setFieldsValue({
-      receiverName: customer?.customerName || "",
-      receiverPhone: customer?.phone || "",
-      receiverAddress: customer?.address || "",
-    });
+      if(customer){
+      setSelectedCustomer(customer);
+      form.setFieldsValue({
+        receiverName: customer?.customerName || "",
+        receiverPhone: customer?.phone || "",
+        receiverAddress: customer?.address || "",
+      });
+    }else{
+      form.setFieldsValue({
+        receiverName: value || "",
+      });
+    }
   };
 
   // Khi user nhập tay tên khách hàng, reset selectedCustomer
   const handleCustomerInput = (value) => {
-    setSelectedCustomer(null);
+    setSelectedCustomer(value);
   };
 
   return (
@@ -169,6 +175,7 @@ const OrderInfo = ({ order, editable, fullyEditable, onOrderUpdate }) => {
                 style={{ margin: 0 }}
               >
                 <Select
+                  mode="tags"
                   showSearch
                   allowClear
                   placeholder="Chọn hoặc nhập tên khách hàng"
