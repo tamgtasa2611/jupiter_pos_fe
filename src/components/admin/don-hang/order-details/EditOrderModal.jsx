@@ -50,8 +50,10 @@ const EditOrderModal = ({ visible, onCancel, orderId }) => {
     order?.orderStatus === ORDER_STATUS.CHO_XAC_NHAN;
 
   const reloadOrder = async () => {
+    setLoading(true);
     const updatedOrder = await getOrderById(orderId);
     setOrder(updatedOrder);
+    setLoading(false);
   };
 
   useEffect(() => {
