@@ -1,8 +1,10 @@
 "use client";
 
+import useIsMobile from "@utils/useIsMobile";
 import MainSellingPage from "@components/admin/ban-hang/MainSellingPage";
-import React from "react";
+import MobileMainSellingPage from "@components/mobile/ban-hang/MobileMainSellingPage";
 
 export default function Page() {
-  return <MainSellingPage />;
+  const isMobile = useIsMobile();
+  return isMobile ? <MobileMainSellingPage /> : <MainSellingPage />;
 }
